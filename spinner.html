@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+
+<body class="bg-light">
+    <div class="container bg-white mt-3">
+        <div class="py-3 text-center">
+            <h2>Spit Artikel</h2>
+        </div>
+        <div class="row p-2">
+            <label for="">Masukan Artikel :</label>
+            <textarea class="form-control" id="artikel" rows="8"></textarea>
+            <button type="button" class="btn btn-secondary mt-2 pull-right" id="btnProssesSplit">Proses Split</button>
+        </div>
+    </div>
+
+    <div class="container-fluid mt-3 mb-5 pb-5">
+        <div class="py-3">
+            <center>
+                <!-- <main>
+                    <button id="button">Start Speech to Text</button>
+                    <div id="result"></div>
+                    <p id="message" hidden aria-hidden="true">
+                        Your browser doesn't support Speech Recognition. Sorry.
+                    </p>
+                </main> -->
+                <h2>Hasil Split</h2>
+                <button type="button" class="btn btn-info mt-2 pull-right" id="btnTambahArtikelSpitKosong">Tambahkan
+                    Split Kosong Baru</button>
+                <!-- <button type="button" class="btn btn-success mt-2 pull-right" id="btnConvert">Convert to alam</button> -->
+                <button type="button" class="btn btn-success mt-2 pull-right" id="btnConvert2">Convert to alam </button>
+            </center>
+
+            <br>
+            <div id="ContainerSplitGrup" class="row flex-row flex-nowrap">
+                <div class="mr-5" id="containerSplitPerArtikel" style="width:320px; height: auto; float: left;">
+
+                </div>
+
+
+            </div>
+            <div class="clearfix"></div>
+            <br><br><br>
+            <div class="row">
+
+                <div class="col-md-8">
+                    <div class="col-md-12">
+                        <button id="btnCopy" data-clipboard-action="copy"
+                            data-clipboard-target="#textareaHasilConvertPerParagraf">copy</button>
+                        <button id="btnCopy2" data-clipboard-action="copy"
+                            data-clipboard-target="#textareaHasilConvertPerParagrafInvisible">copy without index
+                            paragraph</button>
+
+                        <button id="btnCopy2" data-clipboard-action="copy"
+                            data-clipboard-target="#textareaHasilConvertPerParagrafInvisible">copy without index
+                            paragraph</button>
+
+                        <button id="btnGenerateSpin">Generate Spin</button>
+
+                        <!-- <div class="mr-5" id="containerHasilConvertPerParagraf">
+
+                </div> -->
+
+
+                        <textarea id="textareaHasilConvertPerParagraf" class="form-control" rows="20"></textarea>
+                        <textarea id="textareaHasilConvertPerParagrafInvisible" style="display: none;"></textarea>
+                    </div>
+
+                    <!-- <div class="col-md-8">
+                <textarea name="" id="containerHasilConvertSeluruh" class="form-control" rows="20"></textarea>
+            </div> -->
+                </div>
+                <div class="col-md-4">
+                    Variabel :
+                    <button id="addNewVariable">Add New Variabel</button>
+                    <div id="variableContent">
+
+                        <div id="variableContentList1">
+                            <br>
+                            <input type="text" placeholder="Nama Variable" id="variable_name" name="variable_name[]"
+                                class="variable_name">
+                            <textarea rows="5" placeholder="isine opo" id="variable_content_0" name="variable_content_0"
+                                onchange="updateVariableList(0)"></textarea>
+                            <br>
+                            <select multiple id="variable_selected_0"></select>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <br>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Hasil generate Spin</h2>
+                    <textarea id="textareaHasilGenerateSpin" class="form-control" rows="20"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <div class="modal fade" id="hasilConvertModal" tabindex="-1" aria-labelledby="hasilConvertModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="hasilConvertModalLabel">Hasil Convertan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button id="btnCopy" data-clipboard-action="copy"
+                                data-clipboard-target="#textareaHasilConvertPerParagraf">copy</button>
+                            <button id="btnCopy2" data-clipboard-action="copy"
+                                data-clipboard-target="#textareaHasilConvertPerParagrafInvisible">copy without index
+                                paragraph</button> -->
+
+    <!-- <div class="mr-5" id="containerHasilConvertPerParagraf">
+
+                        </div> -->
+
+    <!-- 
+                            <textarea id="textareaHasilConvertPerParagraf" class="form-control" rows="20"></textarea>
+                            <textarea id="textareaHasilConvertPerParagrafInvisible" style="display: none;"></textarea>
+                        </div> -->
+
+    <!-- <div class="col-md-8">
+                        <textarea name="" id="containerHasilConvertSeluruh" class="form-control" rows="20"></textarea>
+                    </div> -->
+    <!-- </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+    <!-- <button type="button" class="btn btn-primary">Send message</button> -->
+    <!-- </div>
+            </div>
+        </div>
+    </div> -->
+
+
+
+    <div class="modal fade" id="hasilConvertArtikelModal" tabindex="-1" aria-labelledby="hasilConvertArtikelModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="hasilConvertArtikelModalLabel">Hasil Convertan 1 Artikel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button id="btnCopyArtikel" data-clipboard-action="copy"
+                                data-clipboard-target="#textareaHasilConvertArtikel">copy</button>
+
+                            <!-- <div class="mr-5" id="containerHasilConvertPerParagraf">
+
+                        </div> -->
+
+
+                            <textarea id="textareaHasilConvertArtikel" class="form-control" rows="20"></textarea>
+                        </div>
+
+                        <!-- <div class="col-md-8">
+                        <textarea name="" id="containerHasilConvertSeluruh" class="form-control" rows="20"></textarea>
+                    </div> -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Send message</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="isiArtikelModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="isiArtikelModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <button id="btnPorsesIsiArtkel">Proses</button>
+                            <input id="indexIsiArtikel" class="form-control" rows="20" type="hidden" />
+                            <textarea id="textareaIsiArtikel" class="form-control" rows="20"></textarea>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Send message</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+
+<script>
+    // speechRecognition = new webkitSpeechRecognition();
+    // speechRecognition.onresult = console.log;
+    // speechRecognition.start();
+    // speechRecognition.lang = 'id-ID';
+
+    // var result = document.getElementById("result");
+
+    // window.addEventListener("DOMContentLoaded", () => {
+    //     const button = document.getElementById("button");
+    //     const main = document.getElementsByTagName("main")[0];
+    //     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    //     if (typeof SpeechRecognition === "undefined") {
+    //         button.remove();
+    //         const message = document.getElementById("message");
+    //         message.removeAttribute("hidden");
+    //         message.setAttribute("aria-hidden", "false");
+    //     } else {
+
+    //         let listening = false;
+    //         const recognition = new SpeechRecognition();
+    //         const start = () => {
+
+    //             recognition.start();
+
+    //             recognition.lang = 'id-ID';
+    //             button.textContent = "Stop speech";
+    //             main.classList.add("speaking");
+    //         };
+    //         const stop = () => {
+
+    //             recognition.stop();
+    //             button.textContent = "Start Speech to Text";
+    //             main.classList.remove("speaking");
+    //         };
+    //         const onResult = event => {
+
+
+    //             // result.innerHTML = "";
+    //             for (const res of event.results) {
+    //                 const text = document.createTextNode(res[0].transcript);
+    //                 const p = document.createElement("p");
+    //                 if (res.isFinal) {
+    //                     p.classList.add("final");
+    //                     // var resultOldVal = result.val();
+    //                     result.val(res[0].transcript);
+
+    //                 }
+    //                 // p.appendChild(text);
+    //                 // result.appendChild(p);
+    //             }
+    //         };
+
+    //         recognition.continuous = true;
+    //         recognition.interimResults = true;
+    //         recognition.addEventListener("result", onResult);
+
+    //         button.addEventListener("click", () => {
+    //             listening ? stop() : start();
+    //             listening = !listening;
+    //         });
+    //     }
+
+
+    // });
+
+    // function pilihTextAreaBuatSpeech(textAreaName) {
+    //     result = $("textarea[name=" + textAreaName + "]");
+    // }
+
+    function updateVariableList(idx) {
+        // variable_selected_1
+        // alert(idx);
+
+        var data = $('#variable_content_' + idx).val().split(/\r?\n/);
+
+        console.log(data);
+
+        var select = document.getElementById('variable_selected_' + idx);
+        $('#variable_selected_' + idx).empty();
+
+        for (var i = 0; i < data.length; i++) {
+            var opt = document.createElement('option');
+            opt.value = data[i];
+            opt.innerHTML = data[i];
+            select.appendChild(opt);
+        }
+    }
+
+
+    var clipboard = new ClipboardJS('#btnCopy');
+
+    clipboard.on('success', function (e) {
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+
+        e.clearSelection();
+    });
+
+    clipboard.on('error', function (e) {
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+    });
+
+
+    var clipboard2 = new ClipboardJS('#btnCopy2');
+
+    clipboard2.on('success', function (e) {
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+
+        e.clearSelection();
+    });
+
+    clipboard2.on('error', function (e) {
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+    });
+
+
+
+    var clipboardArtikel = new ClipboardJS('#btnCopyArtikel');
+
+    clipboardArtikel.on('success', function (e) {
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+
+        e.clearSelection();
+    });
+
+    clipboardArtikel.on('error', function (e) {
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+    });
+
+    var totalParagrafDanKalimatArray = new Array();
+    var warna1 = "#d3f8ff";
+    var warna2 = "#dbdbdb";
+    var indexArikel = 1;
+
+    $("#btnGenerateSpin").click(function () {
+        // textareaHasilConvertPerParagrafInvisible
+        // textareaHasilConvertPerParagraf
+        // var hasil = $('#textareaHasilConvertPerParagraf').val().split(/\r?\n/);
+        // console.log($('#textareaHasilConvertPerParagrafInvisible').val());
+
+        var text = $('#textareaHasilConvertPerParagraf').val();
+
+        var matches, options, random;
+
+        var regEx = new RegExp(/{([^{}]+?)}/);
+        while ((matches = regEx.exec(text)) !== null) {
+            options = matches[1].split("|");
+            random = Math.floor(Math.random() * options.length);
+            console.log("====== " + options);
+
+            var isVariable = options[random].indexOf("###");
+
+            var selectedVariable = "";
+            if (isVariable >= 0) {
+                var variable = options[random].substring(0, isVariable);
+                console.log("===== variable " + variable);
+
+                // var arrayKota = $('#variable_name').val();
+                var arrayKota = $('input[name=variable_name]');
+                var inputs = document.getElementsByClassName('variable_name')
+                    , names = [].map.call(inputs, function (input) {
+                        return input.value;
+                    }).join(',');
+
+                console.log("===== names " + names);
+
+                names = names.split(",");
+
+
+                // console.log("===== arrayKota " + arrayKota);
+                function checkVariable(name) {
+                    return variable == name;
+                }
+                console.log("===== arrayKota.findIndex(variable) " + names.findIndex(checkVariable));
+
+                if (names.findIndex(checkVariable) >= 0) {
+                    selectedVariable = $("#variable_selected_" + names.findIndex(checkVariable) + " :selected").text();
+                    console.log("====== selectedVariable text " + selectedVariable);
+
+                }
+            }
+
+            if (selectedVariable == "") {
+
+                text = text.replace(matches[0], options[random]);
+            } else {
+                console.log("====== kudune ke replace " + selectedVariable);
+                console.log("====== kudune ke replace matches[0]" + matches[0]);
+                text = text.replace(matches[0], selectedVariable);
+
+            }
+
+        }
+        $("#textareaHasilGenerateSpin").val(text);
+        
+    });
+
+
+    var indexNewVariable = 0;
+    $("#addNewVariable").click(function () {
+        indexNewVariable++;
+
+        var input = `<div id="variableContentList` + indexNewVariable + `">
+            <br>
+            <input type="text" placeholder="Nama Variable" name="variable_name[]" class="variable_name">
+            <textarea rows="5" placeholder="isine opo" id="variable_content_`+ indexNewVariable + `" name="variable_content_` + indexNewVariable + `"
+                onchange="updateVariableList(`+ indexNewVariable + `)"></textarea>
+            <br>
+            <select multiple id="variable_selected_`+ indexNewVariable + `"></select>
+        </div>
+        `;
+
+        $("#variableContent").append(input);
+    });
+
+
+    $("#addNewVariableContent").click(function () {
+        var input = `<div>
+                <br>
+                <input type="text" placeholder="Nama Variable" name="variable_name[]">
+                <br>
+                <textarea rows="4" placeholder="Isi variabel, pisah dengan enter"
+                    name="content_name[]"></textarea>
+            </div>`;
+
+        $("#variableContentList").append(input);
+    });
+
+
+    function ambilWarna(index) {
+        return index % 2 == 0 ? warna1 : warna2;
+    }
+
+    $("#btnProssesSplit").click(function () {
+        // $("#btnProssesSplit").prop("disabled",true);
+        // $("#artikel").attr("readonly",true);
+
+        var arikel = $('#artikel').val();
+        var arikelSplit = arikel.split(/\r?\n/);
+        // console.log(arikelSplit);
+
+        var indexParagrafTerisi = 0;
+
+        arikelSplit.forEach((paragrafValue, indexParagraf, array) => {
+            if (paragrafValue != "" && paragrafValue != " ") {
+                indexParagrafTerisi++;
+                // console.log(paragraf);
+                var paragraf = '';
+                if (indexParagrafTerisi == 1) {
+                    paragraf += '<center><h5>Artikel 1</h5> </center>';
+                    paragraf += '<center><button onclick="convertToArtikel(1)">convert to artikel </button> </center>';
+                }
+
+
+                paragraf += '<div class="p-2 mt-5" id="containerPerParagraf" style="width:320px; height: auto; background-color:' + ambilWarna(indexParagrafTerisi) + '">';
+                paragraf += '<center><h6>Paragraf ' + (indexParagrafTerisi) + '</h6></center>';
+                paragraf += '<hr>';
+
+
+                var newParagrafValue = paragrafValue.replace('.', ".|--|");
+                console.log(newParagrafValue);
+                var paragrafSplit = paragrafValue.split('.');
+                // console.log(paragrafSplit);
+
+                var indexKalimatTerisi = 0;
+                paragrafSplit.forEach((kalimatValue, indexKalimat, array) => {
+                    if (kalimatValue != "" && kalimatValue != " ") {
+                        indexKalimatTerisi++;
+
+                        var kalimat = '<div class="mt-2 p-2" style="background-color:' + ambilWarna(indexKalimatTerisi) + '">';
+                        kalimat += '<a>Kalimat ' + (indexKalimatTerisi) + '</a>';
+
+                        // kalimat += '<textarea class="form-control" onclick="pilihTextAreaBuatSpeech(\'artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '\')" name="artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '" rows="3">' + $.trim(kalimatValue) + (paragrafSplit.length > 1 ? '.' : '') + '</textarea>';
+                        kalimat += '<textarea class="form-control" name="artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '" rows="3">' + $.trim(kalimatValue) + (paragrafSplit.length > 1 ? '.' : '') + '</textarea>';
+                        kalimat += '</div>';
+
+                        paragraf += kalimat;
+                    }
+
+                });
+                totalParagrafDanKalimatArray.push([indexParagrafTerisi, indexKalimatTerisi]);
+
+                paragraf += '</div>';
+
+                $("#containerSplitPerArtikel").append(paragraf);
+            }
+
+        });
+        $("#containerSplitPerArtikel").append("<button onclick='addNewParagraf()'>add Prgf</button>");
+
+
+        console.log(totalParagrafDanKalimatArray);
+
+
+
+        var t = setInterval(runFunction, 1000);
+        function runFunction() {
+
+            $("#textareaHasilConvertPerParagrafInvisible").empty();
+            $("#textareaHasilConvertPerParagraf").empty();
+            $('#hasilConvertModal').modal('show');
+            totalParagrafDanKalimatArray.forEach((value, indexParagraf, array) => {
+
+                // var artikelConvertAlam = 'P-' + (indexParagraf + 1) + '';
+                var artikelConvertAlam = '';
+
+                // artikelConvertAlam += '&#10;';
+
+                var artikelConvertAlamInvisible = '';
+
+                for (let indexKalimat = 1; indexKalimat <= value[1]; indexKalimat++) {
+
+                    artikelConvertAlam += '{';
+                    artikelConvertAlamInvisible += '{';
+                    for (let index = 1; index <= indexArikel; index++) {
+                        artikelConvertAlam += $("textarea[name=artikel_" + index + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
+                        artikelConvertAlam += index == indexArikel ? '' : '|';
+
+
+                        artikelConvertAlamInvisible += $("textarea[name=artikel_" + index + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
+                        artikelConvertAlamInvisible += index == indexArikel ? '' : '|';
+                    }
+
+                    artikelConvertAlam += '} ';
+                    artikelConvertAlamInvisible += '} ';
+
+                }
+                artikelConvertAlam += '&#10;';
+
+                artikelConvertAlam += '&#10;';
+                artikelConvertAlamInvisible += '&#10;&#10;';
+
+
+                $("#textareaHasilConvertPerParagrafInvisible").append(artikelConvertAlamInvisible);
+                $("#textareaHasilConvertPerParagraf").append(artikelConvertAlam);
+            });
+        }
+
+    });
+
+
+    $("#btnTambahArtikelSpitKosong").click(function () {
+        indexArikel++;
+        console.log(indexArikel);
+
+        var splitContainer = '<div class="mr-5" id="containerSplitPerArtikel' + indexArikel + '" style="width:320px; height: auto; float: left;">';
+        splitContainer += '<center><h5>Artikel ' + indexArikel + '</h5> </center>';
+        splitContainer += '<center><button onclick="convertToArtikel(' + indexArikel + ')">convert to artikel </button> </center>';
+        splitContainer += '<center><button onclick="btnIsiArtikel(' + indexArikel + ')">Isi artikel </button> </center>';
+
+
+        totalParagrafDanKalimatArray.forEach((value, indexParagraf, array) => {
+
+            console.log('index paragraf' + indexParagraf);
+
+
+            var paragraf = '<div class="p-2 mt-5" id="containerPerParagraf" style="width:320px; height: auto; background-color:' + ambilWarna(indexParagraf + 1) + '">';
+            paragraf += '<center><h6>Paragraf ' + (indexParagraf + 1) + '</h6></center>';
+            paragraf += '<hr>';
+
+            for (let indexKalimat = 1; indexKalimat <= value[1]; indexKalimat++) {
+
+                console.log('index indexKalimat' + indexKalimat);
+
+                var kalimat = '<div class="mt-2 p-2" style="background-color:' + ambilWarna(indexKalimat) + '">';
+                kalimat += '<a>Kalimat ' + (indexKalimat) + '</a>';
+
+                kalimat += '<textarea class="form-control" name="artikel_' + indexArikel + '_' + (indexParagraf + 1) + '_' + indexKalimat + '" rows="3"></textarea>';
+                kalimat += '</div>';
+
+                paragraf += kalimat;
+
+            }
+
+            paragraf += '</div>';
+
+
+            splitContainer += paragraf;
+
+        });
+
+
+
+        splitContainer += '</div>';
+
+        $("#ContainerSplitGrup").append(splitContainer);
+    });
+
+    function btnIsiArtikel(indexArikel) {
+
+        $("#textareaIsiArtikel").empty();
+        $('#isiArtikelModal').modal('show');
+        $('#isiArtikelModalLabel').html('Isi Artkel ' + indexArikel);
+        $('#indexIsiArtikel').val(indexArikel);
+    }
+
+    $("#btnPorsesIsiArtkel").click(function () {
+        var indexArtikel = $('#indexIsiArtikel').val();
+
+
+        var arikel = $('#textareaIsiArtikel').val();
+        var arikelSplit = arikel.split(/\r?\n/);
+        // console.log(arikelSplit);
+
+        var indexParagrafTerisi = 0;
+
+        arikelSplit.forEach((paragrafValue, indexParagraf, array) => {
+            if (paragrafValue != "" && paragrafValue != " ") {
+                indexParagrafTerisi++;
+                // console.log(paragraf); 
+
+
+
+                var newParagrafValue = paragrafValue.replace('.', ".|--|");
+                console.log(newParagrafValue);
+                var paragrafSplit = paragrafValue.split('.');
+                // console.log(paragrafSplit);
+
+                var indexKalimatTerisi = 0;
+                paragrafSplit.forEach((kalimatValue, indexKalimat, array) => {
+                    if (kalimatValue != "" && kalimatValue != " ") {
+                        indexKalimatTerisi++;
+
+
+                        $("textarea[name=artikel_" + indexArtikel + '_' + (indexParagrafTerisi) + '_' + indexKalimatTerisi).val($.trim(kalimatValue) + (paragrafSplit.length > 1 ? '.' : ''));
+
+                    }
+
+                });
+
+
+            }
+
+        });
+        $('#isiArtikelModal').modal('hide');
+
+    });
+
+
+
+
+    // $("#btnConvert").click(function () {
+    //     $( "#textareaHasilConvertPerParagraf" ).empty(); 
+    //     $('#hasilConvertModal').modal('show');  
+    //         totalParagrafDanKalimatArray.forEach((value, indexParagraf, array) => {
+
+    //         var artikelConvertAlam = 'P-'+(indexParagraf+1);
+
+    //         for (let indexKalimat = 1; indexKalimat <= value[1]; indexKalimat++) {
+    //             artikelConvertAlam +='&#10;';
+    //             artikelConvertAlam += 'k-'+(indexKalimat);
+    //             artikelConvertAlam +='&#10;';
+
+    //             artikelConvertAlam +='{';
+    //             for (let index = 1; index <= indexArikel; index++) { 
+    //                 artikelConvertAlam += $("textarea[name=artikel_"+index+'_'+(indexParagraf+1)+'_'+indexKalimat).val();
+    //                 artikelConvertAlam += index == indexArikel ? '' : '|';
+    //             }
+
+    //             artikelConvertAlam +='}';
+
+    //         }
+    //         artikelConvertAlam +='&#10;';
+
+    //         $( "#textareaHasilConvertPerParagraf" ).append(artikelConvertAlam);            
+    //     });
+    // });
+
+
+    $("#btnConvert2").click(function () {
+
+        $("#textareaHasilConvertPerParagrafInvisible").empty();
+        $("#textareaHasilConvertPerParagraf").empty();
+        $('#hasilConvertModal').modal('show');
+        totalParagrafDanKalimatArray.forEach((value, indexParagraf, array) => {
+
+            // var artikelConvertAlam = 'P-' + (indexParagraf + 1) + '';
+            var artikelConvertAlam = '';
+
+            artikelConvertAlam += '&#10;';
+
+            var artikelConvertAlamInvisible = '';
+
+            for (let indexKalimat = 1; indexKalimat <= value[1]; indexKalimat++) {
+
+                artikelConvertAlam += '{';
+                artikelConvertAlamInvisible += '{';
+                for (let index = 1; index <= indexArikel; index++) {
+                    artikelConvertAlam += $("textarea[name=artikel_" + index + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
+                    artikelConvertAlam += index == indexArikel ? '' : '|';
+
+
+                    artikelConvertAlamInvisible += $("textarea[name=artikel_" + index + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
+                    artikelConvertAlamInvisible += index == indexArikel ? '' : '|';
+                }
+
+                artikelConvertAlam += '} ';
+                artikelConvertAlamInvisible += '} ';
+
+            }
+            artikelConvertAlam += '&#10;';
+            artikelConvertAlamInvisible += '&#10;&#10;';
+
+
+            $("#textareaHasilConvertPerParagrafInvisible").append(artikelConvertAlamInvisible);
+            $("#textareaHasilConvertPerParagraf").append(artikelConvertAlam);
+        });
+    });
+
+
+    function convertToArtikel(indexArikel) {
+        $("#textareaHasilConvertArtikel").empty();
+        $('#hasilConvertArtikelModal').modal('show');
+
+
+        totalParagrafDanKalimatArray.forEach((value, indexParagraf, array) => {
+
+            var artikelConvertAlam = '';
+
+            for (let indexKalimat = 1; indexKalimat <= value[1]; indexKalimat++) {
+
+                artikelConvertAlam += $("textarea[name=artikel_" + indexArikel + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
+
+
+            }
+            artikelConvertAlam += '&#10; &#10;';
+
+            $("#textareaHasilConvertArtikel").append(artikelConvertAlam);
+        });
+
+
+    }
+
+    function addNewParagraf() {
+
+        console.log(totalParagrafDanKalimatArray);
+        $("#containerSplitPerArtikel").append("<button onclick='addNewParagraf()'>add Prgf</button>");
+        alert('eokeoke');
+    }
+
+
+
+
+
+</script>
+
+</html>
