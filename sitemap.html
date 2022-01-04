@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body>
+    <center>
+        <h2>Site Map Converter</h2>
+        <button type="button" class="btn btn-primary" id="btnConvert">Convert</button>
+
+    </center>
+    <hr>
+    <div class="">
+        <div class="row">
+            <div class="col-md-4">
+                <center>
+                    <h4>URL</h4>
+                </center>
+              <textarea class="form-control" rows="10" id="txtUrl"></textarea>
+              Total : <span id="totalUrlInput"></span>
+            </div> 
+            <div class="col-md-4">
+                <center>
+                    <h4>Judul</h4>
+                </center>
+              <textarea class="form-control" rows="10" id="txtJudul"></textarea>
+              Total : <span id="totalJudulInput"></span>
+
+            </div> 
+            <div class="col-md-4">
+                <center>
+                    <h4>Desc</h4>
+                </center>
+              <textarea class="form-control" rows="10" id="txtDesc"></textarea>
+              Total : <span id="totalDescInput"></span>
+
+            </div> 
+            <div class="col-md-4">
+                <center>
+                    <h4>Video</h4>
+                </center>
+              <textarea class="form-control" rows="10" id="txtVideo"></textarea>
+              Total : <span id="totalVideoInput"></span>
+
+            </div> 
+            <div class="col-md-4">
+                <center>
+                    <h4>Thumbnail</h4>
+                </center>
+              <textarea class="form-control" rows="10" id="txtThumbnail"></textarea>
+              Total : <span id="totalThumbnailInput"></span>
+
+            </div> 
+
+        </div>
+        <br>
+        <hr>
+        <hr>
+        <div class="container">
+            <center>
+                <h3>Result</h3>        
+                <button type="button" class="btn btn-info" id="btnCopy" data-clipboard-action="copy" data-clipboard-target="#txtResult">Copy Result</button>
+                <br>
+                <br>
+
+            </center>
+            <textarea class="form-control" rows="10" id="txtResult"></textarea>
+        </div>
+
+        
+        
+    </div>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+    <script>
+
+        
+        var clipboard = new ClipboardJS('#btnCopy');
+
+        clipboard.on('success', function (e) {
+            console.info('Action:', e.action);
+            console.info('Text:', e.text);
+            console.info('Trigger:', e.trigger);
+
+            e.clearSelection();
+        });
+
+        clipboard.on('error', function (e) {
+            console.error('Action:', e.action);
+            console.error('Trigger:', e.trigger);
+        });
+
+
+        $("#totalUrlInput").html("0");
+        $("#totalJudulInput").html("0");
+        $("#totalDescInput").html("0");
+        $("#totalVideoInput").html("0");
+        $("#totalThumbnailInput").html("0");
+
+        var dataUrl = [];
+        var dataJudul = [];
+        var dataDesc = [];
+        var dataVideo = [];
+        var dataThumbnail = [];
+
+        var result ="";
+        
+        $("#txtUrl").change(function() {
+            var inputValue = this.value;
+            dataUrl = inputValue.split(/\r?\n/);
+            console.log(dataUrl);
+            $("#totalUrlInput").html(dataUrl.length);
+        });
+
+        
+        $("#txtJudul").change(function() {
+            var inputValue = this.value;
+            dataJudul = inputValue.split(/\r?\n/);
+            console.log(dataJudul);
+            $("#totalJudulInput").html(dataJudul.length);
+        });
+        
+        $("#txtDesc").change(function() {
+            var inputValue = this.value;
+            dataDesc = inputValue.split(/\r?\n/);
+            console.log(dataDesc);
+            $("#totalDescInput").html(dataDesc.length);
+        });
+        
+        $("#txtVideo").change(function() {
+            var inputValue = this.value;
+            dataVideo = inputValue.split(/\r?\n/);
+            console.log(dataVideo);
+            $("#totalVideoInput").html(dataVideo.length);
+        });
+        
+        $("#txtThumbnail").change(function() {
+            var inputValue = this.value;
+            dataThumbnail = inputValue.split(/\r?\n/);
+            console.log(dataThumbnail);
+            $("#totalThumbnailInput").html(dataThumbnail.length);
+        });
+
+
+        $("#btnConvert").click(function() {  
+            if(
+                (dataUrl.length== dataJudul.length ) &&
+                (dataJudul.length == dataDesc.length) && 
+                (dataVideo.length == dataThumbnail.length)
+            ) {
+                result = "";
+                dataUrl.forEach((url, idx, array) => {
+                    var idxRandom = Math.floor(Math.random() * dataVideo.length );
+                    result += `<url>
+    <loc>`+dataUrl[idx]+`</loc>
+    <video:video>
+    <video:player_loc allow_embed="yes" autoplay="autoplay=1">`+dataVideo[idxRandom]+`</video:player_loc>
+    <video:thumbnail_loc>`+dataThumbnail[idxRandom]+`</video:thumbnail_loc>
+    <video:title>`+dataJudul[idx]+`</video:title>
+    <video:description>`+dataDesc[idx]+`</video:description> 
+    </video:video>
+    </url>
+<url>
+`;
+                });
+ 
+                 
+                $("#txtResult").val(result);
+
+            } else {
+                alert("jumlah URL, Judul, dan Desc harus sama, ------------- jumlah video dan Thumbnail harus sama");
+            }
+        });
+        
+        
+
+
+
+    </script>
+</body>
+</html>
