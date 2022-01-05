@@ -65,6 +65,8 @@
             <center>
                 <h3>Result</h3>        
                 <button type="button" class="btn btn-info" id="btnCopy" data-clipboard-action="copy" data-clipboard-target="#txtResult">Copy Result</button>
+
+                <button type="button" class="btn btn-success" id="btnDownload" >Download to XML</button>
                 <br>
                 <br>
 
@@ -155,7 +157,15 @@
                 (dataJudul.length == dataDesc.length) && 
                 (dataVideo.length == dataThumbnail.length)
             ) {
+                var today = new Date(); 
                 result = "";
+                result=`<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created by (Accrue https://lusmodigital.com/) -->
+<!-- Generated-on="`+today+`" -->
+<?xml-stylesheet type="text/xsl" href="https://kaca.co.id/video-sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+
+`;
                 dataUrl.forEach((url, idx, array) => {
                     var idxRandom = Math.floor(Math.random() * dataVideo.length );
                     result += `<url>
@@ -166,8 +176,7 @@
     <video:title>`+dataJudul[idx]+`</video:title>
     <video:description>`+dataDesc[idx]+`</video:description> 
     </video:video>
-    </url>
-<url>
+</url> 
 `;
                 });
  
@@ -178,9 +187,24 @@
                 alert("jumlah URL, Judul, dan Desc harus sama, ------------- jumlah video dan Thumbnail harus sama");
             }
         });
-        
-        
 
+        $("#btnDownload").click(function() {
+            
+            // Generate download of hello.txt file with some content
+            var text = document.getElementById("txtResult").value;
+            var filename = "site-map.xml";
+            download(filename, text);
+        });
+
+        function download(filename, text) {
+            var element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
 
 
     </script>
