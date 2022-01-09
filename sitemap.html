@@ -36,8 +36,17 @@
                 <center>
                     <h4>Desc</h4>
                 </center>
-              <textarea class="form-control" rows="10" id="txtDesc"></textarea>
-              Total : <span id="totalDescInput"></span>
+                <input type="text" placeholder="Depan" class="form-control" id="txtDescDepan">
+                <input type="text" placeholder="Belakang" class="form-control" id="txtDescBelakang">
+                <textarea class="form-control" rows="10" id="txtDesc"></textarea>
+                Total : <span id="totalDescInput"></span>
+            </div> 
+            <div class="col-md-4">
+                <center>
+                    <h4>Video Short Url or Original</h4>
+                </center>
+              <textarea class="form-control" rows="10" id="txtVideoShortUrl"></textarea>
+              Total : <span id="totalVideoShortUrlInput"></span>
 
             </div> 
             <div class="col-md-4">
@@ -83,6 +92,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
     <script>
 
+        function ucFirstAllWords( str )
+        {
+            var pieces = str.split(" ");
+            for ( var i = 0; i < pieces.length; i++ )
+            {
+                var j = pieces[i].charAt(0).toUpperCase();
+                pieces[i] = j + pieces[i].substr(1);
+            }
+            return pieces.join(" ");
+        }
         
         var clipboard = new ClipboardJS('#btnCopy');
 
@@ -103,24 +122,101 @@
         $("#totalUrlInput").html("0");
         $("#totalJudulInput").html("0");
         $("#totalDescInput").html("0");
+        $("#totalVideoShortUrlInput").html("0");
         $("#totalVideoInput").html("0");
         $("#totalThumbnailInput").html("0");
 
         var dataUrl = [];
         var dataJudul = [];
         var dataDesc = [];
+        var dataVideoShortUrl = [];
         var dataVideo = [];
         var dataThumbnail = [];
 
         var result ="";
         
         $("#txtUrl").change(function() {
+            dataUrl = [];
+            dataJudul = [];
+            dataDesc = [];
+            
             var inputValue = this.value;
             dataUrl = inputValue.split(/\r?\n/);
             console.log(dataUrl);
             $("#totalUrlInput").html(dataUrl.length);
+
+            var dataHtmlJudul = "";
+            var dataHtmlDesc = "";
+
+            for(var i=0; i<dataUrl.length; i++) {
+                var splitUrlBySlash=dataUrl[i].split('/');
+                var splitDataByDot=splitUrlBySlash[3].split('.');
+
+                // console.log(splitUrlBySlash);
+                // console.log(splitDataByDot);
+                // console.log(splitDataByDot[0]);
+
+                var resultJudul = ucFirstAllWords(splitDataByDot[0].replaceAll('-', " "));
+
+                var txtDescDepan = $("#txtDescDepan").val();
+                var txtDescBelakang = $("#txtDescBelakang").val();            
+
+                var resultDesc = txtDescDepan +" "+ resultJudul+ " " + txtDescBelakang;
+
+                // console.log(resultDesc);
+
+                dataJudul.push(resultJudul);
+                dataDesc.push(resultDesc);
+
+                dataHtmlJudul+= resultJudul+`
+`;
+                dataHtmlDesc+= resultDesc+`
+`;
+            }
+
+
+
+            $("#txtJudul").html(dataHtmlJudul);
+            $("#txtDesc").html(dataHtmlDesc);
+            
+            $("#totalJudulInput").html(dataJudul.length);
+
+            $("#totalDescInput").html(dataDesc.length);
         });
 
+        $("#txtDescDepan").change(function() {   
+            var txtDescDepan = $("#txtDescDepan").val();
+            var txtDescBelakang = $("#txtDescBelakang").val();            
+            var dataHtmlDesc = "";
+            dataDesc =[];
+
+            for(var i =0; i<dataJudul.length; i++ ) {
+                var resultDesc = txtDescDepan +" "+ dataJudul[i]+ " " + txtDescBelakang;
+                
+                dataDesc.push(resultDesc);              
+                dataHtmlDesc+= resultDesc+`
+`;
+
+            }
+            $("#txtDesc").html(dataHtmlDesc);
+        });
+        
+        $("#txtDescBelakang").change(function() {
+            var txtDescDepan = $("#txtDescDepan").val();
+            var txtDescBelakang = $("#txtDescBelakang").val();            
+            var dataHtmlDesc = "";
+            dataDesc =[];
+
+            for(var i =0; i<dataJudul.length; i++ ) {
+                var resultDesc = txtDescDepan +" "+ dataJudul[i]+ " " + txtDescBelakang;
+                
+                dataDesc.push(resultDesc);              
+                dataHtmlDesc+= resultDesc+`
+`;
+
+            }
+            $("#txtDesc").html(dataHtmlDesc);
+        });
         
         $("#txtJudul").change(function() {
             var inputValue = this.value;
@@ -136,11 +232,48 @@
             $("#totalDescInput").html(dataDesc.length);
         });
         
-        $("#txtVideo").change(function() {
+        $("#txtVideoShortUrl").change(function() {
+            
+            dataVideoShortUrl = [];
+            dataVideo = [];
+            dataThumbnail = [];
+
             var inputValue = this.value;
-            dataVideo = inputValue.split(/\r?\n/);
-            console.log(dataVideo);
+            dataVideoShortUrl = inputValue.split(/\r?\n/);
+            console.log(dataVideoShortUrl);
+            $("#totalVideoInput").html(dataVideoShortUrl.length);
+
+            var dataHtmlVideo = ""; 
+            var dataHtmlThumbnail = ""; 
+
+            for(var i=0; i<dataVideoShortUrl.length; i++) {
+                var youtubeId = "";
+
+                if(dataVideoShortUrl[i].search('youtu.be')>=0) {
+                    var splitUrlBySlash=dataVideoShortUrl[i].split('/'); 
+
+                    youtubeId = splitUrlBySlash[3];
+                } else {
+                    var splitUrlBySlash=dataVideoShortUrl[i].split('/'); 
+                    
+                    youtubeId = splitUrlBySlash[3].substr(8, splitUrlBySlash[3].length);
+                }
+
+                var resultVideo = "https://www.youtube.com/watch?v="+youtubeId;
+                var resultThumbnail = "https://i3.ytimg.com/vi/"+youtubeId+"/hqdefault.jpg";
+
+                dataThumbnail.push(resultThumbnail); 
+                dataHtmlThumbnail+= resultThumbnail+`
+`;
+                dataVideo.push(resultVideo); 
+                dataHtmlVideo+= resultVideo+`
+`;
+            }
+
+            $("#txtVideo").html(dataHtmlVideo); 
             $("#totalVideoInput").html(dataVideo.length);
+            $("#txtThumbnail").html(dataHtmlThumbnail); 
+            $("#totalThumbnailInput").html(dataThumbnail.length);
         });
         
         $("#txtThumbnail").change(function() {
@@ -162,7 +295,6 @@
                 result=`<?xml version="1.0" encoding="UTF-8"?>
 <!-- Created by (Accrue https://lusmodigital.com/) -->
 <!-- Generated-on="`+today+`" -->
-<?xml-stylesheet type="text/xsl" href="https://kaca.co.id/video-sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
 
 `;
@@ -179,8 +311,8 @@
 </url> 
 `;
                 });
- 
-                 
+                result+='</urlset>';
+                
                 $("#txtResult").val(result);
 
             } else {
