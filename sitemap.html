@@ -253,6 +253,10 @@
                     var splitUrlBySlash=dataVideoShortUrl[i].split('/'); 
 
                     youtubeId = splitUrlBySlash[3];
+                } else if(dataVideoShortUrl[i].search('youtube.com/v/')>=0) {
+                    var splitUrlBySlash=dataVideoShortUrl[i].split('/'); 
+
+                    youtubeId = splitUrlBySlash[4];
                 } else {
                     var splitUrlBySlash=dataVideoShortUrl[i].split('/'); 
                     
