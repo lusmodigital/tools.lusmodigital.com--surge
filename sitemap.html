@@ -20,11 +20,11 @@
         <div class="row">
             
             <div class="col-md-4">
+                
+              <textarea  placeholder="Content from URL Sitemap (optional)" class="form-control" rows="5" id="txtSiteMap"></textarea>
                 <center>
                     <h4>URL</h4>
-                </center>
-                <input type="text" placeholder="URL Sitemap (optional)" class="form-control" id="txtUrlSiteMap">
-                <button type="button" class="btn btn-primary" id="btnConvert">Get Url From Sitemap URL</button>
+                </center> 
               <textarea class="form-control" rows="10" id="txtUrl"></textarea>
               Total : <span id="totalUrlInput"></span>
             </div> 
@@ -32,7 +32,7 @@
                 <center>
                     <h4>Judul</h4>
                 </center>
-              <textarea class="form-control" rows="10" id="txtJudul"></textarea>
+              <textarea class="form-control" rows="15" id="txtJudul"></textarea>
               Total : <span id="totalJudulInput"></span>
 
             </div> 
@@ -42,7 +42,7 @@
                 </center>
                 <input type="text" placeholder="Depan" class="form-control" id="txtDescDepan">
                 <input type="text" placeholder="Belakang" class="form-control" id="txtDescBelakang">
-                <textarea class="form-control" rows="10" id="txtDesc"></textarea>
+                <textarea class="form-control" rows="15" id="txtDesc"></textarea>
                 Total : <span id="totalDescInput"></span>
             </div> 
             <div class="col-md-4">
@@ -94,24 +94,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            var url = 'https://produkrumahsakit.wixsite.com/bajuoperasi/blog-posts-sitemap.xml'; 
-                        
-            console.log(123);
-            $.ajax({     
-                url: url,   
-                headers: {
-                    'Access-Control-Allow-Origin':'*',
-                    'Access-Control-Allow-Methods':'GET, PUT, POST, DELETE, OPTIONS',
-                    'Content-Type':'application/json'
-                },
-                method: "GET",
-                success: function (data) {
-                    console.log(data);
-                }, 
-            });
-        });
+    <script> 
 
         function ucFirstAllWords( str )
         {
@@ -155,6 +138,71 @@
         var dataThumbnail = [];
 
         var result ="";
+
+        
+        $("#txtSiteMap").change(function() { 
+            
+            var input = this.value;
+            const match = input.match(/\b((https?|ftp|file):\/\/|(www|ftp)\.)[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/ig);
+
+            // Output the found URLs
+            var result = match ? match.join("\n") : "No URLs found";
+
+            
+            $("#txtUrl").html(result);
+
+            dataUrl = [];
+            dataJudul = [];
+            dataDesc = [];
+            
+            var inputValue = $("#txtUrl").val();
+            dataUrl = inputValue.split(/\r?\n/);
+            console.log(dataUrl);
+            $("#totalUrlInput").html(dataUrl.length);
+
+            var dataHtmlJudul = "";
+            var dataHtmlDesc = "";
+
+            for(var i=0; i<dataUrl.length; i++) {
+                var splitUrlBySlash=dataUrl[i].split('/');
+                var splitDataByDot=splitUrlBySlash[splitUrlBySlash.length-1].split('.');
+
+                // console.log(splitUrlBySlash);
+                // console.log(splitDataByDot);
+                // console.log(splitDataByDot[0]);
+
+                var resultJudul = ucFirstAllWords(splitDataByDot[0].replaceAll('-', " "));
+
+                var txtDescDepan = $("#txtDescDepan").val();
+                var txtDescBelakang = $("#txtDescBelakang").val();            
+
+                var resultDesc = txtDescDepan +" "+ resultJudul+ " " + txtDescBelakang;
+
+                // console.log(resultDesc);
+
+                dataJudul.push(resultJudul);
+                dataDesc.push(resultDesc);
+
+                dataHtmlJudul+= resultJudul+`
+`;
+                dataHtmlDesc+= resultDesc+`
+`;
+            }
+
+
+
+            $("#txtJudul").html(dataHtmlJudul);
+            $("#txtDesc").html(dataHtmlDesc);
+            
+            $("#totalJudulInput").html(dataJudul.length);
+
+            $("#totalDescInput").html(dataDesc.length);
+
+
+
+            
+        });
+
         
         $("#txtUrl").change(function() {
             dataUrl = [];
