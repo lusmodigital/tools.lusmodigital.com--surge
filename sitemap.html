@@ -11,16 +11,20 @@
 <body>
     <center>
         <h2>Site Map Converter</h2>
+        
         <button type="button" class="btn btn-primary" id="btnConvert">Convert</button>
 
     </center>
     <hr>
     <div class="">
         <div class="row">
+            
             <div class="col-md-4">
                 <center>
                     <h4>URL</h4>
                 </center>
+                <input type="text" placeholder="URL Sitemap (optional)" class="form-control" id="txtUrlSiteMap">
+                <button type="button" class="btn btn-primary" id="btnConvert">Get Url From Sitemap URL</button>
               <textarea class="form-control" rows="10" id="txtUrl"></textarea>
               Total : <span id="totalUrlInput"></span>
             </div> 
@@ -91,6 +95,23 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
     <script>
+        $(document).ready(function(){
+            var url = 'https://produkrumahsakit.wixsite.com/bajuoperasi/blog-posts-sitemap.xml'; 
+                        
+            console.log(123);
+            $.ajax({     
+                url: url,   
+                headers: {
+                    'Access-Control-Allow-Origin':'*',
+                    'Access-Control-Allow-Methods':'GET, PUT, POST, DELETE, OPTIONS',
+                    'Content-Type':'application/json'
+                },
+                method: "GET",
+                success: function (data) {
+                    console.log(data);
+                }, 
+            });
+        });
 
         function ucFirstAllWords( str )
         {
@@ -150,7 +171,7 @@
 
             for(var i=0; i<dataUrl.length; i++) {
                 var splitUrlBySlash=dataUrl[i].split('/');
-                var splitDataByDot=splitUrlBySlash[3].split('.');
+                var splitDataByDot=splitUrlBySlash[splitUrlBySlash.length-1].split('.');
 
                 // console.log(splitUrlBySlash);
                 // console.log(splitDataByDot);
@@ -219,10 +240,32 @@
         });
         
         $("#txtJudul").change(function() {
+
+             
+            dataJudul = [];
+            dataDesc = [];
+            
             var inputValue = this.value;
             dataJudul = inputValue.split(/\r?\n/);
             console.log(dataJudul);
             $("#totalJudulInput").html(dataJudul.length);
+
+            var dataHtmlJudul = "";
+            var dataHtmlDesc = "";
+
+            for(var i=0; i<dataJudul.length; i++) { 
+                var txtDescDepan = $("#txtDescDepan").val();
+                var txtDescBelakang = $("#txtDescBelakang").val();            
+
+                var resultDesc = txtDescDepan +" "+ dataJudul[i]+ " " + txtDescBelakang;
+ 
+                dataDesc.push(resultDesc); 
+                dataHtmlDesc+= resultDesc+`
+`;
+            }  
+            $("#txtDesc").html(dataHtmlDesc); 
+
+            $("#totalDescInput").html(dataDesc.length);
         });
         
         $("#txtDesc").change(function() {
