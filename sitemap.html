@@ -143,10 +143,11 @@
         $("#txtSiteMap").change(function() { 
             
             var input = this.value;
-            const match = input.match(/\b((https?|ftp|file):\/\/|(www|ftp)\.)[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/ig);
-
+            var match = input.match(/\b((https?|ftp|file):\/\/|(www|ftp)\.)[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/ig);
+            match.splice(0, 1);
             // Output the found URLs
             var result = match ? match.join("\n") : "No URLs found";
+
 
             
             $("#txtUrl").html(result);
