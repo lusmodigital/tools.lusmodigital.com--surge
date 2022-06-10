@@ -8,9 +8,36 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
 </head>
 
 <body class="bg-light">
+
+    <!-- <div class="draggable-main">
+    <h1>jQuery Drag & Drop</h1>
+    <div class="box">
+    <ul class="connected-sortable draggable-left">
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+    <li>Item 4</li>
+    <li>Item 5</li>
+    <li>Item 6</li>
+    <li>Item 7</li>
+    </ul>
+    </div>
+    <div class="box">
+    <ul class="connected-sortable draggable-right">
+    <li>Item 8</li>
+    <li>Item 9</li>
+    <li>Item 10</li>
+    <li>Item 11</li>
+    <li>Item 12</li>
+    <li>Item 13</li>
+    <li>Item 14</li>
+    </ul>
+    </div>
+    </div> -->
     <div class="container bg-white mt-3">
         <div class="py-3 text-center">
             <h2>Spit Artikel</h2>
@@ -41,9 +68,39 @@
 
             <br>
             <div id="ContainerSplitGrup" class="row flex-row flex-nowrap">
-                <div class="mr-5" id="containerSplitPerArtikel" style="width:320px; height: auto; float: left;">
+                <!-- <div class="draggable-main">
+                    <h1>jQuery Drag & Drop</h1>
+                    <div class="box">
+                    <ul class="connected-sortable draggable-left">
+                    <li>Item 1</li>
+                    <li>Item 2</li>
+                    <li>Item 3</li>
+                    <li>Item 4</li>
+                    <li>Item 5</li>
+                    <li>Item 6</li>
+                    <li>Item 7</li>
+                    </ul>
+                    </div>
+                    <div class="box">
+                    <ul class="connected-sortable draggable-right">
+                    <li>Item 8</li>
+                    <li>Item 9</li>
+                    <li>Item 10</li>
+                    <li>Item 11</li>
+                    <li>Item 12</li>
+                    <li>Item 13</li>
+                    <li>Item 14</li>
+                    </ul>
+                    </div>
+                    </div> -->
+                <ul class="mr-5 connected-sortable" id="containerSplitPerArtikel"
+                    style="width:320px; height: auto; float: left;">
 
-                </div>
+                </ul>
+
+                <!-- <ul class="mr-5 connected-sortable draggable-left" id="containerSplitPerArtikel" style="width:320px; height: auto; float: left;">
+
+                    <li><center><h5>Artikel 1</h5> </center><center><button onclick="convertToArtikel(1)">convert to artikel </button> </center><div class="p-2 mt-5" id="containerPerParagraf" style="width:320px; height: auto; background-color:#dbdbdb"><center><h6>Paragraf 1</h6></center><hr><div class="mt-2 p-2" style="background-color:#dbdbdb"><a>Kalimat 1</a><textarea class="form-control" name="artikel_1_1_1" rows="3">Allah jadikan nikmat surga sebagai ganti kenikmatan yang tak didapat seorang  www.google.com mukmin di dunia dan balasan atas ketaatannya.</textarea></div><div class="mt-2 p-2" style="background-color:#d3f8ff"><a>Kalimat 2</a><textarea class="form-control" name="artikel_1_1_2" rows="3">Allah jadikan nikmat surga sebagai ganti kenikmatan yang tak didapat seorang mukmin di dunia dan balasan atas ketaatannya.</textarea></div><div class="mt-2 p-2" style="background-color:#dbdbdb"><a>Kalimat 3</a><textarea class="form-control" name="artikel_1_1_3" rows="3">Allah jadikan nikmat surga sebagai ganti kenikmatan yang tak didapat seorang mukmin di dunia dan balasan atas ketaatannya.</textarea></div></div></li><li><div class="p-2 mt-5" id="containerPerParagraf" style="width:320px; height: auto; background-color:#d3f8ff"><center><h6>Paragraf 2</h6></center><hr><div class="mt-2 p-2" style="background-color:#dbdbdb"><a>Kalimat 1</a><textarea class="form-control" name="artikel_1_2_1" rows="3">Allah jadikan nikmat surga sebagai ganti kenikmatan yang tak didapat seorang mukmin di dunia dan balasan atas ketaatannya.</textarea></div><div class="mt-2 p-2" style="background-color:#d3f8ff"><a>Kalimat 2</a><textarea class="form-control" name="artikel_1_2_2" rows="3">Allah jadikan nikmat surga sebagai ganti kenikmatan yang tak didapat seorang mukmin di dunia dan balasan atas ketaatannya.</textarea></div></div></li><button onclick="addNewParagraf()">add Prgf</button></ul> -->
 
 
             </div>
@@ -226,7 +283,11 @@
     crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
 
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 <script>
+    var localData = [];
     // speechRecognition = new webkitSpeechRecognition();
     // speechRecognition.onresult = console.log;
     // speechRecognition.start();
@@ -315,7 +376,6 @@
         }
     }
 
-
     var clipboard = new ClipboardJS('#btnCopy');
 
     clipboard.on('success', function (e) {
@@ -385,11 +445,13 @@
             random = Math.floor(Math.random() * options.length);
             console.log("====== " + options);
 
-            var isVariable = options[random].indexOf("###");
+            // var isVariable = options[random].indexOf("###");
+            var isVariable = 1;
 
             var selectedVariable = "";
             if (isVariable >= 0) {
-                var variable = options[random].substring(0, isVariable);
+                // var variable = options[random].substring(0, isVariable);
+                var variable = options;
                 console.log("===== variable " + variable);
 
                 // var arrayKota = $('#variable_name').val();
@@ -403,7 +465,6 @@
 
                 names = names.split(",");
 
-
                 // console.log("===== arrayKota " + arrayKota);
                 function checkVariable(name) {
                     return variable == name;
@@ -413,7 +474,6 @@
                 if (names.findIndex(checkVariable) >= 0) {
                     selectedVariable = $("#variable_selected_" + names.findIndex(checkVariable) + " :selected").text();
                     console.log("====== selectedVariable text " + selectedVariable);
-
                 }
             }
 
@@ -424,12 +484,9 @@
                 console.log("====== kudune ke replace " + selectedVariable);
                 console.log("====== kudune ke replace matches[0]" + matches[0]);
                 text = text.replace(matches[0], selectedVariable);
-
             }
-
         }
         $("#textareaHasilGenerateSpin").val(text);
-        
     });
 
 
@@ -469,108 +526,168 @@
     }
 
     $("#btnProssesSplit").click(function () {
-        // $("#btnProssesSplit").prop("disabled",true);
-        // $("#artikel").attr("readonly",true);
 
-        var arikel = $('#artikel').val();
-        var arikelSplit = arikel.split(/\r?\n/);
-        // console.log(arikelSplit);
-
-        var indexParagrafTerisi = 0;
-
-        arikelSplit.forEach((paragrafValue, indexParagraf, array) => {
-            if (paragrafValue != "" && paragrafValue != " ") {
-                indexParagrafTerisi++;
-                // console.log(paragraf);
-                var paragraf = '';
-                if (indexParagrafTerisi == 1) {
-                    paragraf += '<center><h5>Artikel 1</h5> </center>';
-                    paragraf += '<center><button onclick="convertToArtikel(1)">convert to artikel </button> </center>';
-                }
+        var answer = window.confirm("Lanjut spit artikel?");
+        if (!answer) {
+            //some code
+            console.log('oke');
+            return;
+        }
+        else {
 
 
-                paragraf += '<div class="p-2 mt-5" id="containerPerParagraf" style="width:320px; height: auto; background-color:' + ambilWarna(indexParagrafTerisi) + '">';
-                paragraf += '<center><h6>Paragraf ' + (indexParagrafTerisi) + '</h6></center>';
-                paragraf += '<hr>';
+            $("#ContainerSplitGrup").empty();
+            $("#ContainerSplitGrup").append(`
+            <ul class="mr-5 connected-sortable" id="containerSplitPerArtikel"
+                    style="width:320px; height: auto; float: left;">
 
+                </ul>
+            `);
 
-                var newParagrafValue = paragrafValue.replace('.', ".|--|");
-                console.log(newParagrafValue);
-                var paragrafSplit = paragrafValue.split('.');
-                // console.log(paragrafSplit);
+            // $(".draggable-left").sortable({
+            // connectWith: ".connected-sortable",
+            // stack: ".connected-sortable ul"
+            // }).disableSelection();
 
-                var indexKalimatTerisi = 0;
-                paragrafSplit.forEach((kalimatValue, indexKalimat, array) => {
-                    if (kalimatValue != "" && kalimatValue != " ") {
-                        indexKalimatTerisi++;
+            // $("#btnProssesSplit").prop("disabled",true);
+            // $("#artikel").attr("readonly",true);
 
-                        var kalimat = '<div class="mt-2 p-2" style="background-color:' + ambilWarna(indexKalimatTerisi) + '">';
-                        kalimat += '<a>Kalimat ' + (indexKalimatTerisi) + '</a>';
-
-                        // kalimat += '<textarea class="form-control" onclick="pilihTextAreaBuatSpeech(\'artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '\')" name="artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '" rows="3">' + $.trim(kalimatValue) + (paragrafSplit.length > 1 ? '.' : '') + '</textarea>';
-                        kalimat += '<textarea class="form-control" name="artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '" rows="3">' + $.trim(kalimatValue) + (paragrafSplit.length > 1 ? '.' : '') + '</textarea>';
-                        kalimat += '</div>';
-
-                        paragraf += kalimat;
-                    }
-
-                });
-                totalParagrafDanKalimatArray.push([indexParagrafTerisi, indexKalimatTerisi]);
-
-                paragraf += '</div>';
-
-                $("#containerSplitPerArtikel").append(paragraf);
+            if (localData.length > 0) {
+                localData = [];
+                totalParagrafDanKalimatArray = new Array();
+                indexArikel = 1;
             }
 
-        });
-        $("#containerSplitPerArtikel").append("<button onclick='addNewParagraf()'>add Prgf</button>");
+            var arikel = $('#artikel').val();
+            var arikelSplit = arikel.split(/\r?\n/);
+            // console.log(arikelSplit);
 
+            var indexParagrafTerisi = 0;
 
-        console.log(totalParagrafDanKalimatArray);
+            var localDataPerIndex = [];
 
-
-
-        var t = setInterval(runFunction, 1000);
-        function runFunction() {
-
-            $("#textareaHasilConvertPerParagrafInvisible").empty();
-            $("#textareaHasilConvertPerParagraf").empty();
-            $('#hasilConvertModal').modal('show');
-            totalParagrafDanKalimatArray.forEach((value, indexParagraf, array) => {
-
-                // var artikelConvertAlam = 'P-' + (indexParagraf + 1) + '';
-                var artikelConvertAlam = '';
-
-                // artikelConvertAlam += '&#10;';
-
-                var artikelConvertAlamInvisible = '';
-
-                for (let indexKalimat = 1; indexKalimat <= value[1]; indexKalimat++) {
-
-                    artikelConvertAlam += '{';
-                    artikelConvertAlamInvisible += '{';
-                    for (let index = 1; index <= indexArikel; index++) {
-                        artikelConvertAlam += $("textarea[name=artikel_" + index + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
-                        artikelConvertAlam += index == indexArikel ? '' : '|';
-
-
-                        artikelConvertAlamInvisible += $("textarea[name=artikel_" + index + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
-                        artikelConvertAlamInvisible += index == indexArikel ? '' : '|';
+            arikelSplit.forEach((paragrafValue, indexParagraf, array) => {
+                if (paragrafValue != "" && paragrafValue != " ") {
+                    indexParagrafTerisi++;
+                    // console.log(paragraf);
+                    var paragraf = '<li>';
+                    if (indexParagrafTerisi == 1) {
+                        paragraf += '<center><h5>Artikel 1</h5> </center>';
+                        paragraf += '<center><button onclick="convertToArtikel(1)">convert to artikel </button> </center>';
                     }
+                    paragraf += '<div><button onclick="upParagraf(' + indexParagraf + ')">Up</button> </div>';
+                    paragraf += '<div><button onclick="downParagraf(' + indexParagraf + ')">Down</button></div>';
 
-                    artikelConvertAlam += '} ';
-                    artikelConvertAlamInvisible += '} ';
+                    paragraf += '<div class="p-2 mt-5" id="containerPerParagraf" style="width:320px; height: auto; background-color:' + ambilWarna(indexParagrafTerisi) + '">';
+                    paragraf += '<center><h6>Paragraf ' + (indexParagrafTerisi) + '</h6></center>';
+                    paragraf += '<hr>';
+
+                    var newParagrafValue = paragrafValue.replace('.', ".|--|");
+                    console.log(newParagrafValue);
+                    var paragrafSplit = paragrafValue.split('. ');
+                    // console.log(paragrafSplit);
+
+                    var indexKalimatTerisi = 0;
+                    localDataParagraf = [];
+                    paragrafSplit.forEach((kalimatValue, indexKalimat, array) => {
+                        if (kalimatValue != "" && kalimatValue != " ") {
+                            indexKalimatTerisi++;
+
+                            var kalimat = '<div class="mt-2 p-2" style="background-color:' + ambilWarna(indexKalimatTerisi) + '">';
+                            kalimat += '<a>Kalimat ' + (indexKalimatTerisi) + '</a>';
+                            var valueTextArea = $.trim(kalimatValue) + (paragrafSplit.length > 1 ? '.' : '');
+                            // kalimat += '<textarea class="form-control" onclick="pilihTextAreaBuatSpeech(\'artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '\')" name="artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '" rows="3">' + $.trim(kalimatValue) + (paragrafSplit.length > 1 ? '.' : '') + '</textarea>';
+                            kalimat += '<textarea class="form-control" name="artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '" rows="3">' + valueTextArea + '</textarea>';
+                            kalimat += '</div>';
+
+
+                            localDataParagraf.push(valueTextArea);
+                            // console.log(localDataParagraf + " xxxxxxxxxxxx ");
+                            paragraf += kalimat;
+                        }
+
+                    });
+                    console.log("=========1 localData");
+                    console.log(localDataParagraf);
+
+
+                    localDataPerIndex.push(localDataParagraf);
+                    // console.log(localData[0][0]);
+
+
+                    // const element = array[idxParagraf];
+
+                    // for (let idxParagraf = 0; idxParagraf < localDataParagraf.length; idxParagraf++) {
+                    // }
+                    // if (localDataParagraf.length > 0)
+                    totalParagrafDanKalimatArray.push([indexParagrafTerisi, indexKalimatTerisi]);
+
+                    paragraf += '</div></li>';
+
+                    $("#containerSplitPerArtikel").append(paragraf);
 
                 }
-                artikelConvertAlam += '&#10;';
 
-                artikelConvertAlam += '&#10;';
-                artikelConvertAlamInvisible += '&#10;&#10;';
-
-
-                $("#textareaHasilConvertPerParagrafInvisible").append(artikelConvertAlamInvisible);
-                $("#textareaHasilConvertPerParagraf").append(artikelConvertAlam);
             });
+
+            localData.push(localDataPerIndex);
+            // $("#containerSplitPerArtikel").append("<button onclick='addNewParagraf()'>add Prgf</button>");
+
+
+            // console.log("========= localData");
+            // console.log(localData);
+
+
+
+            var t = setInterval(runFunction, 1000);
+            function runFunction() {
+                console.log("tes");
+
+                $("#textareaHasilConvertPerParagrafInvisible").empty();
+                $("#textareaHasilConvertPerParagraf").empty();
+                // $('#hasilConvertModal').modal('show');
+
+                for (let indexParagraf = 0; indexParagraf < localData[0].length; indexParagraf++) {
+
+
+                    // var artikelConvertAlam = 'P-' + (indexParagraf + 1) + '';
+                    var artikelConvertAlam = '';
+
+                    // artikelConvertAlam += '&#10;';
+
+                    var artikelConvertAlamInvisible = '';
+
+                    for (let indexKalimat = 0; indexKalimat < localData[0][indexParagraf].length; indexKalimat++) {
+
+                        artikelConvertAlam += localData.length == 1 ? '' : '{';
+                        artikelConvertAlamInvisible += localData.length == 1 ? '' : '{';
+                        for (let index = 0; index < indexArikel; index++) {
+                            artikelConvertAlam += $("textarea[name=artikel_" + (index + 1) + '_' + (indexParagraf + 1) + '_' + (indexKalimat + 1)).val();
+                            artikelConvertAlam += index == (indexArikel - 1) ? '' : '|';
+
+
+                            artikelConvertAlamInvisible += $("textarea[name=artikel_" + (index + 1) + '_' + (indexParagraf + 1) + '_' + (indexKalimat + 1)).val();
+                            artikelConvertAlamInvisible += index == (indexArikel - 1) ? '' : '|';
+
+                            localData[index][indexParagraf][indexKalimat] = $("textarea[name=artikel_" + (index + 1) + '_' + (indexParagraf + 1) + '_' + (indexKalimat + 1)).val();
+
+                        }
+
+                        artikelConvertAlam += localData.length == 1 ? '' : '} ';
+                        artikelConvertAlamInvisible += localData.length == 1 ? '' : '} ';
+                    }
+
+                    artikelConvertAlam += '&#10;';
+
+                    artikelConvertAlam += '&#10;';
+                    artikelConvertAlamInvisible += '&#10;&#10;';
+
+
+                    $("#textareaHasilConvertPerParagrafInvisible").append(artikelConvertAlamInvisible);
+                    $("#textareaHasilConvertPerParagraf").append(artikelConvertAlam);
+                }
+            }
+
         }
 
     });
@@ -585,16 +702,16 @@
         splitContainer += '<center><button onclick="convertToArtikel(' + indexArikel + ')">convert to artikel </button> </center>';
         splitContainer += '<center><button onclick="btnIsiArtikel(' + indexArikel + ')">Isi artikel </button> </center>';
 
-
+        var localDataPerIndex = [];
         totalParagrafDanKalimatArray.forEach((value, indexParagraf, array) => {
 
             console.log('index paragraf' + indexParagraf);
-
 
             var paragraf = '<div class="p-2 mt-5" id="containerPerParagraf" style="width:320px; height: auto; background-color:' + ambilWarna(indexParagraf + 1) + '">';
             paragraf += '<center><h6>Paragraf ' + (indexParagraf + 1) + '</h6></center>';
             paragraf += '<hr>';
 
+            var localDataParagraf = [];
             for (let indexKalimat = 1; indexKalimat <= value[1]; indexKalimat++) {
 
                 console.log('index indexKalimat' + indexKalimat);
@@ -606,16 +723,15 @@
                 kalimat += '</div>';
 
                 paragraf += kalimat;
-
+                localDataParagraf.push("");
             }
+            localDataPerIndex.push(localDataParagraf);
 
             paragraf += '</div>';
-
-
             splitContainer += paragraf;
 
         });
-
+        localData.push(localDataPerIndex);
 
 
         splitContainer += '</div>';
@@ -629,6 +745,143 @@
         $('#isiArtikelModal').modal('show');
         $('#isiArtikelModalLabel').html('Isi Artkel ' + indexArikel);
         $('#indexIsiArtikel').val(indexArikel);
+    }
+
+    function upParagraf(selectedIndexParagraf) {
+        if (selectedIndexParagraf == 0) {
+            alert("Wis mentok uy");
+            return;
+        }
+
+        $("#ContainerSplitGrup").empty();
+
+        for (let index = 0; index < localData.length; index++) {
+            var temp = localData[index][selectedIndexParagraf];
+            localData[index][selectedIndexParagraf] = localData[index][selectedIndexParagraf - 1];
+            localData[index][selectedIndexParagraf - 1] = temp;
+        }
+
+
+        // for (let index = 1; index <= indexArikel; index++) {
+
+        for (let index = 0; index < localData.length; index++) {
+
+            var splitContainer = '<div class="mr-5" id="containerSplitPerArtikel' + (index + 1) + '" style="width:320px; height: auto; float: left; margin-left:20px">';
+            splitContainer += '<center><h5>Artikel ' + (index + 1) + '</h5> </center>';
+            splitContainer += '<center><button onclick="convertToArtikel(' + (index + 1) + ')">convert to artikel </button> </center>';
+            splitContainer += '<center><button onclick="btnIsiArtikel(' + (index + 1) + ')">Isi artikel </button> </center>';
+
+            for (let indexParagraf = 0; indexParagraf < localData[0].length; indexParagraf++) {
+                // console.log("===== indexParagraf");
+                // console.log(indexParagraf);
+                // console.log(localData[0][indexParagraf].length);
+
+                var paragraf = '<li>';
+                paragraf += '<div><button onclick="upParagraf(' + (indexParagraf) + ')">Up</button> </div>';
+                paragraf += '<div><button onclick="downParagraf(' + (indexParagraf) + ')">Down</button></div>';
+
+                paragraf += '<div class="p-2 mt-5" id="containerPerParagraf" style="width:320px; height: auto; background-color:' + ambilWarna(indexParagraf + 1) + '">';
+                paragraf += '<center><h6>Paragraf ' + (indexParagraf + 1) + '</h6></center>';
+                paragraf += '<hr>';
+
+                indexKalimatTerisi = 0;
+
+                for (let indexKalimat = 0; indexKalimat < localData[0][indexParagraf].length; indexKalimat++) {
+                    // console.log("===== indexKalimat");
+                    // console.log(indexKalimat);
+
+                    indexKalimatTerisi++;
+
+                    var kalimat = '<div class="mt-2 p-2" style="background-color:' + ambilWarna(indexKalimatTerisi) + '">';
+                    kalimat += '<a>Kalimat ' + (indexKalimatTerisi) + '</a>';
+
+                    // console.log(localData[0][indexParagraf][index - 1]);
+                    // kalimat += '<textarea class="form-control" onclick="pilihTextAreaBuatSpeech(\'artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '\')" name="artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '" rows="3">' + $.trim(kalimatValue) + (paragrafSplit.length > 1 ? '.' : '') + '</textarea>';
+                    kalimat += '<textarea class="form-control" name="artikel_' + (index + 1) + '_' + (indexParagraf + 1) + '_' + (indexKalimat + 1) + '" rows="3">' + localData[index][indexParagraf][indexKalimat] + '</textarea>';
+                    kalimat += '</div>';
+                    paragraf += kalimat;
+                }
+                paragraf += '</li>';
+                splitContainer += paragraf;
+
+            }
+            splitContainer += '</div>';
+
+            $("#ContainerSplitGrup").append(splitContainer);
+        }
+    }
+
+    function downParagraf(selectedIndexParagraf) {
+
+        if (selectedIndexParagraf == (localData[0].length - 1)) {
+            alert("Wis mentok uy");
+            return;
+        }
+
+
+        $("#ContainerSplitGrup").empty();
+
+        for (let index = 0; index < localData.length; index++) {
+            console.log(localData[index]);
+            var temp = localData[index][selectedIndexParagraf];
+            console.log("temp -" + temp);
+
+            localData[index][selectedIndexParagraf] = localData[index][selectedIndexParagraf + 1];
+            console.log(localData[index][selectedIndexParagraf]);
+
+            localData[index][selectedIndexParagraf + 1] = temp;
+            console.log(localData[index][selectedIndexParagraf + 1]);
+        }
+
+
+        // for (let index = 1; index <= indexArikel; index++) {
+
+        for (let index = 0; index < localData.length; index++) {
+
+            var splitContainer = '<div class="mr-5" id="containerSplitPerArtikel' + (index + 1) + '" style="width:320px; height: auto; float: left; margin-left:20px">';
+            splitContainer += '<center><h5>Artikel ' + (index + 1) + '</h5> </center>';
+            splitContainer += '<center><button onclick="convertToArtikel(' + (index + 1) + ')">convert to artikel </button> </center>';
+            splitContainer += '<center><button onclick="btnIsiArtikel(' + (index + 1) + ')">Isi artikel </button> </center>';
+
+            for (let indexParagraf = 0; indexParagraf < localData[0].length; indexParagraf++) {
+                // console.log("===== indexParagraf");
+                // console.log(indexParagraf);
+                // console.log(localData[0][indexParagraf].length);
+
+                var paragraf = '<li>';
+                paragraf += '<div><button onclick="upParagraf(' + (indexParagraf) + ')">Up</button> </div>';
+                paragraf += '<div><button onclick="downParagraf(' + (indexParagraf) + ')">Down</button></div>';
+
+                paragraf += '<div class="p-2 mt-5" id="containerPerParagraf" style="width:320px; height: auto; background-color:' + ambilWarna(indexParagraf + 1) + '">';
+                paragraf += '<center><h6>Paragraf ' + (indexParagraf + 1) + '</h6></center>';
+                paragraf += '<hr>';
+
+                indexKalimatTerisi = 0;
+
+                for (let indexKalimat = 0; indexKalimat < localData[0][indexParagraf].length; indexKalimat++) {
+                    // console.log("===== indexKalimat");
+                    // console.log(indexKalimat);
+
+                    indexKalimatTerisi++;
+
+                    var kalimat = '<div class="mt-2 p-2" style="background-color:' + ambilWarna(indexKalimatTerisi) + '">';
+                    kalimat += '<a>Kalimat ' + (indexKalimatTerisi) + '</a>';
+
+                    // console.log(localData[0][indexParagraf][index - 1]);
+                    // kalimat += '<textarea class="form-control" onclick="pilihTextAreaBuatSpeech(\'artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '\')" name="artikel_1_' + indexParagrafTerisi + '_' + indexKalimatTerisi + '" rows="3">' + $.trim(kalimatValue) + (paragrafSplit.length > 1 ? '.' : '') + '</textarea>';
+                    kalimat += '<textarea class="form-control" name="artikel_' + (index + 1) + '_' + (indexParagraf + 1) + '_' + (indexKalimat + 1) + '" rows="3">' + localData[index][indexParagraf][indexKalimat] + '</textarea>';
+                    kalimat += '</div>';
+                    paragraf += kalimat;
+                }
+                paragraf += '</li>';
+                splitContainer += paragraf;
+
+            }
+            splitContainer += '</div>';
+
+            $("#ContainerSplitGrup").append(splitContainer);
+        }
+
     }
 
     $("#btnPorsesIsiArtkel").click(function () {
@@ -705,43 +958,45 @@
 
 
     $("#btnConvert2").click(function () {
+        console.log(localData);
+        console.log(localData[0][0]);
 
-        $("#textareaHasilConvertPerParagrafInvisible").empty();
-        $("#textareaHasilConvertPerParagraf").empty();
-        $('#hasilConvertModal').modal('show');
-        totalParagrafDanKalimatArray.forEach((value, indexParagraf, array) => {
+        // $("#textareaHasilConvertPerParagrafInvisible").empty();
+        // $("#textareaHasilConvertPerParagraf").empty();
+        // $('#hasilConvertModal').modal('show');
+        // totalParagrafDanKalimatArray.forEach((value, indexParagraf, array) => {
 
-            // var artikelConvertAlam = 'P-' + (indexParagraf + 1) + '';
-            var artikelConvertAlam = '';
+        //     // var artikelConvertAlam = 'P-' + (indexParagraf + 1) + '';
+        //     var artikelConvertAlam = '';
 
-            artikelConvertAlam += '&#10;';
+        //     artikelConvertAlam += '&#10;';
 
-            var artikelConvertAlamInvisible = '';
+        //     var artikelConvertAlamInvisible = '';
 
-            for (let indexKalimat = 1; indexKalimat <= value[1]; indexKalimat++) {
+        //     for (let indexKalimat = 1; indexKalimat <= value[1]; indexKalimat++) {
 
-                artikelConvertAlam += '{';
-                artikelConvertAlamInvisible += '{';
-                for (let index = 1; index <= indexArikel; index++) {
-                    artikelConvertAlam += $("textarea[name=artikel_" + index + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
-                    artikelConvertAlam += index == indexArikel ? '' : '|';
-
-
-                    artikelConvertAlamInvisible += $("textarea[name=artikel_" + index + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
-                    artikelConvertAlamInvisible += index == indexArikel ? '' : '|';
-                }
-
-                artikelConvertAlam += '} ';
-                artikelConvertAlamInvisible += '} ';
-
-            }
-            artikelConvertAlam += '&#10;';
-            artikelConvertAlamInvisible += '&#10;&#10;';
+        //         artikelConvertAlam += '{';
+        //         artikelConvertAlamInvisible += '{';
+        //         for (let index = 1; index <= indexArikel; index++) {
+        //             artikelConvertAlam += $("textarea[name=artikel_" + index + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
+        //             artikelConvertAlam += index == indexArikel ? '' : '|';
 
 
-            $("#textareaHasilConvertPerParagrafInvisible").append(artikelConvertAlamInvisible);
-            $("#textareaHasilConvertPerParagraf").append(artikelConvertAlam);
-        });
+        //             artikelConvertAlamInvisible += $("textarea[name=artikel_" + index + '_' + (indexParagraf + 1) + '_' + indexKalimat).val();
+        //             artikelConvertAlamInvisible += index == indexArikel ? '' : '|';
+        //         }
+
+        //         artikelConvertAlam += '} ';
+        //         artikelConvertAlamInvisible += '} ';
+
+        //     }
+        //     artikelConvertAlam += '&#10;';
+        //     artikelConvertAlamInvisible += '&#10;&#10;';
+
+
+        //     $("#textareaHasilConvertPerParagrafInvisible").append(artikelConvertAlamInvisible);
+        //     $("#textareaHasilConvertPerParagraf").append(artikelConvertAlam);
+        // });
     });
 
 
