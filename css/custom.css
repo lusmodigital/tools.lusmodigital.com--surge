@@ -1,0 +1,63 @@
+@charset "utf-8";
+/* CSS Document */
+body {
+	background-color: #eeeeee;
+}
+#progress,
+#keyword-progress{
+	position:relative;	
+}
+.progressMessage{
+	position: absolute;
+    text-align: center;
+    width: 100%;
+}
+img {
+    display: block;
+    margin: auto;
+	padding-right:200px;
+	margin-top:-15px;
+}
+.center { 
+	float: none; 
+	margin-left: auto; 
+	margin-right: auto; 
+}
+div.main>div.center{
+	max-width:1080px;	
+}
+div.result-phrases{
+	height:300px;
+	overflow-x:auto;
+}
+button.copy-result-btn{
+	margin-top:5px;
+}
+div.modal textarea{
+	min-height:300px;	
+}
+div.footer{
+	margin-right:200px;	
+}
+div#groups{
+	margin-top:35px;	
+}
+div.main{
+	margin:30px auto;	
+}
+div#groups li.list-group-item{
+	padding-right:0;	
+}
+#maxLength{
+	margin:5px 0;	
+}
+#process-result-list p.alert{
+	margin: 10px 0;	
+}
+div#keyword-progress,
+div#process-result-list{
+	display:none;	
+}
+div#process-result-list{
+	padding:0;	
+}
