@@ -12,10 +12,10 @@
     <style>
         .float {
             position: fixed;
-            width: 120px;
+            width: 185px;
             height: 30px;
             bottom: 40px;
-            right: 170px;
+            right: 250px;
             background-color: #25d366;
             color: #FFF;
             border-radius: 50px;
@@ -31,7 +31,7 @@
 
         #btnGenerateTwo {
             background-color: #0abbff;
-            right: 40px;
+            right: 50px;
         }
 
         .loading-overlay-container {
@@ -79,8 +79,11 @@
             <h2>Spit Artikel</h2>
         </div>
         <div class="row p-2">
+            <input class="form-control" placeholder="Api Key" type="text" id="api-key">
             <label for="">Masukan Artikel :</label>
             <textarea class="form-control" id="textArticle" rows="8"></textarea>
+            <br>
+            <input class="form-control" placeholder="Model OPEN AI" type="text" id="model-open-ai">
             <button type="button" class="btn btn-secondary mt-2 pull-right" id="btnProcessSplit">Proses Split</button>
         </div>
 

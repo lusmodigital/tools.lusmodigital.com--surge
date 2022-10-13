@@ -168,6 +168,7 @@ function showOtherSentences(paragraph_index, sentence_index) {
 }
 
 function getOpenAI(paragraph_index, sentence_index) {
+    let apiKey = $("#api-key").val();
     LOADING.show();
     const selected_sentence = paragraphs_object[paragraph_index].sentences[sentence_index];
     console.log(selected_sentence);
@@ -178,7 +179,7 @@ function getOpenAI(paragraph_index, sentence_index) {
     xhr.open("POST", url);
 
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("Authorization", "Bearer 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");
+    xhr.setRequestHeader("Authorization", "Bearer "+apiKey);
 
     xhr.onreadystatechange = function () {
         LOADING.hide();
@@ -220,8 +221,10 @@ function getOpenAI(paragraph_index, sentence_index) {
         }
     };
 
+    let modelOpenAi = $("#model-open-ai").val();
+
     var data = `{
-        "model": "davinci:ft-personal:rewrite-spokpel-2022-07-07-11-24-05",
+        "model": "${modelOpenAi}",
         "prompt": "${selected_sentence}",
         "temperature": 0.7,
         "max_tokens": 256,
