@@ -178,7 +178,7 @@ function getOpenAI(paragraph_index, sentence_index) {
     xhr.open("POST", url);
 
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("Authorization", "Bearer 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");
+    xhr.setRequestHeader("Authorization", "Bearer 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");
 
     xhr.onreadystatechange = function () {
         LOADING.hide();
