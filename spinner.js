@@ -15,6 +15,8 @@ $("#btnProcessSplit").click(function () {
 
         paragraphs_object = [];
         paragraphs.forEach((paragraph_item, paragraph_index) => {
+            if (paragraph_item === '') return; 
+                
             let paragraph = paragraph_item;
             let sentences = paragraph.split('. ');
 
@@ -157,7 +159,7 @@ function showOtherSentences(paragraph_index, sentence_index) {
     selected_sentence.other_sentences.forEach((other_sentence, other_sentence_index) => {
         result += `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
                 <a>Kalimat ${sentence_index+1}</a>
-                <textarea class="form-control" name="paragraph[]" rows="3">${other_sentence}</textarea> 
+                <textarea class="form-control" name="paragraph[]" rows="3">${other_sentence.trim()}</textarea> 
             </div> `;
         result += `</div>`;
 
@@ -217,7 +219,6 @@ function getOpenAI(paragraph_index, sentence_index) {
             console.log(paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences);
 
             showOtherSentences(paragraph_index, sentence_index);
-
         }
     };
 
