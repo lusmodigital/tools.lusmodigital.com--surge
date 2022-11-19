@@ -29,6 +29,7 @@ $("#btnProcessSplit").click(function () {
                     "sentence_item": sentence_item,
                     "length_of_other_sentences": 0,
                     "other_sentences": [],
+                    "other_sentence_ids": [],
                 });
             });
 
@@ -175,6 +176,7 @@ function AddOpenAIText(paragraph_index, sentence_index) {
     let current_index = paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences;
     paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = current_index+1;
     paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.push('');
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.push(current_index);
     console.log(current_index);
     result = `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="open-ai-div-${paragraph_index}-${sentence_index}-${current_index}">
         <a>Kalimat ${sentence_index+1}</a>
@@ -190,8 +192,11 @@ function AddOpenAIText(paragraph_index, sentence_index) {
 
 function DeleteTextOpenAI(paragraph_index, sentence_index, current_index) {
     $(`#open-ai-div-${paragraph_index}-${sentence_index}-${current_index}`).remove();
-    console.log(paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences);
-    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.splice(current_index, 1);
+
+    let index = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.findIndex(item => item == current_index);
+    
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.splice(index, 1);
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.splice(index, 1);
     paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.length;
 }
 
