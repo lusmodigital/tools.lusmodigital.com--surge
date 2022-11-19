@@ -171,13 +171,38 @@ function showOtherSentences(paragraph_index, sentence_index) {
     $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
 }
 
-function getOpenAI(paragraph_index, sentence_index) {
+function AddOpenAIText(paragraph_index, sentence_index) {
+    let current_index = paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences;
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = current_index+1;
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.push('');
+    console.log(current_index);
+    result = `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="open-ai-div-${paragraph_index}-${sentence_index}-${current_index}">
+        <a>Kalimat ${sentence_index+1}</a>
+        <textarea class="form-control" name="paragraph[]" rows="3" id="open-ai-text-${paragraph_index}-${sentence_index}-${current_index}"></textarea> 
+        <center>
+            <button class="btn btn-sm btn-success" onclick="GenerateOpenAI('${paragraph_index}','${sentence_index}', '${current_index}')">Generate Open AI</button>
+            <button class="btn btn-sm btn-danger" onclick="DeleteTextOpenAI('${paragraph_index}','${sentence_index}', '${current_index}')">Close</button>
+        </center>
+    </div> `;
+
+    $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
+}
+
+function DeleteTextOpenAI(paragraph_index, sentence_index, current_index) {
+    $(`#open-ai-div-${paragraph_index}-${sentence_index}-${current_index}`).remove();
+    console.log(paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences);
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.splice(current_index, 1);
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.length;
+}
+
+function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
+    let instruction = $("#instruction-open-ai").val();
+    let kalimat =  paragraphs_object[paragraph_index].sentences[sentence_index];
+    let keyword =  $(`#open-ai-text-${paragraph_index}-${sentence_index}-${current_index}`).val();
+
     let apiKey = $("#api-key").val();
     LOADING.show();
-    const selected_sentence = paragraphs_object[paragraph_index].sentences[sentence_index];
-    console.log(selected_sentence);
-
-    var url = "https://api.openai.com/v1/completions";
+    var url = "https://api.openai.com/v1/edits";
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url);
@@ -192,35 +217,14 @@ function getOpenAI(paragraph_index, sentence_index) {
             console.log(xhr.response);
 
             let response = JSON.parse(xhr.response);
+            if(response.choices.length < 1 ) {
+                alert('Tidak ada hasil');
+            }
 
-            let choices = response.choices[0].text;
-            choices = choices.split('\n');
+            let result = response.choices[0].text;
+            paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[current_index] = result;
+            $(`#open-ai-text-${paragraph_index}-${sentence_index}-${current_index}`).val(result);
 
-            choices = choices.filter(function (item) {
-                console.log(item.includes("="));
-                if (item.includes("=") && item.includes(".")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            });
-
-            console.log(choices);
-            choices.forEach((choice, index) => {
-                let start_index = choice.indexOf('=');
-                let end_index = choice.length;
-                let value = choice.substring(start_index + 1, end_index);
-                console.log(value);
-                choices[index] = value;
-            });
-
-            console.log(choices);
-            paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = choices.length;
-            paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences = choices;
-            console.log(paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences);
-            console.log(paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences);
-
-            showOtherSentences(paragraph_index, sentence_index);
         }
     };
 
@@ -228,25 +232,11 @@ function getOpenAI(paragraph_index, sentence_index) {
 
     var data = `{
         "model": "${modelOpenAi}",
-        "prompt": "${selected_sentence}",
-        "temperature": 0.7,
-        "max_tokens": 256,
-        "top_p": 1,
-        "frequency_penalty": 0,
-        "presence_penalty": 0,
-        "stop": ["**END**"]
+        "input": "${kalimat}",
+        "instruction": "${instruction} ${keyword}"
     }`;
 
     xhr.send(data);
-}
-
-function AddOpenAIText(paragraph_index, sentence_index) {
-    result = `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
-        <a>Kalimat ${sentence_index+1}</a>
-        <textarea class="form-control" name="paragraph[]" rows="3"></textarea> 
-    </div> `;
-
-    $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
 }
 
 function updateVariableList(idx) {
