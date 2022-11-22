@@ -20,7 +20,7 @@ $("#btnProcessSplit").click(function () {
             if (paragraph_item === '') return; 
                 
             let paragraph = paragraph_item;
-            let sentences = paragraph.split('. ');
+            let sentences = paragraph.split(/\.\s|\?\s/);
 
             let sentences_object = [];
             sentences.forEach((sentence_item, sentence_index) => {
@@ -137,10 +137,12 @@ function showDataSplit() {
         <center><h6>Paragraph ${paragraph_index+1}</h6></center><hr>`;
 
         paragraph.sentences.forEach((sentence, sentence_index) => {
+            let withDot = (paragraph.length_of_sentences-1) > sentence_index ? '.' : '';
+
             result += `<div class="section-sentence-horizontal" id="section-sentence-horizontal-${paragraph_index}-${sentence_index}">`;
             result += `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
                     <a>Kalimat ${sentence_index+1}</a>
-                    <textarea class="form-control" name="paragraph[]" rows="3">${sentence}</textarea>
+                    <textarea class="form-control" name="paragraph[]" rows="3">${sentence}${withDot}</textarea>
                     <center>
                         <button class="btn btn-sm btn-info" onclick="AddOpenAIText('${paragraph_index}','${sentence_index}')">Add</button>
                     </center>
