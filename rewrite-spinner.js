@@ -182,7 +182,7 @@ function AddOpenAIText(paragraph_index, sentence_index) {
     console.log(current_index);
     result = `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="open-ai-div-${paragraph_index}-${sentence_index}-${current_index}">
         <a>Kalimat ${sentence_index+1}</a>
-        <textarea class="form-control" name="paragraph[]" rows="3" id="open-ai-text-${paragraph_index}-${sentence_index}-${current_index}"></textarea> 
+        <textarea class="form-control" name="paragraph[]" rows="3" id="open-ai-text-${paragraph_index}-${sentence_index}-${current_index}" onchange="updateOtherSentence('${paragraph_index}','${sentence_index}', '${current_index}')"></textarea> 
         <center>
             <button class="btn btn-sm btn-success" onclick="GenerateOpenAI('${paragraph_index}','${sentence_index}', '${current_index}')">Generate Open AI</button>
             <button class="btn btn-sm btn-danger" onclick="DeleteTextOpenAI('${paragraph_index}','${sentence_index}', '${current_index}')">Close</button>
@@ -190,6 +190,14 @@ function AddOpenAIText(paragraph_index, sentence_index) {
     </div> `;
 
     $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
+}
+
+
+function updateSentence() {}
+
+function updateOtherSentence(paragraph_index, sentence_index, current_index) {
+    let text =  $(`#open-ai-text-${paragraph_index}-${sentence_index}-${current_index}`).val();
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[current_index] = text;
 }
 
 function DeleteTextOpenAI(paragraph_index, sentence_index, current_index) {
@@ -228,7 +236,11 @@ function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
                 alert('Tidak ada hasil');
             }
 
-            let result = response.choices[0].text;
+            let result = response.choices[0].text.trim();
+            if(!result.match(/\.$/)) {
+                result = result + '.';
+            }
+
             paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[current_index] = result;
             $(`#open-ai-text-${paragraph_index}-${sentence_index}-${current_index}`).val(result);
 
