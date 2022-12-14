@@ -1,9 +1,22 @@
 let data_split = [];
 let paragraphs_object = [];
+const data_instructions = [
+    'tulis ulang dengan mengubah struktur kalimat di atas tanpa merubah maknanya',
+    'tulis ulang dengan mengubah struktur kalimat di atas',
+    'Tambah Data Disini ',
+    'Tambah Data Disini 2',
+    'Tambah Data Disini 3',
+]
 const LOADING = $("#loading-overlay");
 LOADING.hide();
+
 $("#model-open-ai").val('text-davinci-edit-001');
-$("#instruction-open-ai").val('tulis ulang dengan mengubah struktur kalimat di atas tanpa merubah maknanya, dimulai dengan kata');
+$.each(data_instructions, function (i, item) {
+    $('#instruction-open-ai').append($('<option>', { 
+        value: item,
+        text : item 
+    }));
+});
 
 $("#btnProcessSplit").click(function () {
     let answer = window.confirm("Continue For Split this Article ? ");
@@ -144,7 +157,8 @@ function showDataSplit() {
                     <a>Kalimat ${sentence_index+1}</a>
                     <textarea class="form-control" name="paragraph[]" rows="3">${sentence}${withDot}</textarea>
                     <center>
-                        <button class="btn btn-sm btn-info" onclick="AddOpenAIText('${paragraph_index}','${sentence_index}')">Add</button>
+                    <button class="btn btn-sm btn-info" onclick="AddOpenAIText('${paragraph_index}','${sentence_index}')">Add</button>
+                    <button class="btn btn-sm btn-danger" onclick="DeleteHorizontalSentence('${paragraph_index}','${sentence_index}')">Delete</button>
                     </center>
                 </div> `;
             result += `</div>`;
@@ -174,13 +188,54 @@ function showOtherSentences(paragraph_index, sentence_index) {
     $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
 }
 
-function AddOpenAIText(paragraph_index, sentence_index) {
+
+$("#generate-input-open-ai").click(function () {
+    paragraphs_object.forEach( (paragraph, paragraph_index) => {
+        paragraph.sentences_object.forEach( (sentence, sentence_index) => {
+            AddOpenAIText(paragraph_index, sentence_index, true);
+        });
+    });
+
+});
+
+function deleteVertialOtherSentences(other_sentence_verticaly_index) {
+    paragraphs_object.forEach( (paragraph, paragraph_index) => {
+        paragraph.sentences_object.forEach( (sentence, sentence_index) => {
+            $(`#open-ai-div-${paragraph_index}-${sentence_index}-${other_sentence_verticaly_index}`).remove();
+            DeleteTextOpenAI(paragraph_index,sentence_index, other_sentence_verticaly_index);
+        });
+    });
+    
+    $(`btn-generate-vertical-other-sentence-${other_sentence_verticaly_index}`).remove();
+    $(`#btn-delete-vertical-other-sentence-${other_sentence_verticaly_index}`).remove();
+} 
+
+function generateOpenAiVertialOtherSentences(other_sentence_verticaly_index) {
+    paragraphs_object.forEach( (paragraph, paragraph_index) => {
+        paragraph.sentences_object.forEach( (sentence, sentence_index) => {
+            GenerateOpenAI(paragraph_index,sentence_index, other_sentence_verticaly_index);
+        });
+    });
+    
+} 
+
+function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false) {
     let current_index = paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences;
+    let massDeleteButton = '';
+    if (is_mass_generate && paragraph_index==0 && sentence_index==0) {
+        massDeleteButton =`
+            <button class="btn btn-sm btn-success" id="btn-generate-vertical-other-sentence-${current_index}" onclick="generateOpenAiVertialOtherSentences('${current_index}')">Generate All Open AI</button>
+            <button class="btn btn-sm btn-danger" id="btn-delete-vertical-other-sentence-${current_index}" onclick="deleteVertialOtherSentences('${current_index}')">Close All</button>
+            <br>
+        `;
+    }
+
     paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = current_index+1;
     paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.push('');
     paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.push(current_index);
     console.log(current_index);
     result = `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="open-ai-div-${paragraph_index}-${sentence_index}-${current_index}">
+        ${massDeleteButton}
         <a>Kalimat ${sentence_index+1}</a>
         <textarea class="form-control" name="paragraph[]" rows="3" id="open-ai-text-${paragraph_index}-${sentence_index}-${current_index}" onchange="updateOtherSentence('${paragraph_index}','${sentence_index}', '${current_index}')"></textarea> 
         <center>
@@ -192,6 +247,9 @@ function AddOpenAIText(paragraph_index, sentence_index) {
     $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
 }
 
+function DeleteHorizontalSentence(paragraph_index, sentence_index) {
+    $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).remove();
+}
 
 function updateSentence() {}
 
