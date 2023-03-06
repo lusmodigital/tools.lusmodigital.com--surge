@@ -3,20 +3,31 @@ let paragraphs_object = [];
 const data_instructions = [
     'tulis ulang dengan mengubah struktur kalimat di atas tanpa merubah maknanya',
     'tulis ulang dengan mengubah struktur kalimat di atas',
-    'Tambah Data Disini ',
-    'Tambah Data Disini 2',
-    'Tambah Data Disini 3',
+    // 'Tambah Data Disini ',
+    // 'Tambah Data Disini 2',
+    // 'Tambah Data Disini 3',
+    'Tambahkan instruksi kustom'
 ]
 const LOADING = $("#loading-overlay");
 LOADING.hide();
 
-$("#model-open-ai").val('text-davinci-edit-001');
+$("#model-open-ai").val('gpt-3.5-turbo');
 $.each(data_instructions, function (i, item) {
     $('#instruction-open-ai').append($('<option>', { 
         value: item,
         text : item 
     }));
 });
+
+$('#instruction-open-ai').on('change', function() {
+    if (this.value === 'Tambahkan instruksi kustom') {
+      const newInput = '<input class="form-control" type="text" id="instruction-open-ai" value="">';
+      $('#instruction-container').html(newInput);
+    }
+  });
+
+const modelOpenAiWidth = $('#model-open-ai').outerWidth();
+$('#instruction-open-ai').parent().css('width', modelOpenAiWidth);
 
 $("#btnProcessSplit").click(function () {
     let answer = window.confirm("Continue For Split this Article ? ");
@@ -275,7 +286,7 @@ function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
 
     let apiKey = $("#api-key").val();
     LOADING.show();
-    var url = "https://api.openai.com/v1/edits";
+    var url = "https://api.openai.com/v1/chat/completions";
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url);
@@ -294,7 +305,7 @@ function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
                 alert('Tidak ada hasil');
             }
 
-            let result = response.choices[0].text.trim();
+            let result = response.choices[0].message.content.trim();
             if(!result.match(/\.$/)) {
                 result = result + '.';
             }
@@ -307,10 +318,15 @@ function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
 
     let modelOpenAi = $("#model-open-ai").val();
 
-    var data = `{
+    // var data = `{
+    //     "model": "${modelOpenAi}",
+    //     "input": "${kalimat}",
+    //     "instruction": "${instruction} ${keyword}"
+    // }`;
+
+    let data = `{
         "model": "${modelOpenAi}",
-        "input": "${kalimat}",
-        "instruction": "${instruction} ${keyword}"
+        "messages": [{"role": "user", "content": "${instruction} ${kalimat}"}]
     }`;
 
     xhr.send(data);
