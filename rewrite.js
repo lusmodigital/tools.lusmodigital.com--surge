@@ -252,12 +252,6 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
         <center>
             <button class="btn btn-sm btn-success" onclick="GenerateOpenAI('${paragraph_index}','${sentence_index}', '${current_index}')">Generate Open AI</button>
             <button class="btn btn-sm btn-danger" onclick="DeleteTextOpenAI('${paragraph_index}','${sentence_index}', '${current_index}')">Close</button>
-            <div style="display: flex; justify-content: center; align-items: center;">
-                <a style="margin: 0;">Total Tokens</a>
-                <div style="position: relative;">
-                    <textarea class="form-control ml-1" style="resize:none; overflow: hidden; width: 100px; height: 30px; padding-top: 3px;" disabled id="open-ai-tokens-${paragraph_index}-${sentence_index}-${current_index}" onchange="updateOtherSentence('${paragraph_index}','${sentence_index}', '${current_index}')"></textarea>
-                </div>
-            </div>
         </center>
     </div> `;
 
@@ -273,8 +267,6 @@ function updateSentence() {}
 function updateOtherSentence(paragraph_index, sentence_index, current_index) {
     let text =  $(`#open-ai-text-${paragraph_index}-${sentence_index}-${current_index}`).val();
     paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[current_index] = text;
-    let tokens =  $(`#open-ai-tokens-${paragraph_index}-${sentence_index}-${current_index}`).val();
-    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[current_index] = tokens;
 }
 
 function DeleteTextOpenAI(paragraph_index, sentence_index, current_index) {
@@ -318,13 +310,8 @@ function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
                 result = result + '.';
             }
 
-            let tokens = response.usage.total_tokens;
-
             paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[current_index] = result;
             $(`#open-ai-text-${paragraph_index}-${sentence_index}-${current_index}`).val(result);
-
-            paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[current_index] = tokens;
-            $(`#open-ai-tokens-${paragraph_index}-${sentence_index}-${current_index}`).val(tokens);
 
         }
     };
