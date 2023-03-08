@@ -1,5 +1,5 @@
 let data_split = [];
-let paragraphs_object = [];
+let paragraphs_object = [], totalToken = 0;
 const data_instructions = [
     'tulis ulang dengan mengubah struktur kalimat di atas tanpa merubah maknanya',
     'tulis ulang dengan mengubah struktur kalimat di atas',
@@ -11,7 +11,7 @@ const data_instructions = [
 const LOADING = $("#loading-overlay");
 LOADING.hide();
 
-$("#model-open-ai").val('gpt-3.5-turbo');
+$("#model-open-ai").val('gpt-3.5-turbo-0301');
 $.each(data_instructions, function (i, item) {
     $('#instruction-open-ai').append($('<option>', { 
         value: item,
@@ -252,6 +252,12 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
         <center>
             <button class="btn btn-sm btn-success" onclick="GenerateOpenAI('${paragraph_index}','${sentence_index}', '${current_index}')">Generate Open AI</button>
             <button class="btn btn-sm btn-danger" onclick="DeleteTextOpenAI('${paragraph_index}','${sentence_index}', '${current_index}')">Close</button>
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <a style="margin: 0;">Total Tokens</a>
+                <div style="position: relative;">
+                    <textarea class="form-control ml-1" style="resize:none; overflow: hidden; width: 100px; height: 30px; padding-top: 3px;" disabled id="open-ai-tokens-${paragraph_index}-${sentence_index}-${current_index}" onchange="updateOtherSentence('${paragraph_index}','${sentence_index}', '${current_index}')"></textarea>
+                </div>
+            </div>
         </center>
     </div> `;
 
@@ -310,9 +316,28 @@ function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
                 result = result + '.';
             }
 
+            let tokens = response.usage.total_tokens;
+
             paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[current_index] = result;
             $(`#open-ai-text-${paragraph_index}-${sentence_index}-${current_index}`).val(result);
 
+            totalToken += tokens;
+            console.log("Total Token Updated to: ", totalToken);
+            $(`#open-ai-tokens-${paragraph_index}-${sentence_index}-${current_index}`).val(tokens);
+
+            const TOKEN_PRICE_USD = 0.002; // Harga API dalam USD per 1K token
+            const TOKENS_PER_K = 1000; // Jumlah token per K
+
+            // Menghitung biaya berdasarkan jumlah token yang digunakan
+            function tokenToRupiah(numTokens) {
+            const numK = numTokens / TOKENS_PER_K; // Konversi ke ribuan (K)
+            const costUSD = numK * TOKEN_PRICE_USD; // Biaya dalam USD
+            const costIDR = costUSD * 15500; // Konversi ke IDR (asumsi kurs 15500)
+            return costIDR;
+            }
+
+            $("#total-tokens").text("Total token yang terpakai: " + totalToken);
+            $("#total-tokens-to-rupiah").text("Harga yang dikeluarkan: Rp" + tokenToRupiah(totalToken).toFixed(2));
         }
     };
 
