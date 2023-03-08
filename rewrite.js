@@ -11,7 +11,7 @@ const data_instructions = [
 const LOADING = $("#loading-overlay");
 LOADING.hide();
 
-$("#model-open-ai").val('gpt-3.5-turbo-0301');
+$("#model-open-ai").val('gpt-3.5-turbo');
 $.each(data_instructions, function (i, item) {
     $('#instruction-open-ai').append($('<option>', { 
         value: item,
