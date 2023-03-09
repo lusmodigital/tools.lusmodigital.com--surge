@@ -241,6 +241,24 @@ function generateOpenAiVertialOtherSentences(other_sentence_verticaly_index) {
     
 } 
 
+function download(current_index) {
+    var element = document.createElement('a');
+    var text = document.getElementById('artikel-'+current_index).value;
+    if (text != null && text && "\0" && text != "")
+    {
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', 'artikel-'+(current_index+1)+'.txt');
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+    else alert("Artikel spin ke-"+(current_index+1)+" belum ter-generate, mohon klik 'Generate Artikel' di atas terlebih dahulu!")
+}
+
 function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false) {
     let current_index = paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences;
     console.log(paragraphs_object);
@@ -259,10 +277,11 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
         massGenerateArticle =`
             <center>
                 <br>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate Article!</button>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate Article</button>
                 <br><br>
                 <b>Hasil Artikel ke-${current_index+1}</b>
-        <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
+                <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
+                <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
             </center>
         `;
     }
@@ -270,7 +289,6 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
     paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = current_index+1;
     paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.push('');
     paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.push(current_index);
-    console.log(current_index);
     result = `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="open-ai-div-${paragraph_index}-${sentence_index}-${current_index}">
         ${massDeleteButton}
         <a>Kalimat ${sentence_index+1}</a>
