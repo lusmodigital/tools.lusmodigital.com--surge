@@ -152,6 +152,18 @@ $("#btnGenerateTwo").click(function () {
     $("#textareaFinalResult").val(text);
 });
 
+$('#btnAdd').click(function (e) {
+    var nextTab = $('#tabs li').size()+1;
+  
+    // create the tab
+    $('<li><a href="#tab'+nextTab+'" data-toggle="tab">Tab '+nextTab+'</a></li>').appendTo('#tabs');
+    
+    // create the tab content
+    $('<div class="tab-pane" id="tab'+nextTab+'">tab' +nextTab+' content</div>').appendTo('.tab-content');
+    
+    // make the new tab active
+    $('#tabs a:last').tab('show');
+});
 
 function showDataSplit() {
     paragraphs_object.forEach((paragraph, paragraph_index) => {
@@ -248,7 +260,9 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
             <center>
                 <br>
                 <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate Article!</button>
-                <br>
+                <br><br>
+                <b>Hasil Artikel ke-${current_index+1}</b>
+        <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
             </center>
         `;
     }
@@ -305,9 +319,10 @@ function GenerateArticleColumn(current_index) {
             console.log(sentence);
             resultHtml += sentence.other_sentences[current_index] + " "
         });
+        resultHtml += '&#10;&#10;';
     });
     console.log(resultHtml);
-    // $("#textareaConvertSplitResult").html(resultHtml);
+    $("#artikel-"+current_index).html(resultHtml);
 }
 
 function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
