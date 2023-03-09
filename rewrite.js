@@ -1,5 +1,5 @@
 let data_split = [];
-let paragraphs_object = [], totalToken = 0;
+let paragraphs_object = [], totalToken = 0, totalKalimat = 0;
 const data_instructions = [
     'tulis ulang dengan mengubah struktur kalimat di atas tanpa merubah maknanya',
     'tulis ulang dengan mengubah struktur kalimat di atas',
@@ -64,9 +64,8 @@ $("#btnProcessSplit").click(function () {
                 "sentences_object": sentences_object,
                 "sentences": sentences,
             });
+            totalKalimatParagrafAkhir = sentences.length;
         });
-
-        console.log(paragraphs_object);
         showDataSplit();
     }
 
@@ -232,12 +231,25 @@ function generateOpenAiVertialOtherSentences(other_sentence_verticaly_index) {
 
 function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false) {
     let current_index = paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences;
-    let massDeleteButton = '';
+    console.log(paragraphs_object);
+    let massDeleteButton = '', massGenerateArticle = '';
     if (is_mass_generate && paragraph_index==0 && sentence_index==0) {
         massDeleteButton =`
             <button class="btn btn-sm btn-success" id="btn-generate-vertical-other-sentence-${current_index}" onclick="generateOpenAiVertialOtherSentences('${current_index}')">Generate All Open AI</button>
             <button class="btn btn-sm btn-danger" id="btn-delete-vertical-other-sentence-${current_index}" onclick="deleteVertialOtherSentences('${current_index}')">Close All</button>
             <br>
+        `;
+    }
+    console.log("test: masuk di " + current_index + " - " + paragraph_index);
+
+    if (is_mass_generate && sentence_index==totalKalimatParagrafAkhir-1 && paragraph_index==paragraphs_object.length-1) {
+        console.log("masuk di " + current_index + " - " + paragraph_index);
+        massGenerateArticle =`
+            <center>
+                <br>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate Article!</button>
+                <br>
+            </center>
         `;
     }
 
@@ -259,6 +271,7 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
                 </div>
             </div>
         </center>
+        ${massGenerateArticle}
     </div> `;
 
     $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
@@ -284,7 +297,6 @@ function DeleteTextOpenAI(paragraph_index, sentence_index, current_index) {
     paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.splice(index, 1);
     paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.length;
 }
-
 function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
     let instruction = $("#instruction-open-ai").val();
     let kalimat =  paragraphs_object[paragraph_index].sentences[sentence_index];
