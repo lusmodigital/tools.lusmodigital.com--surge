@@ -297,6 +297,19 @@ function DeleteTextOpenAI(paragraph_index, sentence_index, current_index) {
     paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.splice(index, 1);
     paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.length;
 }
+
+function GenerateArticleColumn(current_index) {
+    let resultHtml = '';
+    paragraphs_object.forEach((paragraph, paragraph_index) => {
+        paragraph.sentences_object.forEach((sentence, sentence_index) => {
+            console.log(sentence);
+            resultHtml += sentence.other_sentences[current_index] + " "
+        });
+    });
+    console.log(resultHtml);
+    // $("#textareaConvertSplitResult").html(resultHtml);
+}
+
 function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
     let instruction = $("#instruction-open-ai").val();
     let kalimat =  paragraphs_object[paragraph_index].sentences[sentence_index];
