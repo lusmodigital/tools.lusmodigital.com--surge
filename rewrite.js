@@ -245,10 +245,7 @@ function GetData()  {
     const xhr = new XMLHttpRequest;
     let urlArtikel = $("#url-artikel").val();
     xhr.open('GET', urlArtikel);
-
-    // If specified, responseType must be empty string or "document"
     xhr.responseType = 'document';
-
     xhr.onload = () => {
         if (xhr.readyState === xhr.DONE && xhr.status === 200) {
             var XMLResult = xhr.responseXML;
