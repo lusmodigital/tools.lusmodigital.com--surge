@@ -241,6 +241,58 @@ function generateOpenAiVertialOtherSentences(other_sentence_verticaly_index) {
     
 } 
 
+function GetData()  {
+    const xhr = new XMLHttpRequest;
+    let urlArtikel = $("#url-artikel").val();
+    xhr.open('GET', urlArtikel);
+
+    // If specified, responseType must be empty string or "document"
+    xhr.responseType = 'document';
+
+    xhr.onload = () => {
+        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+            console.log(xhr.response, xhr.responseXML);
+            var XMLResult = xhr.responseXML;
+            var test_res = XMLResult.querySelector("div.entry-content");
+            var headingTags = ["h1","h2","h3","h4","h5","h6","h7","h8","h9","h10"];
+            var paragraf = "";
+            var hasilQuery = test_res.getElementsByTagName("p");
+            for (var i = 0; i < hasilQuery.length; i++)
+            {
+                paragraf += hasilQuery[i].innerText + "\n"
+            }
+            for (var i = 0; i < headingTags.length; i++)
+            {
+                hasilQuery = test_res.getElementsByTagName(headingTags[i]);
+                console.log(hasilQuery);
+                for (var j = 0; j < hasilQuery.length; j++)
+                {
+                    console.log(hasilQuery[j].innerText + "\n");
+                }
+            }
+            $("#fetchArtikel").val(paragraf);
+        }
+    };
+
+    xhr.send();
+}
+function GetData2()  {
+    var XMLReq = new XMLHttpRequest();
+  
+    XMLReq.open( "GET", "https://trainingwalet-com.pages.dev/cara-mengatasi-masalah-pada-burung-walet-penyakit-dan-gangguan-umum-yang-sering-terjadi", true )
+  
+    XMLReq.onreadystatechange = function() {
+      if(XMLReq.readyState == 4 && XMLReq.status == 200) {
+        var a = XMLReq.responseXML.querySelector("div.entry-content:nth-child(1)");
+        console.log(a.responseText);
+      }
+    }
+  
+    XMLReq.send();
+}
+  
+document.querySelector("#getDataBtn").addEventListener('click', GetData);
+
 function download(current_index) {
     var element = document.createElement('a');
     var text = document.getElementById('artikel-'+current_index).value;
