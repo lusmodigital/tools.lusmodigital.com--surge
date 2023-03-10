@@ -265,6 +265,7 @@ function GetData()  {
             for (var i = 0; i < headingTags.length; i++)
             {
                 hasilQuery = test_res.getElementsByTagName(headingTags[i]);
+                if (hasilQuery.length > 0) heading += "Level Heading ke-"+(i+1)+":\n"
                 for (var j = 0; j < hasilQuery.length; j++)
                     heading += (j+1) + ". " + hasilQuery[j].innerText + "\n"
             }
