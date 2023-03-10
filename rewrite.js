@@ -251,26 +251,25 @@ function GetData()  {
 
     xhr.onload = () => {
         if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-            console.log(xhr.response, xhr.responseXML);
             var XMLResult = xhr.responseXML;
             var test_res = XMLResult.querySelector("div.entry-content");
             var headingTags = ["h1","h2","h3","h4","h5","h6","h7","h8","h9","h10"];
-            var paragraf = "";
+            var paragraf = "", heading = "";
             var hasilQuery = test_res.getElementsByTagName("p");
             for (var i = 0; i < hasilQuery.length; i++)
             {
-                paragraf += hasilQuery[i].innerText + "\n"
+                var currRes = hasilQuery[i].innerText
+                paragraf += currRes
+                if (currRes != "" && currRes != "\0" && currRes != "\n") paragraf += "\n"
             }
             for (var i = 0; i < headingTags.length; i++)
             {
                 hasilQuery = test_res.getElementsByTagName(headingTags[i]);
-                console.log(hasilQuery);
                 for (var j = 0; j < hasilQuery.length; j++)
-                {
-                    console.log(hasilQuery[j].innerText + "\n");
-                }
+                    heading += (j+1) + ". " + hasilQuery[j].innerText + "\n"
             }
-            $("#fetchArtikel").val(paragraf);
+            $("#fetchArtikelHeadings").val(heading);
+            $("#fetchArtikelContents").val(paragraf);
         }
     };
 
