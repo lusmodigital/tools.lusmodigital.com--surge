@@ -269,8 +269,11 @@ function deleteVertialOtherSentences(other_sentence_verticaly_index) {
 function generateOpenAiVertialOtherSentences(other_sentence_verticaly_index) {
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach( (sentence, sentence_index) => {
-            if (sentence.slice(0, 5) != '[IMG]' || sentence.slice(0, 2) != '[H')
+            if (sentence["sentence_item"].slice(0, 5) != '[IMG]' && sentence["sentence_item"].slice(0, 2) != '[H')
                 GenerateOpenAI(paragraph_index,sentence_index, other_sentence_verticaly_index);
+            else if(sentence["sentence_item"].slice(0, 2) == '[H') 
+                paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[other_sentence_verticaly_index] = paragraphs_object[paragraph_index].sentences[sentence_index],
+                $(`#open-ai-text-${paragraph_index}-${sentence_index}-${other_sentence_verticaly_index}`).val(paragraphs_object[paragraph_index].sentences[sentence_index]);
         });
     });
     
