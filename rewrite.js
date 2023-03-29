@@ -29,8 +29,27 @@ $('#instruction-open-ai').on('change', function() {
 const modelOpenAiWidth = $('#model-open-ai').outerWidth();
 $('#instruction-open-ai').parent().css('width', modelOpenAiWidth);
 
+function output(){
+    editor.save().then((outputData) => {
+        const jsonData = JSON.stringify(outputData)
+        console.log(jsonData)
+        for (var i = 0; i < outputData["blocks"].length; i++){
+            var dataNya = outputData["blocks"][i]
+            var tipe = dataNya["type"], data = dataNya["data"], level
+            if (tipe == 'image') data = data["url"]
+            else if (tipe == 'heading') data = data["text"], level = data["level"]
+            else data = data["text"]
+            console.log(tipe, "-", data)
+        }
+    }).catch((error) => {
+        console.log('Error:', error);
+    });
+}
+
 $("#btnProcessSplit").click(function () {
     output()
+    let articlecheck = $('#editorjs').val();
+    console.log(articlecheck)
     let answer = window.confirm("Continue For Split this Article ? ");
     if (!answer) {
         console.log('Cancelled');
