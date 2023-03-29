@@ -18,7 +18,7 @@ const editor = new EditorJS({
                   defaultStyle: 'unordered'
                 }
             },
-            ulist: {
+            olist: {
                 class: List,
                 inlineToolbar: true,
                 config: {
