@@ -30,6 +30,7 @@ const modelOpenAiWidth = $('#model-open-ai').outerWidth();
 $('#instruction-open-ai').parent().css('width', modelOpenAiWidth);
 
 $("#btnProcessSplit").click(function () {
+    output()
     let answer = window.confirm("Continue For Split this Article ? ");
     if (!answer) {
         console.log('Cancelled');
@@ -37,6 +38,7 @@ $("#btnProcessSplit").click(function () {
     } else {
 
         let article = $('#textArticle').val();
+        console.log(article)
         let paragraphs = article.split(/\r?\n/);
 
         paragraphs_object = [];

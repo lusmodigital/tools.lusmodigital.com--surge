@@ -62,6 +62,8 @@
             margin-right: 25px;
             width: 300px;
         }
+
+        .ce-block__content, .ce-toolbar__content { max-width:calc(100% - 80px) !important; } .cdx-block { max-width: 100% !important; }
     </style>
 </head>
 
@@ -73,13 +75,6 @@
     <button class="float" id="btnGenerateTwo">
         <i class="fa fa-whatsapp my-float">Generate Result</i>
     </button>
-
-    <div class="container bg-white mt-3">
-        <div class="py-3 text-center">
-            <h2>Editor Artikel</h2>
-        </div>
-        <div id="editorjs"></div>
-    </div>
 
     <div class="container bg-white mt-3">
         <div class="py-3 text-center">
@@ -101,7 +96,14 @@
 
         <div class="row p-2">
             <input class="form-control" placeholder="Api Key" type="text" id="api-key" value="">
-            <label for="">Masukan Artikel :</label>
+            
+            <div class="py-1">
+                <label for=""><b>Masukkan Artikel:</b></label>
+            <p id="statusText">(Status EditorJS)</p>
+            </div>
+            <div class="container bg-white border border-secondary-30 rounded">
+                <div id="editorjs"></div>
+            </div>
             <textarea class="form-control" id="textArticle" rows="8"></textarea>
             <br>
             <input class="form-control" placeholder="Model OPEN AI" type="text" id="model-open-ai" value="" disabled>
