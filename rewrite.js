@@ -33,63 +33,74 @@ function output(){
     editor.save().then((outputData) => {
         const jsonData = JSON.stringify(outputData)
         console.log(jsonData)
+        var articleText = ''
         for (var i = 0; i < outputData["blocks"].length; i++){
             var dataNya = outputData["blocks"][i]
             var tipe = dataNya["type"], data = dataNya["data"], level
             if (tipe == 'image') data = data["url"]
             else if (tipe == 'heading') data = data["text"], level = data["level"]
-            else data = data["text"]
+            else data = data["text"], 
             console.log(tipe, "-", data)
+            articleText += data+'\n'
         }
+        console.log(articleText)
     }).catch((error) => {
         console.log('Error:', error);
     });
 }
 
 $("#btnProcessSplit").click(function () {
-    output()
-    let articlecheck = $('#editorjs').val();
-    console.log(articlecheck)
-    let answer = window.confirm("Continue For Split this Article ? ");
-    if (!answer) {
-        console.log('Cancelled');
-        return;
-    } else {
+    editor.save().then((outputData) => {
+        const jsonData = JSON.stringify(outputData)
+        console.log(jsonData)
+        var articleText = ''
+        for (var i = 0; i < outputData["blocks"].length; i++){
+            var dataNya = outputData["blocks"][i]
+            var tipe = dataNya["type"], data = dataNya["data"], level = data;
+            if (tipe == 'image') data = data["url"], articleText += '[IMG] '+data+'\n'
+            else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '[H'+level+'] '+data+'\n'
+            else data = data["text"], articleText += data+'\n'
+            console.log(tipe, "-", data)
+        }
+        let answer = window.confirm("Continue For Split this Article ? ");
+        if (!answer) {
+            console.log('Cancelled');
+            return;
+        } else {
+            let paragraphs = articleText.split(/\r?\n/);
 
-        let article = $('#textArticle').val();
-        console.log(article)
-        let paragraphs = article.split(/\r?\n/);
+            paragraphs_object = [];
+            paragraphs.forEach((paragraph_item, paragraph_index) => {
+                if (paragraph_item === '') return; 
+                    
+                let paragraph = paragraph_item;
+                let sentences = paragraph.split(/\.\s|\?\s/);
 
-        paragraphs_object = [];
-        paragraphs.forEach((paragraph_item, paragraph_index) => {
-            if (paragraph_item === '') return; 
-                
-            let paragraph = paragraph_item;
-            let sentences = paragraph.split(/\.\s|\?\s/);
-
-            let sentences_object = [];
-            sentences.forEach((sentence_item, sentence_index) => {
-                sentences_object.push({
-                    "sentence_index": sentence_index,
-                    "sentence_item": sentence_item,
-                    "length_of_other_sentences": 0,
-                    "other_sentences": [],
-                    "other_sentence_ids": [],
+                let sentences_object = [];
+                sentences.forEach((sentence_item, sentence_index) => {
+                    sentences_object.push({
+                        "sentence_index": sentence_index,
+                        "sentence_item": sentence_item,
+                        "length_of_other_sentences": 0,
+                        "other_sentences": [],
+                        "other_sentence_ids": [],
+                    });
                 });
-            });
 
-            paragraphs_object.push({
-                "paragraph_index": paragraph_index,
-                "paragraph_item": paragraph_item,
-                "length_of_sentences": sentences.length,
-                "sentences_object": sentences_object,
-                "sentences": sentences,
+                paragraphs_object.push({
+                    "paragraph_index": paragraph_index,
+                    "paragraph_item": paragraph_item,
+                    "length_of_sentences": sentences.length,
+                    "sentences_object": sentences_object,
+                    "sentences": sentences,
+                });
+                totalKalimatParagrafAkhir = sentences.length;
             });
-            totalKalimatParagrafAkhir = sentences.length;
-        });
-        showDataSplit();
-    }
-
+            showDataSplit();
+        }
+    }).catch((error) => {
+        console.log('Error:', error);
+    });
 });
 
 
@@ -235,7 +246,9 @@ function showOtherSentences(paragraph_index, sentence_index) {
 $("#generate-input-open-ai").click(function () {
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach( (sentence, sentence_index) => {
-            AddOpenAIText(paragraph_index, sentence_index, true);
+            if (sentence.slice(0, 2) != '[H')
+                AddOpenAIText(paragraph_index, sentence_index, true);
+            else AddOpenAITextHeader(paragraph_index, sentence_index, true);
         });
     });
 
@@ -256,7 +269,8 @@ function deleteVertialOtherSentences(other_sentence_verticaly_index) {
 function generateOpenAiVertialOtherSentences(other_sentence_verticaly_index) {
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach( (sentence, sentence_index) => {
-            GenerateOpenAI(paragraph_index,sentence_index, other_sentence_verticaly_index);
+            if (sentence.slice(0, 5) != '[IMG]' || sentence.slice(0, 2) != '[H')
+                GenerateOpenAI(paragraph_index,sentence_index, other_sentence_verticaly_index);
         });
     });
     
@@ -370,6 +384,56 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
                 <a style="margin: 0;">Total Tokens</a>
                 <div style="position: relative;">
                     <textarea class="form-control ml-1" style="resize:none; overflow: hidden; width: 100px; height: 30px; padding-top: 3px;" disabled id="open-ai-tokens-${paragraph_index}-${sentence_index}-${current_index}" onchange="updateOtherSentence('${paragraph_index}','${sentence_index}', '${current_index}')"></textarea>
+                </div>
+            </div>
+        </center>
+        ${massGenerateArticle}
+    </div> `;
+
+    $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
+}
+
+function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate = false) {
+    let current_index = paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences;
+    console.log(paragraphs_object);
+    let massDeleteButton = '', massGenerateArticle = '';
+    if (is_mass_generate && paragraph_index==0 && sentence_index==0) {
+        massDeleteButton =`
+            <button class="btn btn-sm btn-success" id="btn-generate-vertical-other-sentence-${current_index}" onclick="generateOpenAiVertialOtherSentences('${current_index}')">Generate All Open AI</button>
+            <button class="btn btn-sm btn-danger" id="btn-delete-vertical-other-sentence-${current_index}" onclick="deleteVertialOtherSentences('${current_index}')">Close All</button>
+            <br>
+        `;
+    }
+    console.log("test: masuk di " + current_index + " - " + paragraph_index);
+
+    if (is_mass_generate && sentence_index==totalKalimatParagrafAkhir-1 && paragraph_index==paragraphs_object.length-1) {
+        console.log("masuk di " + current_index + " - " + paragraph_index);
+        massGenerateArticle =`
+            <center>
+                <br>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate Article</button>
+                <br><br>
+                <b>Hasil Artikel ke-${current_index+1}</b>
+                <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
+                <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
+            </center>
+        `;
+    }
+
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = current_index+1;
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.push('');
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.push(current_index);
+    result = `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="open-ai-div-${paragraph_index}-${sentence_index}-${current_index}">
+        ${massDeleteButton}
+        <a>Kalimat ${sentence_index+1}</a>
+        <textarea disabled class="form-control" name="paragraph[]" rows="3" id="open-ai-text-${paragraph_index}-${sentence_index}-${current_index}" onchange="updateOtherSentence('${paragraph_index}','${sentence_index}', '${current_index}')"></textarea> 
+        <center>
+            <button class="btn btn-sm btn-success" onclick="GenerateOpenAI('${paragraph_index}','${sentence_index}', '${current_index}')">Generate Open AI</button>
+            <button class="btn btn-sm btn-danger" onclick="DeleteTextOpenAI('${paragraph_index}','${sentence_index}', '${current_index}')">Close</button>
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <a style="margin: 0;">Total Tokens</a>
+                <div style="position: relative;">
+                    <textarea disabled class="form-control ml-1" style="resize:none; overflow: hidden; width: 100px; height: 30px; padding-top: 3px;" disabled id="open-ai-tokens-${paragraph_index}-${sentence_index}-${current_index}" onchange="updateOtherSentence('${paragraph_index}','${sentence_index}', '${current_index}')"></textarea>
                 </div>
             </div>
         </center>
