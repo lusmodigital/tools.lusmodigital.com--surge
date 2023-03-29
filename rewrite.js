@@ -246,7 +246,7 @@ function showOtherSentences(paragraph_index, sentence_index) {
 $("#generate-input-open-ai").click(function () {
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach( (sentence, sentence_index) => {
-            if (sentence.slice(0, 2) != '[H')
+            if (sentence["sentence_item"].slice(0, 2) != '[H')
                 AddOpenAIText(paragraph_index, sentence_index, true);
             else AddOpenAITextHeader(paragraph_index, sentence_index, true);
         });
