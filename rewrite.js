@@ -383,6 +383,24 @@ function download(current_index) {
     else alert("Artikel spin ke-"+(current_index+1)+" belum ter-generate, mohon klik 'Generate Artikel' di atas terlebih dahulu!")
 }
 
+function exportHTML() {
+    var element = document.createElement('a');
+    var text = document.getElementById('textareaConvertSplitResult').value;
+    if (text != null && text && "\0" && text != "")
+    {
+        element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', 'artikel.html');
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+    else alert("Artikel spin dalam bentuk HTML belum ter-generate, mohon klik 'Export HTML' di bawah terlebih dahulu!")
+}
+
 function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false) {
     let current_index = paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences;
     console.log(paragraphs_object);
