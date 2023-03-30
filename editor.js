@@ -41,37 +41,39 @@ editor.isReady
 });
 
 const editorHasil = new EditorJS({
-        onReady: () => {
-            new Undo({ editor });
-            new DragDrop(editor);
+    autofocuse: true,
+    onReady: () => {
+        new Undo({ editor });
+        new DragDrop(editor);
+    },
+    logLevel: 'ERROR',
+    tools: {
+        header: Header,
+        image: SimpleImage,
+        paragraph: {
+            class: Paragraph,
+            inlineToolbar: true,
         },
-        logLevel: 'ERROR',
-        tools: {
-            header: Header,
-            image: SimpleImage,
-            paragraph: {
-                class: Paragraph,
-                inlineToolbar: true,
-            },
-            list: {
-                class: List,
-                inlineToolbar: true,
-                config: {
-                  defaultStyle: 'unordered'
-                }
-            },
-            olist: {
-                class: List,
-                inlineToolbar: true,
-                config: {
-                  defaultStyle: 'ordered'
-                }
-            },
+        list: {
+            class: List,
+            inlineToolbar: true,
+            config: {
+              defaultStyle: 'unordered'
+            }
         },
-        holder: 'editorjs_hasil',
-        minHeight : 0
-    }
-);
+        olist: {
+            class: List,
+            inlineToolbar: true,
+            config: {
+              defaultStyle: 'ordered'
+            }
+        },
+        markdownParser: MDParser,
+        markdownImporter: MDImporter,
+    },
+    holder: 'editorjs_hasil',
+    minHeight : 0
+});
 
 editorHasil.isReady
   .then(() => {
