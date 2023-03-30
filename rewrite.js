@@ -29,26 +29,6 @@ $('#instruction-open-ai').on('change', function() {
 const modelOpenAiWidth = $('#model-open-ai').outerWidth();
 $('#instruction-open-ai').parent().css('width', modelOpenAiWidth);
 
-function output(){
-    editor.save().then((outputData) => {
-        const jsonData = JSON.stringify(outputData)
-        console.log(jsonData)
-        var articleText = ''
-        for (var i = 0; i < outputData["blocks"].length; i++){
-            var dataNya = outputData["blocks"][i]
-            var tipe = dataNya["type"], data = dataNya["data"], level
-            if (tipe == 'image') data = data["url"]
-            else if (tipe == 'heading') data = data["text"], level = data["level"]
-            else data = data["text"], 
-            console.log(tipe, "-", data)
-            articleText += data+'\n'
-        }
-        console.log(articleText)
-    }).catch((error) => {
-        console.log('Error:', error);
-    });
-}
-
 $("#btnProcessSplit").click(function () {
     editor.save().then((outputData) => {
         const jsonData = JSON.stringify(outputData)
