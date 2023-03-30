@@ -105,17 +105,17 @@ $("#btnProcessSplit").click(function () {
 
 
 $("#btnGenerateOne").click(function () {
-    let resultHtml = '';
+    let resultHtml = '', totalKalimat = 0;
     paragraphs_object.forEach((paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach((sentence, sentence_index) => {
             console.log(htmlElement)
-            let dataType = htmlElement[sentence_index], openTag, closeTag;
+            let dataType = htmlElement[totalKalimat++], openTag, closeTag;
             if (dataType === 'p') openTag = "<p>", closeTag = "</p>"
             if (dataType === 'img') openTag = '<img src="', closeTag = '" alt="" width="NaN" height="NaN"></img>'
             if (dataType[0] === 'h') openTag = "<"+dataType+">", closeTag = "</"+dataType+">"
             resultHtml += sentence.length_of_other_sentences > 0 ? openTag + '{' : '';
 
-            if (dataType === 'p') resultHtml += sentence.sentence_item.slice(3);
+            if (dataType === 'p') resultHtml += sentence.sentence_item;
             if (dataType === 'img') resultHtml += sentence.sentence_item.slice(6);
             if (dataType[0] === 'h') resultHtml += sentence.sentence_item.slice(5);
 
@@ -123,14 +123,15 @@ $("#btnGenerateOne").click(function () {
 
             if (sentence.length_of_other_sentences > 0)
                 sentence.other_sentences.forEach((other_sentence_item, other_sentence_index) => {
-                    resultHtml += "|" + other_sentence_item;
+                    if (dataType === 'p' || dataType === 'img') resultHtml += "|" + other_sentence_item;
+                    if (dataType[0] === 'h') resultHtml += "|" + other_sentence_item.slice(5);
                 });
 
             resultHtml += sentence.length_of_other_sentences > 0 ? '} ' + closeTag : '';
         });
         resultHtml += '&#10;&#10;';
     });
-
+    editorHasil.blocks.renderFromHTML(resultHtml)
     $("#textareaConvertSplitResult").html(resultHtml);
 });
 
