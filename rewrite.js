@@ -1,4 +1,4 @@
-let data_split = [];
+let data_split = [], htmlElement = [];
 let paragraphs_object = [], totalToken = 0, totalKalimat = 0;
 const data_instructions = [
     'tulis ulang dengan mengubah struktur kalimat di atas tanpa merubah maknanya',
@@ -57,8 +57,8 @@ $("#btnProcessSplit").click(function () {
         for (var i = 0; i < outputData["blocks"].length; i++){
             var dataNya = outputData["blocks"][i]
             var tipe = dataNya["type"], data = dataNya["data"], level = data;
-            if (tipe == 'image') data = data["url"], articleText += '[IMG] '+data+'\n'
-            else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '[H'+level+'] '+data+'\n'
+            if (tipe == 'image') data = data["url"], articleText += '[img] '+data+'\n'
+            else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '[h'+level+'] '+data+'\n'
             else data = data["text"], articleText += data+'\n'
             console.log(tipe, "-", data)
         }
@@ -108,9 +108,16 @@ $("#btnGenerateOne").click(function () {
     let resultHtml = '';
     paragraphs_object.forEach((paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach((sentence, sentence_index) => {
-            resultHtml += sentence.length_of_other_sentences > 0 ? '{' : '';
+            console.log(htmlElement)
+            let dataType = htmlElement[sentence_index], openTag, closeTag;
+            if (dataType === 'p') openTag = "<p>", closeTag = "</p>"
+            if (dataType === 'img') openTag = '<img src="', closeTag = '" alt="" width="NaN" height="NaN"></img>'
+            if (dataType[0] === 'h') openTag = "<"+dataType+">", closeTag = "</"+dataType+">"
+            resultHtml += sentence.length_of_other_sentences > 0 ? openTag + '{' : '';
 
-            resultHtml += sentence.sentence_item;
+            if (dataType === 'p') resultHtml += sentence.sentence_item.slice(3);
+            if (dataType === 'img') resultHtml += sentence.sentence_item.slice(6);
+            if (dataType[0] === 'h') resultHtml += sentence.sentence_item.slice(5);
 
             console.log(sentence);
 
@@ -119,7 +126,7 @@ $("#btnGenerateOne").click(function () {
                     resultHtml += "|" + other_sentence_item;
                 });
 
-            resultHtml += sentence.length_of_other_sentences > 0 ? '} ' : '';
+            resultHtml += sentence.length_of_other_sentences > 0 ? '} ' + closeTag : '';
         });
         resultHtml += '&#10;&#10;';
     });
@@ -246,7 +253,7 @@ function showOtherSentences(paragraph_index, sentence_index) {
 $("#generate-input-open-ai").click(function () {
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach( (sentence, sentence_index) => {
-            if (sentence["sentence_item"].slice(0, 2) != '[H')
+            if (sentence["sentence_item"].slice(0, 2) != '[h')
                 AddOpenAIText(paragraph_index, sentence_index, true);
             else AddOpenAITextHeader(paragraph_index, sentence_index, true);
         });
@@ -267,13 +274,28 @@ function deleteVertialOtherSentences(other_sentence_verticaly_index) {
 } 
 
 function generateOpenAiVertialOtherSentences(other_sentence_verticaly_index) {
+    let totalKalimat = 0
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach( (sentence, sentence_index) => {
-            if (sentence["sentence_item"].slice(0, 5) != '[IMG]' && sentence["sentence_item"].slice(0, 2) != '[H')
+            console.log("kam", sentence_index)
+            if (sentence["sentence_item"].slice(0, 5) != '[img]' && sentence["sentence_item"].slice(0, 2) != '[h')
+            {
+                console.log(totalKalimat, htmlElement)
+                if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, 'p')
                 GenerateOpenAI(paragraph_index,sentence_index, other_sentence_verticaly_index);
-            else if(sentence["sentence_item"].slice(0, 2) == '[H') 
+            }
+            else if(sentence["sentence_item"].slice(0, 2) == '[h') 
+            {
+                console.log(totalKalimat, htmlElement)
+                if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, sentence["sentence_item"].slice(1, 3))
                 paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[other_sentence_verticaly_index] = paragraphs_object[paragraph_index].sentences[sentence_index],
                 $(`#open-ai-text-${paragraph_index}-${sentence_index}-${other_sentence_verticaly_index}`).val(paragraphs_object[paragraph_index].sentences[sentence_index]);
+            }
+            else if(sentence["sentence_item"].slice(0, 5) == '[img]')
+            {
+                console.log(totalKalimat, htmlElement)
+                if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, 'img')
+            }
         });
     });
     
