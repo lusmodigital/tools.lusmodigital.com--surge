@@ -355,20 +355,6 @@ function GetData()  {
 
     xhr.send();
 }
-function GetData2()  {
-    var XMLReq = new XMLHttpRequest();
-  
-    XMLReq.open( "GET", "https://trainingwalet-com.pages.dev/cara-mengatasi-masalah-pada-burung-walet-penyakit-dan-gangguan-umum-yang-sering-terjadi", true )
-  
-    XMLReq.onreadystatechange = function() {
-      if(XMLReq.readyState == 4 && XMLReq.status == 200) {
-        var a = XMLReq.responseXML.querySelector("div.entry-content:nth-child(1)");
-        console.log(a.responseText);
-      }
-    }
-  
-    XMLReq.send();
-}
   
 document.querySelector("#getDataBtn").addEventListener('click', GetData);
 
