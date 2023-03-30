@@ -55,6 +55,7 @@
           </div>
         </div>
         <button
+          type="button"
           id="update-html-btn"
           class="btn btn-primary mb-3"
           style="display: none"
@@ -157,7 +158,7 @@
         if (canonicalElement) {
           canonicalUrlInput.value = canonicalElement.getAttribute("href");
           canonicalUrlContainer.style.display = "block";
-          descriptionElement.setAttribute("content", canonicalUrlInput.value);
+          canonicalElement.setAttribute("href", canonicalUrlInput.value);
           const ogUrlElement = htmlDocument.querySelector(
             'meta[property="og:url"]'
           );
@@ -261,11 +262,11 @@
         const alertElement = document.createElement("div");
         alertElement.classList.add("alert", "alert-success");
         alertElement.innerText = "HTML berhasil diperbarui!";
-        document.querySelector(".container").appendChild(alertElement);
+        document.querySelector(".container").appendChild(alertElement); // modified
 
         // remove success alert after 3 seconds
         setTimeout(() => {
-          document.body.removeChild(alertElement);
+          document.querySelector(".container").removeChild(alertElement); // modified
         }, 3000);
       });
     </script>
