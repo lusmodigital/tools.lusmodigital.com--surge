@@ -325,24 +325,27 @@ function GetData()  {
         if (xhr.readyState === xhr.DONE && xhr.status === 200) {
             var XMLResult = xhr.responseXML;
             var test_res = XMLResult.querySelector("div.entry-content");
-            var headingTags = ["h1","h2","h3","h4","h5","h6","h7","h8","h9","h10"];
-            var paragraf = "", heading = "";
-            var hasilQuery = test_res.getElementsByTagName("p");
-            for (var i = 0; i < hasilQuery.length; i++)
-            {
-                var currRes = hasilQuery[i].innerText
-                paragraf += currRes
-                if (currRes != "" && currRes != "\0" && currRes != "\n") paragraf += "\n"
-            }
-            for (var i = 0; i < headingTags.length; i++)
-            {
-                hasilQuery = test_res.getElementsByTagName(headingTags[i]);
-                if (hasilQuery.length > 0) heading += "Level Heading ke-"+(i+1)+":\n"
-                for (var j = 0; j < hasilQuery.length; j++)
-                    heading += (j+1) + ". " + hasilQuery[j].innerText + "\n"
-            }
-            $("#fetchArtikelHeadings").val(heading);
-            $("#fetchArtikelContents").val(paragraf);
+            var scrapeHTML = test_res.innerHTML;
+            console.log(scrapeHTML)
+            editorFetch.blocks.renderFromHTML(scrapeHTML)
+            // var headingTags = ["h1","h2","h3","h4","h5","h6","h7","h8","h9","h10"];
+            // var paragraf = "", heading = "";
+            // var hasilQuery = test_res.getElementsByTagName("p");
+            // for (var i = 0; i < hasilQuery.length; i++)
+            // {
+            //     var currRes = hasilQuery[i].innerText
+            //     paragraf += currRes
+            //     if (currRes != "" && currRes != "\0" && currRes != "\n") paragraf += "\n"
+            // }
+            // for (var i = 0; i < headingTags.length; i++)
+            // {
+            //     hasilQuery = test_res.getElementsByTagName(headingTags[i]);
+            //     if (hasilQuery.length > 0) heading += "Level Heading ke-"+(i+1)+":\n"
+            //     for (var j = 0; j < hasilQuery.length; j++)
+            //         heading += (j+1) + ". " + hasilQuery[j].innerText + "\n"
+            // }
+            // $("#fetchArtikelHeadings").val(heading);
+            // $("#fetchArtikelContents").val(paragraf);
         }
     };
 
