@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Editor HTML</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1>Editor HTML</h1>
+      <form>
+        <div class="form-group">
+          <label for="html-input">Masukkan Teks HTML:</label>
+          <textarea
+            id="html-input"
+            name="html-input"
+            class="form-control"
+            rows="8"
+          ></textarea>
+        </div>
+        <div id="meta-title-container" style="display: none">
+          <div class="form-group">
+            <label for="meta-title">Title:</label>
+            <input id="meta-title" name="meta-title" class="form-control" />
+          </div>
+        </div>
+        <div id="meta-description-container" style="display: none">
+          <div class="form-group">
+            <label for="meta-description">Description:</label>
+            <textarea
+              id="meta-description"
+              name="meta-description"
+              class="form-control"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+        <div id="canonical-url-container" style="display: none">
+          <div class="form-group">
+            <label for="canonical-url">Permalink:</label>
+            <input
+              id="canonical-url"
+              name="canonical-url"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div id="entry-title-container" style="display: none">
+          <div class="form-group">
+            <label for="entry-title">Entry Title:</label>
+            <input id="entry-title" name="entry-title" class="form-control" />
+          </div>
+        </div>
+        <button
+          id="update-html-btn"
+          class="btn btn-primary mb-3"
+          style="display: none"
+        >
+          Update HTML
+        </button>
+      </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+      const htmlInput = document.getElementById("html-input");
+      const metaTitleContainer = document.getElementById(
+        "meta-title-container"
+      );
+      const metaTitleInput = document.getElementById("meta-title");
+      const metaDescriptionContainer = document.getElementById(
+        "meta-description-container"
+      );
+      const metaDescriptionInput = document.getElementById("meta-description");
+      const canonicalUrlContainer = document.getElementById(
+        "canonical-url-container"
+      );
+      const canonicalUrlInput = document.getElementById("canonical-url");
+      const entryTitleContainer = document.getElementById(
+        "entry-title-container"
+      );
+      const entryTitleInput = document.getElementById("entry-title");
+      const updateHtmlBtn = document.getElementById("update-html-btn");
+
+      htmlInput.addEventListener("input", () => {
+        const htmlText = htmlInput.value;
+        const parser = new DOMParser();
+        const htmlDocument = parser.parseFromString(htmlText, "text/html");
+
+        const titleElement = htmlDocument.querySelector("head title");
+        const descriptionElement = htmlDocument.querySelector(
+          'head meta[name="description"]'
+        );
+        const canonicalElement = htmlDocument.querySelector(
+          'head link[rel="canonical"]'
+        );
+        const entryTitleElement = htmlDocument.querySelector(
+          'h1[class="entry-title"]'
+        );
+
+        if (titleElement) {
+          metaTitleInput.value = titleElement.innerText
+            .replace(/\s+/g, " ")
+            .trim();
+          metaTitleContainer.style.display = "block";
+          titleElement.innerText = metaTitleInput.value;
+          const ogTitleElement = htmlDocument.querySelector(
+            'meta[property="og:title"]'
+          );
+          const twitterTitleElement = htmlDocument.querySelector(
+            'meta[name="twitter:title"]'
+          );
+          if (ogTitleElement) {
+            ogTitleElement.setAttribute("content", metaTitleInput.value);
+          }
+          if (twitterTitleElement) {
+            twitterTitleElement.setAttribute("content", metaTitleInput.value);
+          }
+        } else {
+          metaTitleContainer.style.display = "none";
+        }
+
+        if (descriptionElement) {
+          metaDescriptionInput.value =
+            descriptionElement.getAttribute("content");
+          metaDescriptionContainer.style.display = "block";
+          descriptionElement.setAttribute(
+            "content",
+            metaDescriptionInput.value
+          );
+          const ogDescriptionElement = htmlDocument.querySelector(
+            'meta[property="og:description"]'
+          );
+          const twitterDescriptionElement = htmlDocument.querySelector(
+            'meta[name="twitter:description"]'
+          );
+          if (ogDescriptionElement) {
+            ogDescriptionElement.setAttribute(
+              "content",
+              metaDescriptionInput.value
+            );
+          }
+          if (twitterDescriptionElement) {
+            twitterDescriptionElement.setAttribute(
+              "content",
+              metaDescriptionInput.value
+            );
+          }
+        } else {
+          metaDescriptionContainer.style.display = "none";
+        }
+
+        if (canonicalElement) {
+          canonicalUrlInput.value = canonicalElement.getAttribute("href");
+          canonicalUrlContainer.style.display = "block";
+          descriptionElement.setAttribute("content", canonicalUrlInput.value);
+          const ogUrlElement = htmlDocument.querySelector(
+            'meta[property="og:url"]'
+          );
+          if (ogUrlElement) {
+            ogUrlElement.setAttribute("content", canonicalUrlInput.value);
+          }
+        } else {
+          canonicalUrlContainer.style.display = "none";
+        }
+
+        if (entryTitleElement) {
+          entryTitleInput.value = entryTitleElement.innerText
+            .replace(/\s+/g, " ")
+            .trim();
+          entryTitleContainer.style.display = "block";
+          entryTitleElement.innerText = entryTitleInput.value;
+        } else {
+          metaTitleContainer.style.display = "none";
+        }
+
+        htmlInput.value = htmlDocument.documentElement.outerHTML;
+        updateHtmlBtn.style.display = "block";
+      });
+
+      updateHtmlBtn.addEventListener("click", () => {
+        const parser = new DOMParser();
+        const htmlDocument = parser.parseFromString(
+          htmlInput.value,
+          "text/html"
+        );
+
+        const titleElement = htmlDocument.querySelector("head title");
+        const descriptionElement = htmlDocument.querySelector(
+          'head meta[name="description"]'
+        );
+        const ogTitleElement = htmlDocument.querySelector(
+          'meta[property="og:title"]'
+        );
+        const twitterTitleElement = htmlDocument.querySelector(
+          'meta[name="twitter:title"]'
+        );
+        const ogDescriptionElement = htmlDocument.querySelector(
+          'meta[property="og:description"]'
+        );
+        const twitterDescriptionElement = htmlDocument.querySelector(
+          'meta[name="twitter:description"]'
+        );
+        const canonicalUrlElement = htmlDocument.querySelector(
+          'link[rel="canonical"]'
+        );
+        const ogUrlElement = htmlDocument.querySelector(
+          'meta[property="og:url"]'
+        );
+        const entryTitleElement = htmlDocument.querySelector(
+          'h1[class="entry-title"]'
+        );
+
+        if (titleElement && metaTitleInput.value !== "") {
+          titleElement.innerText = metaTitleInput.value;
+          if (ogTitleElement) {
+            ogTitleElement.setAttribute("content", metaTitleInput.value);
+          }
+          if (twitterTitleElement) {
+            twitterTitleElement.setAttribute("content", metaTitleInput.value);
+          }
+        }
+
+        if (descriptionElement && metaDescriptionInput.value !== "") {
+          descriptionElement.setAttribute(
+            "content",
+            metaDescriptionInput.value
+          );
+          if (ogDescriptionElement) {
+            ogDescriptionElement.setAttribute(
+              "content",
+              metaDescriptionInput.value
+            );
+          }
+          if (twitterDescriptionElement) {
+            twitterDescriptionElement.setAttribute(
+              "content",
+              metaDescriptionInput.value
+            );
+          }
+        }
+
+        if (canonicalUrlElement && canonicalUrlInput.value !== "") {
+          canonicalUrlElement.setAttribute("href", canonicalUrlInput.value);
+          if (ogUrlElement) {
+            ogUrlElement.setAttribute("content", canonicalUrlInput.value);
+          }
+        }
+
+        if (entryTitleElement && entryTitleInput.value !== "") {
+          entryTitleElement.innerText = entryTitleInput.value;
+        }
+
+        htmlInput.value = htmlDocument.documentElement.outerHTML;
+
+        // show success alert
+        const alertElement = document.createElement("div");
+        alertElement.classList.add("alert", "alert-success");
+        alertElement.innerText = "HTML berhasil diperbarui!";
+        document.querySelector(".container").appendChild(alertElement);
+
+        // remove success alert after 3 seconds
+        setTimeout(() => {
+          document.body.removeChild(alertElement);
+        }, 3000);
+      });
+    </script>
+  </body>
+</html>
