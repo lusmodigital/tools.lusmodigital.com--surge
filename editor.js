@@ -25,6 +25,8 @@ const editor = new EditorJS({
                   defaultStyle: 'ordered'
                 }
             },
+            markdownParser: MDParser,
+            markdownImporter: MDImporter,
         },
         holder: 'editorjs',
         minHeight : 0
