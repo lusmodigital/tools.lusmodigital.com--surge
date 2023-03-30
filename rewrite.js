@@ -112,8 +112,9 @@ $("#btnGenerateOne").click(function () {
             let dataType = htmlElement[totalKalimat++], openTag, closeTag;
             if (dataType === 'p') openTag = "<p>", closeTag = "</p>"
             if (dataType === 'img') openTag = '<img src="', closeTag = '" alt="" width="NaN" height="NaN"></img>'
-            if (dataType[0] === 'h') openTag = "<"+dataType+">", closeTag = "</"+dataType+">"
-            resultHtml += sentence.length_of_other_sentences > 0 ? openTag + '{' : '';
+            if (dataType[0] === 'h') console.log("test", dataType[0]), openTag = "<"+dataType+">", closeTag = "</"+dataType+">"
+            if (dataType[0] != 'h') resultHtml += sentence.length_of_other_sentences > 0 ? openTag + '{' : openTag;
+            if (dataType[0] == 'h') resultHtml += openTag;
 
             if (dataType === 'p') resultHtml += sentence.sentence_item;
             if (dataType === 'img') resultHtml += sentence.sentence_item.slice(6);
@@ -124,13 +125,14 @@ $("#btnGenerateOne").click(function () {
             if (sentence.length_of_other_sentences > 0)
                 sentence.other_sentences.forEach((other_sentence_item, other_sentence_index) => {
                     if (dataType === 'p' || dataType === 'img') resultHtml += "|" + other_sentence_item;
-                    if (dataType[0] === 'h') resultHtml += "|" + other_sentence_item.slice(5);
                 });
 
-            resultHtml += sentence.length_of_other_sentences > 0 ? '} ' + closeTag : '';
+            if (dataType[0] != 'h') resultHtml += sentence.length_of_other_sentences > 0 ? '} ' + closeTag : '' + closeTag;
+            else resultHtml += closeTag;
         });
         resultHtml += '&#10;&#10;';
     });
+    console.log(resultHtml);
     editorHasil.blocks.renderFromHTML(resultHtml)
     $("#textareaConvertSplitResult").html(resultHtml);
 });
