@@ -83,9 +83,17 @@
 
         <div class="row p-2">
             <input class="form-control" placeholder="URL Artikel" type="text" id="url-artikel" value="">
-            <button type="button" class="btn btn-secondary mt-2 mb-2" id="getDataBtn">Fetch!</button>
+            <div class="container">
+                <button type="button" class="btn btn-primary mt-2" id="getDataBtn">Fetch!</button>
+            </div>
+            <div class="py-1 mt-1">
+                <label for=""><b>Masukkan Artikel:</b></label>
+                <p id="statusTextFetch">(Status EditorJS)</p>
+            </div>
+            <div class="container bg-white border border-secondary-30 rounded mb-4">
+                <div id="editorjs_fetch" class="mt-5 mb-5 ml-3 mr-3"></div>
+            </div>
             <textarea disabled class="form-control" id="fetchArtikelHeadings" rows="5"></textarea>
-            <label for="" class="mt-2">Konten Artikel: </label>
             <textarea disabled class="form-control mt-2" id="fetchArtikelContents" rows="10"></textarea>
         </div>
     </div>
