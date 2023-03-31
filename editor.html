@@ -54,6 +54,17 @@
             <input id="entry-title" name="entry-title" class="form-control" />
           </div>
         </div>
+        <div id="entry-content-container" style="display: none">
+          <div class="form-group">
+            <label for="entry-content">Entry Content:</label>
+            <textarea
+              id="entry-content"
+              name="entry-content"
+              class="form-control"
+              rows="16"
+            ></textarea>
+          </div>
+        </div>
         <button
           type="button"
           id="update-html-btn"
@@ -85,6 +96,10 @@
         "entry-title-container"
       );
       const entryTitleInput = document.getElementById("entry-title");
+      const entryContentContainer = document.getElementById(
+        "entry-content-container"
+      );
+      const entryContentInput = document.getElementById("entry-content");
       const updateHtmlBtn = document.getElementById("update-html-btn");
 
       htmlInput.addEventListener("input", () => {
@@ -102,6 +117,10 @@
         const entryTitleElement = htmlDocument.querySelector(
           'h1[class="entry-title"]'
         );
+        // const entryContentElement =
+        //   htmlDocument.querySelector(".entry-content");
+        const entryContentElement =
+          htmlDocument.querySelector(".entry-content");
 
         if (titleElement) {
           metaTitleInput.value = titleElement.innerText
@@ -179,6 +198,14 @@
           metaTitleContainer.style.display = "none";
         }
 
+        if (entryContentElement) {
+          entryContentInput.value = entryContentElement.innerHTML;
+          entryContentContainer.style.display = "block";
+          entryContentElement.innerHTML = entryContentInput.value;
+        } else {
+          entryContentContainer.style.display = "none";
+        }
+
         htmlInput.value = htmlDocument.documentElement.outerHTML;
         updateHtmlBtn.style.display = "block";
       });
@@ -215,6 +242,8 @@
         const entryTitleElement = htmlDocument.querySelector(
           'h1[class="entry-title"]'
         );
+        const entryContentElement =
+          htmlDocument.querySelector(".entry-content");
 
         if (titleElement && metaTitleInput.value !== "") {
           titleElement.innerText = metaTitleInput.value;
@@ -254,6 +283,10 @@
 
         if (entryTitleElement && entryTitleInput.value !== "") {
           entryTitleElement.innerText = entryTitleInput.value;
+        }
+
+        if (entryContentElement && entryContentInput.value !== "") {
+          entryContentElement.innerHTML = entryContentInput.value;
         }
 
         htmlInput.value = htmlDocument.documentElement.outerHTML;
