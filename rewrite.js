@@ -29,6 +29,11 @@ $('#instruction-open-ai').on('change', function() {
 const modelOpenAiWidth = $('#model-open-ai').outerWidth();
 $('#instruction-open-ai').parent().css('width', modelOpenAiWidth);
 
+$("#btnClearArticle").click(function () {
+    editor.clear()
+    alert("Berhasil mengosongkan artikel!")
+})
+
 $("#btnProcessSplit").click(function () {
     editor.save().then((outputData) => {
         const jsonData = JSON.stringify(outputData)
@@ -308,7 +313,7 @@ function GetData()  {
                 var test_res = XMLResult.querySelector("div.entry-content");
                 var scrapeHTML = test_res.innerHTML;
                 console.log(scrapeHTML)
-                editorFetch.blocks.renderFromHTML(scrapeHTML)
+                editor.blocks.renderFromHTML(scrapeHTML)
                 // var headingTags = ["h1","h2","h3","h4","h5","h6","h7","h8","h9","h10"];
                 // var paragraf = "", heading = "";
                 // var hasilQuery = test_res.getElementsByTagName("p");
