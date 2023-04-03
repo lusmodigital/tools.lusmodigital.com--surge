@@ -7,9 +7,27 @@
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     />
+    <style>
+      textarea[is="highlighted-code"] {
+        padding: 8px;
+      }
+    </style>
+    <script type="module">
+      (async ({ chrome, netscape }) => {
+        // add Safari polyfill if needed
+        if (!chrome && !netscape)
+          await import("https://unpkg.com/@ungap/custom-elements");
+
+        const { default: HighlightedCode } = await import(
+          "https://unpkg.com/highlighted-code"
+        );
+
+        HighlightedCode.useTheme("github-dark");
+      })(self);
+    </script>
   </head>
   <body>
-    <div class="container mt-5">
+    <div class="my-5" style="margin-left: 20rem; margin-right: 20rem">
       <h1>Editor HTML</h1>
       <form>
         <div class="form-group">
@@ -18,7 +36,9 @@
             id="html-input"
             name="html-input"
             class="form-control"
-            rows="8"
+            rows="10"
+            is="highlighted-code"
+            language="html"
           ></textarea>
         </div>
         <div id="meta-title-container" style="display: none">
@@ -62,18 +82,23 @@
               name="entry-content"
               class="form-control"
               rows="16"
+              is="highlighted-code"
+              language="html"
             ></textarea>
           </div>
         </div>
-        <button
-          type="button"
-          id="update-html-btn"
-          class="btn btn-primary mb-3"
-          style="display: none"
-        >
-          Update HTML
-        </button>
+        <div class="d-flex justify-content-end">
+          <button
+            type="button"
+            id="update-html-btn"
+            class="btn btn-primary float-end"
+            style="display: none"
+          >
+            Update HTML
+          </button>
+        </div>
       </form>
+      <div class="alert-container"></div>
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -108,6 +133,12 @@
         const htmlDocument = parser.parseFromString(htmlText, "text/html");
 
         const titleElement = htmlDocument.querySelector("head title");
+        const ogTitleElement = htmlDocument.querySelector(
+          'meta[property="og:title"]'
+        );
+        const twitterTitleElement = htmlDocument.querySelector(
+          'meta[name="twitter:title"]'
+        );
         const descriptionElement = htmlDocument.querySelector(
           'head meta[name="description"]'
         );
@@ -117,8 +148,6 @@
         const entryTitleElement = htmlDocument.querySelector(
           'h1[class="entry-title"]'
         );
-        // const entryContentElement =
-        //   htmlDocument.querySelector(".entry-content");
         const entryContentElement =
           htmlDocument.querySelector(".entry-content");
 
@@ -128,18 +157,12 @@
             .trim();
           metaTitleContainer.style.display = "block";
           titleElement.innerText = metaTitleInput.value;
-          const ogTitleElement = htmlDocument.querySelector(
-            'meta[property="og:title"]'
-          );
-          const twitterTitleElement = htmlDocument.querySelector(
-            'meta[name="twitter:title"]'
-          );
-          if (ogTitleElement) {
-            ogTitleElement.setAttribute("content", metaTitleInput.value);
-          }
-          if (twitterTitleElement) {
-            twitterTitleElement.setAttribute("content", metaTitleInput.value);
-          }
+        } else if (!titleElement && ogTitleElement) {
+          metaTitleInput.value = ogTitleElement.getAttribute("content");
+          metaTitleContainer.style.display = "block";
+        } else if (!titleElement && !ogTitleElement && twitterTitleElement) {
+          metaTitleInput.value = twitterTitleElement.getAttribute("content");
+          metaTitleContainer.style.display = "block";
         } else {
           metaTitleContainer.style.display = "none";
         }
@@ -152,24 +175,24 @@
             "content",
             metaDescriptionInput.value
           );
-          const ogDescriptionElement = htmlDocument.querySelector(
-            'meta[property="og:description"]'
-          );
-          const twitterDescriptionElement = htmlDocument.querySelector(
-            'meta[name="twitter:description"]'
-          );
-          if (ogDescriptionElement) {
-            ogDescriptionElement.setAttribute(
-              "content",
-              metaDescriptionInput.value
-            );
-          }
-          if (twitterDescriptionElement) {
-            twitterDescriptionElement.setAttribute(
-              "content",
-              metaDescriptionInput.value
-            );
-          }
+          // const ogDescriptionElement = htmlDocument.querySelector(
+          //   'meta[property="og:description"]'
+          // );
+          // const twitterDescriptionElement = htmlDocument.querySelector(
+          //   'meta[name="twitter:description"]'
+          // );
+          // if (ogDescriptionElement) {
+          //   ogDescriptionElement.setAttribute(
+          //     "content",
+          //     metaDescriptionInput.value
+          //   );
+          // }
+          // if (twitterDescriptionElement) {
+          //   twitterDescriptionElement.setAttribute(
+          //     "content",
+          //     metaDescriptionInput.value
+          //   );
+          // }
         } else {
           metaDescriptionContainer.style.display = "none";
         }
@@ -245,14 +268,30 @@
         const entryContentElement =
           htmlDocument.querySelector(".entry-content");
 
-        if (titleElement && metaTitleInput.value !== "") {
+        if (
+          titleElement &&
+          metaTitleInput.value !== "" &&
+          ogTitleElement &&
+          twitterTitleElement
+        ) {
           titleElement.innerText = metaTitleInput.value;
-          if (ogTitleElement) {
-            ogTitleElement.setAttribute("content", metaTitleInput.value);
-          }
-          if (twitterTitleElement) {
-            twitterTitleElement.setAttribute("content", metaTitleInput.value);
-          }
+          ogTitleElement.setAttribute("content", metaTitleInput.value);
+          twitterTitleElement.setAttribute("content", metaTitleInput.value);
+        } else if (
+          !titleElement &&
+          metaTitleInput.value !== "" &&
+          ogTitleElement &&
+          twitterTitleElement
+        ) {
+          ogTitleElement.setAttribute("content", metaTitleInput.value);
+          twitterTitleElement.setAttribute("content", metaTitleInput.value);
+        } else if (
+          !titleElement &&
+          metaTitleInput.value !== "" &&
+          !ogTitleElement &&
+          twitterTitleElement
+        ) {
+          twitterTitleElement.setAttribute("content", metaTitleInput.value);
         }
 
         if (descriptionElement && metaDescriptionInput.value !== "") {
@@ -292,14 +331,15 @@
         htmlInput.value = htmlDocument.documentElement.outerHTML;
 
         // show success alert
+        const alertContainer = document.querySelector(".alert-container");
         const alertElement = document.createElement("div");
-        alertElement.classList.add("alert", "alert-success");
+        alertElement.classList.add("alert", "alert-success", "fixed-top");
         alertElement.innerText = "HTML berhasil diperbarui!";
-        document.querySelector(".container").appendChild(alertElement); // modified
+        alertContainer.appendChild(alertElement);
 
         // remove success alert after 3 seconds
         setTimeout(() => {
-          document.querySelector(".container").removeChild(alertElement); // modified
+          alertContainer.removeChild(alertElement);
         }, 3000);
       });
     </script>
