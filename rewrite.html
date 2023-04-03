@@ -75,43 +75,42 @@
     <button class="float" id="btnGenerateTwo">
         <i class="fa fa-whatsapp my-float">Generate Result</i>
     </button>
-
-    <div class="container bg-white mt-3">
-        <div class="py-3 text-center">
-            <h2>Fetch Artikel</h2>
-        </div>
-
-        <div class="row p-2">
-            <input class="form-control" placeholder="URL Artikel" type="text" id="url-artikel" value="">
-            <div class="container">
-                <button type="button" class="btn btn-primary mt-2" id="getDataBtn">Fetch!</button>
-            </div>
-            <div class="py-1 mt-1">
-                <label for=""><b>Masukkan Artikel:</b></label>
-                <p id="statusTextFetch">(Status EditorJS)</p>
-            </div>
-            <div class="container bg-white border border-secondary-30 rounded mb-4">
-                <div id="editorjs_fetch" class="mt-5 mb-5 ml-3 mr-3"></div>
-            </div>
-            <!-- <textarea disabled class="form-control" id="fetchArtikelHeadings" rows="5"></textarea>
-            <textarea disabled class="form-control mt-2" id="fetchArtikelContents" rows="10"></textarea> -->
-        </div>
-    </div>
     <div class="container bg-white mt-3">
         <div class="py-3 text-center">
             <h2>Split Artikel</h2>
         </div>
-
         <div class="row p-2">
-            <input class="form-control" placeholder="Api Key" type="text" id="api-key" value="">
-            
+            <form class="form-inline">
+                <div class="form-group">
+                    <input class="form-control mr-3" placeholder="URL Artikel" type="text" id="url-artikel" value="">
+                </div>
+                <button type="button" class="btn btn-primary" id="getDataBtn">Fetch!</button>
+            </form>
+            <div class="container">
+            </div>
+            <div class="py-1 mt-1">
+                <p id="statusTextFetch">(Status EditorJS)</p>
+            </div>
+            <div class="container bg-white border border-secondary-30 rounded mb-4 justify-content-center">
+                <div class="py-3 text-center">
+                    <h4>Artikel</h4>
+                </div>
+                <div id="editorjs_fetch" class="mb-5 ml-3 mr-3"></div>
+            </div>
+            <!-- <textarea disabled class="form-control" id="fetchArtikelHeadings" rows="5"></textarea>
+            <textarea disabled class="form-control mt-2" id="fetchArtikelContents" rows="10"></textarea> -->
+        </div>
+
+        <div class="row p-2">            
             <div class="py-1 mt-4">
                 <label for=""><b>Masukkan Artikel:</b></label>
                 <p id="statusText">(Status EditorJS)</p>
             </div>
-            <div class="container bg-white border border-secondary-30 rounded mb-4">
+            <div class="container bg-white border border-secondary-30 rounded mb-3">
                 <div id="editorjs" class="mt-5 mb-5 ml-3 mr-3"></div>
             </div>
+            
+            <input class="form-control mb-3" placeholder="Api Key" type="text" id="api-key" value="">
             <br>
             <input class="form-control" placeholder="Model OPEN AI" type="text" id="model-open-ai" value="" disabled>
             <br>
