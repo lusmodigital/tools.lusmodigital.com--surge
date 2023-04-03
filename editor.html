@@ -142,6 +142,12 @@
         const descriptionElement = htmlDocument.querySelector(
           'head meta[name="description"]'
         );
+        const ogDescriptionElement = htmlDocument.querySelector(
+          'meta[property="og:description"]'
+        );
+        const twitterDescriptionElement = htmlDocument.querySelector(
+          'meta[name="twitter:description"]'
+        );
         const canonicalElement = htmlDocument.querySelector(
           'head link[rel="canonical"]'
         );
@@ -175,27 +181,22 @@
             "content",
             metaDescriptionInput.value
           );
-          // const ogDescriptionElement = htmlDocument.querySelector(
-          //   'meta[property="og:description"]'
-          // );
-          // const twitterDescriptionElement = htmlDocument.querySelector(
-          //   'meta[name="twitter:description"]'
-          // );
-          // if (ogDescriptionElement) {
-          //   ogDescriptionElement.setAttribute(
-          //     "content",
-          //     metaDescriptionInput.value
-          //   );
-          // }
-          // if (twitterDescriptionElement) {
-          //   twitterDescriptionElement.setAttribute(
-          //     "content",
-          //     metaDescriptionInput.value
-          //   );
-          // }
+        } else if (!descriptionElement && ogDescriptionElement) {
+          metaDescriptionInput.value =
+            ogDescriptionElement.getAttribute("content");
+          metaDescriptionContainer.style.display = "block";
+        } else if (
+          !descriptionElement &&
+          !ogDescriptionElement &&
+          twitterDescriptionElement
+        ) {
+          metaDescriptionInput.value =
+            twitterDescriptionElement.getAttribute("content");
+          metaDescriptionContainer.style.display = "block";
         } else {
           metaDescriptionContainer.style.display = "none";
         }
+        console.log("ini input", metaDescriptionInput.value);
 
         if (canonicalElement) {
           canonicalUrlInput.value = canonicalElement.getAttribute("href");
@@ -294,23 +295,48 @@
           twitterTitleElement.setAttribute("content", metaTitleInput.value);
         }
 
-        if (descriptionElement && metaDescriptionInput.value !== "") {
+        if (
+          descriptionElement &&
+          metaDescriptionInput.value !== "" &&
+          ogDescriptionElement &&
+          twitterDescriptionElement
+        ) {
           descriptionElement.setAttribute(
             "content",
             metaDescriptionInput.value
           );
-          if (ogDescriptionElement) {
-            ogDescriptionElement.setAttribute(
-              "content",
-              metaDescriptionInput.value
-            );
-          }
-          if (twitterDescriptionElement) {
-            twitterDescriptionElement.setAttribute(
-              "content",
-              metaDescriptionInput.value
-            );
-          }
+          ogDescriptionElement.setAttribute(
+            "content",
+            metaDescriptionInput.value
+          );
+          twitterDescriptionElement.setAttribute(
+            "content",
+            metaDescriptionInput.value
+          );
+        } else if (
+          !descriptionElement &&
+          metaDescriptionInput.value !== "" &&
+          ogDescriptionElement &&
+          twitterDescriptionElement
+        ) {
+          ogDescriptionElement.setAttribute(
+            "content",
+            metaDescriptionInput.value
+          );
+          twitterDescriptionElement.setAttribute(
+            "content",
+            metaDescriptionInput.value
+          );
+        } else if (
+          !descriptionElement &&
+          metaDescriptionInput.value !== "" &&
+          !ogDescriptionElement &&
+          twitterDescriptionElement
+        ) {
+          twitterDescriptionElement.setAttribute(
+            "content",
+            metaDescriptionInput.value
+          );
         }
 
         if (canonicalUrlElement && canonicalUrlInput.value !== "") {
