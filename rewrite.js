@@ -29,6 +29,11 @@ $('#instruction-open-ai').on('change', function() {
 const modelOpenAiWidth = $('#model-open-ai').outerWidth();
 $('#instruction-open-ai').parent().css('width', modelOpenAiWidth);
 
+$("#btnClearArticle").click(function () {
+    editor.clear()
+    alert("Berhasil mengosongkan artikel!")
+})
+
 $("#btnProcessSplit").click(function () {
     editor.save().then((outputData) => {
         const jsonData = JSON.stringify(outputData)
