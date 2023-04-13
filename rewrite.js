@@ -188,7 +188,8 @@ $("#btnGenerateTwo").click(function () {
             text = text.replace(matches[0], selectedVariable);
         }
     }
-    $("#textareaConvertSplitResultAkhir").val(text);
+    editorHasilAkhir.blocks.renderFromHTML(text)
+    $("#textareaConvertSplitResultAkhir").val(text)
 });
 
 $('#btnAdd').click(function (e) {
