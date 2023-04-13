@@ -188,7 +188,7 @@ $("#btnGenerateTwo").click(function () {
             text = text.replace(matches[0], selectedVariable);
         }
     }
-    $("#textareaFinalResult").val(text);
+    $("#textareaConvertSplitResultAkhir").val(text);
 });
 
 $('#btnAdd').click(function (e) {
@@ -364,6 +364,24 @@ function download(current_index) {
 function exportHTML() {
     var element = document.createElement('a');
     var text = document.getElementById('textareaConvertSplitResult').value;
+    if (text != null && text && "\0" && text != "")
+    {
+        element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', 'artikel.html');
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+    else alert("Artikel spin dalam bentuk HTML belum ter-generate, mohon klik 'Export HTML' di bawah terlebih dahulu!")
+}
+
+function exportHTMLAkhir() {
+    var element = document.createElement('a');
+    var text = document.getElementById('textareaConvertSplitResultAkhir').value;
     if (text != null && text && "\0" && text != "")
     {
         element.setAttribute('href', 'data:text/html;charset=utf-8,' + encodeURIComponent(text));

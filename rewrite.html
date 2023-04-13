@@ -190,11 +190,21 @@
         <div class="row">
 
             <div class="col-md-8">
-                <div class="col-md-12 text-center">
+                <div class="col-md-12">
                     <h2>
                         Final Result - Generate B
                     </h2>
-                    <textarea id="textareaFinalResult" class="form-control" rows="20"></textarea>
+                    <div class="py-1 mt-4">
+                        <p id="statusTextHasilAkhir">(Status EditorJS)</p>
+                    </div>
+                    <div class="container bg-white border border-secondary-30 rounded mb-4">
+                        <div id="editorjs_hasil_akhir"></div>
+                    </div>
+                    <div class="py-1 mt-4">
+                        <p><b>HTML Result</b></p>
+                    </div>
+                    <textarea id="textareaConvertSplitResultAkhir" class="form-control" rows="20"></textarea>
+                    <button type="button" class="btn btn-primary mt-2 pull-right" onclick="exportHTMLAkhir()">Export HTML</button>
                 </div>
 
             </div>
