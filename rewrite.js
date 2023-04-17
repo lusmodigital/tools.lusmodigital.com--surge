@@ -3,7 +3,7 @@ let paragraphs_object = [], totalToken = 0, totalKalimat = 0;
 const data_instructions = [
     'tulis ulang dengan mengubah struktur kalimat di atas tanpa merubah maknanya',
     'tulis ulang dengan mengubah struktur kalimat di atas',
-    // 'Tambah Data Disini ',
+    'tulis ulang kalimat yang ada dimulai dengan kata ditengah tanpa merubah makna',
     // 'Tambah Data Disini 2',
     // 'Tambah Data Disini 3',
     'Tambahkan instruksi kustom'
