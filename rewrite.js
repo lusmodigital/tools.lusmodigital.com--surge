@@ -299,36 +299,37 @@ function generateOpenAiVertialOtherSentences(other_sentence_verticaly_index) {
         });
     });
     
-}
+} 
 
-function GetData() {
-  const xhr = new XMLHttpRequest();
-  const urlArtikel = $("#url-artikel").val();
-  const proxyUrl = "https://cors-anywhere.herokuapp.com/";
-  const fullUrl = proxyUrl + urlArtikel;
-  
-  xhr.open("GET", fullUrl);
-  xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-  // add the Access-Control-Allow-Origin header
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.responseType = "document";
+function GetData()  {
+    const xhr = new XMLHttpRequest;
+    let urlArtikel = $("#url-artikel").val();
+    const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+    const fullUrl = proxyUrl + urlArtikel;
+    
+    xhr.open("GET", fullUrl);
+    // add the Access-Control-Allow-Origin header
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+    xhr.responseType = 'document';
+    xhr.onload = () => {
+        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+            try {
+                var XMLResult = xhr.responseXML;
+                var test_res = XMLResult.querySelector("div#main-content");
+                if (!test_res)
+                    test_res = XMLResult.querySelector("div.entry-content");
+                var scrapeHTML = test_res.innerHTML;
+                console.log(scrapeHTML)
+                editor.blocks.renderFromHTML(scrapeHTML)
+            } catch(err) {
+                console.log(err)
+                alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+            }
+        }
+    };
 
-  xhr.onload = () => {
-    if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-      try {
-        const XMLResult = xhr.responseXML;
-        let test_res = XMLResult.querySelector("div#main-content");
-        if (!test_res) test_res = XMLResult.querySelector("div.entry-content");
-        const scrapeHTML = test_res.innerHTML;
-        console.log(scrapeHTML);
-        editor.blocks.renderFromHTML(scrapeHTML);
-      } catch (err) {
-        console.log(err);
-        alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!");
-      }
-    }
-  };
-  xhr.send();
+    xhr.send();
 }
   
 document.querySelector("#getDataBtn").addEventListener('click', GetData);
