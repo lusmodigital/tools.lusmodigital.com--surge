@@ -325,6 +325,34 @@ function GetData()  {
 
     xhr.send();
 }
+
+function GetData() {
+  const xhr = new XMLHttpRequest();
+  const urlArtikel = $("#url-artikel").val();
+  const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+  const fullUrl = proxyUrl + urlArtikel;
+  
+  xhr.open("GET", fullUrl);
+  xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+  xhr.responseType = "document";
+
+  xhr.onload = () => {
+    if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+      try {
+        const XMLResult = xhr.responseXML;
+        let test_res = XMLResult.querySelector("div#main-content");
+        if (!test_res) test_res = XMLResult.querySelector("div.entry-content");
+        const scrapeHTML = test_res.innerHTML;
+        console.log(scrapeHTML);
+        editor.blocks.renderFromHTML(scrapeHTML);
+      } catch (err) {
+        console.log(err);
+        alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!");
+      }
+    }
+  };
+  xhr.send();
+}
   
 document.querySelector("#getDataBtn").addEventListener('click', GetData);
 
