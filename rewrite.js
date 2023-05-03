@@ -299,31 +299,6 @@ function generateOpenAiVertialOtherSentences(other_sentence_verticaly_index) {
         });
     });
     
-} 
-
-function GetData()  {
-    const xhr = new XMLHttpRequest;
-    let urlArtikel = $("#url-artikel").val();
-    xhr.open('GET', urlArtikel);
-    xhr.responseType = 'document';
-    xhr.onload = () => {
-        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-            try {
-                var XMLResult = xhr.responseXML;
-                var test_res = XMLResult.querySelector("div#main-content");
-                if (!test_res)
-                    test_res = XMLResult.querySelector("div.entry-content");
-                var scrapeHTML = test_res.innerHTML;
-                console.log(scrapeHTML)
-                editor.blocks.renderFromHTML(scrapeHTML)
-            } catch(err) {
-                console.log(err)
-                alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
-            }
-        }
-    };
-
-    xhr.send();
 }
 
 function GetData() {
@@ -334,6 +309,8 @@ function GetData() {
   
   xhr.open("GET", fullUrl);
   xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+  // add the Access-Control-Allow-Origin header
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
   xhr.responseType = "document";
 
   xhr.onload = () => {
@@ -351,9 +328,6 @@ function GetData() {
       }
     }
   };
-
-  // add the Access-Control-Allow-Origin header
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
   xhr.send();
 }
   
