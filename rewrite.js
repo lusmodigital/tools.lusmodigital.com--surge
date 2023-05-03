@@ -310,7 +310,9 @@ function GetData()  {
         if (xhr.readyState === xhr.DONE && xhr.status === 200) {
             try {
                 var XMLResult = xhr.responseXML;
-                var test_res = XMLResult.querySelector("div.entry-content");
+                var test_res = XMLResult.querySelector("div#main-content");
+                if (!test_res)
+                    test_res = XMLResult.querySelector("div.entry-content");
                 var scrapeHTML = test_res.innerHTML;
                 console.log(scrapeHTML)
                 editor.blocks.renderFromHTML(scrapeHTML)
@@ -333,6 +335,7 @@ function GetData()  {
                 // $("#fetchArtikelHeadings").val(heading);
                 // $("#fetchArtikelContents").val(paragraf);
             } catch(err) {
+                console.log(err)
                 alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
             }
         }
