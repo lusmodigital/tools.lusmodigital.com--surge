@@ -351,6 +351,9 @@ function GetData() {
       }
     }
   };
+
+  // add the Access-Control-Allow-Origin header
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
   xhr.send();
 }
   
