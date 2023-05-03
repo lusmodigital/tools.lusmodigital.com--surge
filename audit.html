@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tool SEO Audit</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1>Tool SEO Audit</h1>
+      <form>
+        <div class="form-group">
+          <label for="urlInput">Masukkan URL:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="urlInput"
+            placeholder="Contoh: contoh.com"
+          />
+        </div>
+        <button type="button" class="btn btn-primary" onclick="generateLink()">
+          Generate Link
+        </button>
+      </form>
+      <br />
+      <div
+        class="alert alert-success"
+        id="linkResult"
+        style="display: none"
+      ></div>
+    </div>
+
+    <script>
+      function generateLink() {
+        var urlInput = document.getElementById("urlInput").value;
+        var linkResult = document.getElementById("linkResult");
+        linkResult.innerHTML =
+          '<a href="https://www.seoptimer.com/' +
+          urlInput +
+          '" target="_blank">Seoptimer</a><br><a href="https://app.neilpatel.com/en/seo_analyzer/site_audit?domain=' +
+          urlInput +
+          '&submit=Analyze+Website" target="_blank">Neil Patel SEO Analyzer</a><br><a href="https://thehoth.websiteauditserver.com/process-embedded.inc?type=pdf&uid=46847&behaviour=new_tab&template=0&domain=' +
+          urlInput +
+          '&first_name=waletwalet&email=markaswalet%40gmail.com" target="_blank">The Hoth</a><br><a href="https://www.woorank.com/en/teaser-review/' +
+          urlInput +
+          '?usecase=all" target="_blank">Woorank</a>';
+        linkResult.style.display = "block";
+      }
+    </script>
+  </body>
+</html>
