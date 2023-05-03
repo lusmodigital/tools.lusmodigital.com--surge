@@ -36,21 +36,18 @@
     </div>
 
     <script>
-      function generateLink() {
-        var urlInput = document.getElementById("urlInput").value;
-        var linkResult = document.getElementById("linkResult");
-        linkResult.innerHTML =
-          '<a href="https://www.seoptimer.com/' +
-          urlInput +
-          '" target="_blank">Seoptimer</a><br><a href="https://app.neilpatel.com/en/seo_analyzer/site_audit?domain=' +
-          urlInput +
-          '&submit=Analyze+Website" target="_blank">Neil Patel SEO Analyzer</a><br><a href="https://thehoth.websiteauditserver.com/process-embedded.inc?type=pdf&uid=46847&behaviour=new_tab&template=0&domain=' +
-          urlInput +
-          '&first_name=waletwalet&email=markaswalet%40gmail.com" target="_blank">The Hoth</a><br><a href="https://www.woorank.com/en/teaser-review/' +
-          urlInput +
-          '?usecase=all" target="_blank">Woorank</a>';
+      const generateLink = () => {
+        const urlInput = document.getElementById("urlInput").value;
+        const linkResult = document.getElementById("linkResult");
+        linkResult.innerHTML = `
+    <a href="https://www.seoptimer.com/${urlInput}" target="_blank">Seoptimer</a><br>
+    <a href="https://app.neilpatel.com/en/seo_analyzer/site_audit?domain=${urlInput}&submit=Analyze+Website" target="_blank">Neil Patel SEO Analyzer</a><br>
+    <a href="https://thehoth.websiteauditserver.com/process-embedded.inc?type=pdf&uid=46847&behaviour=new_tab&template=0&domain=${urlInput}&first_name=waletwalet&email=markaswalet%40gmail.com" target="_blank">The Hoth</a><br>
+    <a href="https://www.woorank.com/en/teaser-review/${urlInput}?usecase=all" target="_blank">Woorank</a><br>
+    <a href="https://dashboard.linkgraph.io/go/url?domain_analyzer=${urlInput}" target="_blank">LinkGraph</a>
+  `;
         linkResult.style.display = "block";
-      }
+      };
     </script>
   </body>
 </html>
