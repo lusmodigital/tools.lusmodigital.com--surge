@@ -76,6 +76,9 @@ $("#btnProcessSplit").click(function () {
                 paragraphs_object.push({
                     "paragraph_index": paragraph_index,
                     "paragraph_item": paragraph_item,
+                    "other_paragraphs": [],
+                    "other_paragraph_ids": [],
+                    "length_of_other_paragraphs": 0,
                     "length_of_sentences": sentences.length,
                     "sentences_object": sentences_object,
                     "sentences": sentences,
@@ -132,6 +135,9 @@ $("#btnProcessSplitParagraph").click(function () {
                 paragraphs_object.push({
                     "paragraph_index": paragraph_index,
                     "paragraph_item": paragraph_item,
+                    "other_paragraphs": [],
+                    "other_paragraph_ids": [],
+                    "length_of_other_paragraphs": 0,
                     "length_of_sentences": sentences.length,
                     "sentences_object": sentences_object,
                     "sentences": sentences,
@@ -338,14 +344,12 @@ $("#generate-input-open-ai").click(function () {
     });
 });
 
-let counterSplitParagraf = 0;
 $("#generate-paragraph-open-ai").click(function () {
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
         if (paragraph.paragraph_item.slice(0, 2) != '[h')
-            AddOpenAIParagraph(paragraph_index, counterSplitParagraf, true);
-        else AddOpenAIParagraphHeader(paragraph_index, counterSplitParagraf, true);
+            AddOpenAIParagraph(paragraph_index, true);
+        else AddOpenAIParagraphHeader(paragraph_index, true);
     });
-    counterSplitParagraf++
 });
 
 function deleteVerticalOtherSentences(other_sentence_vertical_index) {
@@ -411,7 +415,7 @@ function generateOpenAiVerticalOtherParagraphs(other_sentence_vertical_index) {
         {
             console.log(totalKalimat, htmlElement)
             if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, paragraph.paragraph_item.slice(1, 3))
-            // paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[other_sentence_vertical_index] = paragraphs_object[paragraph_index].sentences[sentence_index],
+            paragraphs_object[paragraph_index].other_paragraphs[other_sentence_vertical_index] = paragraphs_object[paragraph_index].paragraph_item,
             $(`#open-ai-paragraph-${paragraph_index}-${other_sentence_vertical_index}`).val(paragraphs_object[paragraph_index].paragraph_item);
         }
         else if(paragraph.paragraph_item.slice(0, 5) == '[img]')
@@ -613,12 +617,13 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
     $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
 }
 
-function AddOpenAIParagraph(paragraph_index, current_index, is_mass_generate = false) {
+function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
+    let current_index = paragraphs_object[paragraph_index].length_of_other_paragraphs;
     console.log(paragraphs_object);
     let massDeleteButton = '', massGenerateArticle = '';
     if (is_mass_generate && paragraph_index==0) {
         massDeleteButton =`
-            <button class="btn btn-sm btn-success" id="btn-generate-vertical-other-paragraph-${paragraph_index}" onclick="generateOpenAiVerticalOtherParagraphs('${paragraph_index}')">Generate All Open AI</button>
+            <button class="btn btn-sm btn-success" id="btn-generate-vertical-other-paragraph-${paragraph_index}" onclick="generateOpenAiVerticalOtherParagraphs('${current_index}')">Generate All Open AI</button>
             <button class="btn btn-sm btn-danger" id="btn-delete-vertical-other-paragraph-${paragraph_index}" onclick="deleteVerticalOtherParagraphs('${paragraph_index}')">Close All</button>
             <br>
         `;
@@ -630,7 +635,7 @@ function AddOpenAIParagraph(paragraph_index, current_index, is_mass_generate = f
         massGenerateArticle =`
             <center>
                 <br>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate Article</button>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate Article</button>
                 <br><br>
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
@@ -638,6 +643,9 @@ function AddOpenAIParagraph(paragraph_index, current_index, is_mass_generate = f
             </center>
         `;
     }
+    paragraphs_object[paragraph_index].length_of_other_paragraphs = current_index+1;
+    paragraphs_object[paragraph_index].other_paragraphs.push('');
+    paragraphs_object[paragraph_index].other_paragraph_ids.push(current_index);
     result = `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="open-ai-div-paragraph-${paragraph_index}-${current_index}">
         ${massDeleteButton}
         <a>Paragraf ${paragraph_index+1}</a>
@@ -708,12 +716,13 @@ function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate =
     $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
 }
 
-function AddOpenAIParagraphHeader(paragraph_index, current_index, is_mass_generate = false) {
+function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
+    let current_index = paragraphs_object[paragraph_index].length_of_other_paragraphs;
     console.log(paragraphs_object);
     let massDeleteButton = '', massGenerateArticle = '';
     if (is_mass_generate && paragraph_index==0) {
         massDeleteButton =`
-            <button class="btn btn-sm btn-success" id="btn-generate-vertical-other-paragraph-${paragraph_index}" onclick="generateOpenAiVerticalOtherParagraphs('${paragraph_index}')">Generate All Open AI</button>
+            <button class="btn btn-sm btn-success" id="btn-generate-vertical-other-paragraph-${paragraph_index}" onclick="generateOpenAiVerticalOtherParagraphs('${current_index}')">Generate All Open AI</button>
             <button class="btn btn-sm btn-danger" id="btn-delete-vertical-other-paragraph-${paragraph_index}" onclick="deleteVerticalOtherParagraphs('${paragraph_index}')">Close All</button>
             <br>
         `;
@@ -725,7 +734,7 @@ function AddOpenAIParagraphHeader(paragraph_index, current_index, is_mass_genera
         massGenerateArticle =`
             <center>
                 <br>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate Article</button>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate Article</button>
                 <br><br>
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
@@ -733,6 +742,9 @@ function AddOpenAIParagraphHeader(paragraph_index, current_index, is_mass_genera
             </center>
         `;
     }
+    paragraphs_object[paragraph_index].length_of_other_paragraphs = current_index+1;
+    paragraphs_object[paragraph_index].other_paragraphs.push('');
+    paragraphs_object[paragraph_index].other_paragraph_ids.push(current_index);
     result = `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="open-ai-div-paragraph-${paragraph_index}-${current_index}">
         ${massDeleteButton}
         <a>Paragraf ${paragraph_index+1}</a>
@@ -770,7 +782,7 @@ function updateOtherSentence(paragraph_index, sentence_index, current_index) {
 
 function updateOtherParagraph(paragraph_index, current_index) {
     let text =  $(`#open-ai-paragraph-${paragraph_index}-${current_index}`).val();
-    // paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[current_index] = text;
+    paragraphs_object[paragraph_index].other_paragraphs[current_index] = text;
 }
 
 function DeleteTextOpenAI(paragraph_index, sentence_index, current_index) {
@@ -786,11 +798,11 @@ function DeleteTextOpenAI(paragraph_index, sentence_index, current_index) {
 function DeleteParagraphOpenAI(paragraph_index, current_index) {
     $(`#open-ai-div-paragraph-${paragraph_index}-${current_index}`).remove();
 
-    // let index = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.findIndex(item => item == current_index);
+    let index = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.findIndex(item => item == current_index);
     
-    // paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.splice(index, 1);
-    // paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.splice(index, 1);
-    // paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.length;
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.splice(index, 1);
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.splice(index, 1);
+    paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.length;
 }
 
 function GenerateArticleColumn(current_index) {
@@ -801,6 +813,15 @@ function GenerateArticleColumn(current_index) {
             resultHtml += sentence.other_sentences[current_index] + " "
         });
         resultHtml += '&#10;&#10;';
+    });
+    console.log(resultHtml);
+    $("#artikel-"+current_index).html(resultHtml);
+}
+
+function GenerateArticleColumnParagraph(current_index) {
+    let resultHtml = '';
+    paragraphs_object.forEach((paragraph, paragraph_index) => {
+        resultHtml += paragraph.other_paragraphs[current_index] + '&#10;&#10;';
     });
     console.log(resultHtml);
     $("#artikel-"+current_index).html(resultHtml);
@@ -910,7 +931,7 @@ function GenerateOpenAIParagraph(paragraph_index, current_index) {
 
             let tokens = response.usage.total_tokens;
 
-            // paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences[current_index] = result;
+            paragraphs_object[paragraph_index].other_paragraphs[current_index] = result;
             $(`#open-ai-paragraph-${paragraph_index}-${current_index}`).val(result);
 
             totalToken += tokens;
