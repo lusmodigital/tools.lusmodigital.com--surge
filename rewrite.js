@@ -4,8 +4,7 @@ const data_instructions = [
     'tulis ulang dengan mengubah struktur kalimat di atas tanpa merubah maknanya',
     'tulis ulang dengan mengubah struktur kalimat di atas',
     'tulis ulang kalimat yang ada dimulai dengan kata ditengah tanpa merubah makna',
-    // 'Tambah Data Disini 2',
-    // 'Tambah Data Disini 3',
+    'tulis ulang paragraf ini secara unik dan lebih lengkap',
     'Tambahkan instruksi kustom'
 ]
 const LOADING = $("#loading-overlay");
@@ -47,7 +46,7 @@ $("#btnProcessSplit").click(function () {
             else data = data["text"], articleText += data+'\n'
             console.log(tipe, "-", data)
         }
-        let answer = window.confirm("Continue For Split this Article ? ");
+        let answer = window.confirm("Continue to Split this Article?");
         if (!answer) {
             console.log('Cancelled');
             return;
@@ -55,6 +54,8 @@ $("#btnProcessSplit").click(function () {
             let paragraphs = articleText.split(/\r?\n/);
 
             paragraphs_object = [];
+            console.log("paragraphs")
+            console.log(paragraphs)
             paragraphs.forEach((paragraph_item, paragraph_index) => {
                 if (paragraph_item === '') return; 
                     
@@ -82,6 +83,62 @@ $("#btnProcessSplit").click(function () {
                 totalKalimatParagrafAkhir = sentences.length;
             });
             showDataSplit();
+        }
+    }).catch((error) => {
+        console.log('Error:', error);
+    });
+});
+
+$("#btnProcessSplitParagraph").click(function () {
+    editor.save().then((outputData) => {
+        const jsonData = JSON.stringify(outputData)
+        console.log(jsonData)
+        var articleText = ''
+        for (var i = 0; i < outputData["blocks"].length; i++){
+            var dataNya = outputData["blocks"][i]
+            var tipe = dataNya["type"], data = dataNya["data"], level = data;
+            if (tipe == 'image') data = data["url"], articleText += '[img] '+data+'\n'
+            else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '[h'+level+'] '+data+'\n'
+            else data = data["text"], articleText += data+'\n'
+            console.log(tipe, "-", data)
+        }
+        let answer = window.confirm("Continue to Split this Article?");
+        if (!answer) {
+            console.log('Cancelled');
+            return;
+        } else {
+            let paragraphs = articleText.split(/\r?\n/);
+
+            paragraphs_object = [];
+            paragraphs.forEach((paragraph_item, paragraph_index) => {
+                if (paragraph_item === '') return; 
+                    
+                let paragraph = paragraph_item;
+                console.log("paragraph_item")
+                console.log(paragraph_item)
+                let sentences = paragraph.split(/\.\s|\?\s/);
+
+                let sentences_object = [];
+                sentences.forEach((sentence_item, sentence_index) => {
+                    sentences_object.push({
+                        "sentence_index": sentence_index,
+                        "sentence_item": sentence_item,
+                        "length_of_other_sentences": 0,
+                        "other_sentences": [],
+                        "other_sentence_ids": [],
+                    });
+                });
+
+                paragraphs_object.push({
+                    "paragraph_index": paragraph_index,
+                    "paragraph_item": paragraph_item,
+                    "length_of_sentences": sentences.length,
+                    "sentences_object": sentences_object,
+                    "sentences": sentences,
+                });
+                totalKalimatParagrafAkhir = sentences.length;
+            });
+            showParagraphSplit();
         }
     }).catch((error) => {
         console.log('Error:', error);
@@ -225,6 +282,27 @@ function showDataSplit() {
             result += `</div>`;
 
         });
+        result += `</div>`;
+
+        $('#containerSplitPerArticle').append(result);
+    });
+}
+
+function showParagraphSplit() {
+    paragraphs_object.forEach((paragraph, paragraph_index) => {
+        let result = '';
+        result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${paragraph_index % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
+        <center><h6>Paragraph ${paragraph_index+1}</h6></center><hr>`;
+        result += `<div class="section-sentence-horizontal" id="section-sentence-horizontal-${paragraph_index}">`;
+        result += `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+                <a>Isi Paragraf</a>
+                <textarea class="form-control" name="paragraph" rows="3">${paragraph.paragraph_item}</textarea>
+                <center>
+                    <button class="btn btn-sm btn-info" onclick="AddOpenAITextParagraph('${paragraph_index}')">Add</button>
+                    <button class="btn btn-sm btn-danger" onclick="DeleteHorizontalSentenceParagraph('${paragraph_index}')">Delete</button>
+                </center>
+            </div> `;
+        result += `</div>`;
         result += `</div>`;
 
         $('#containerSplitPerArticle').append(result);
