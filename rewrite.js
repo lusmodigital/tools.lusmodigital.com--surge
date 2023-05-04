@@ -332,8 +332,6 @@ function GetDataX()  {
 
 function GetDataCORSBypass(urlArtikel) {
     try {
-        alert("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
-        console.log("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
         $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel)+'&callback=?', function (data) {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(data.contents, 'text/html');
@@ -343,6 +341,8 @@ function GetDataCORSBypass(urlArtikel) {
             var scrapeHTML = test_res.innerHTML;
             editor.blocks.renderFromHTML(scrapeHTML)
         });
+        $('#modalTunggu').modal('show');
+        console.log("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
     } catch(err) {
         // console.log(err);
         alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
@@ -357,14 +357,22 @@ function checkAccessControlAllowOrigin(url) {
   } catch (e) {
     console.log('AccessControlAllowOrigin tidak diizinkan!');
   }
-  return xhr.getResponseHeader('Access-Control-Allow-Origin') !== null;
+  let check = false;
+  try {
+    if (xhr.getAllResponseHeaders() != '') check = true;
+    if (xhr.getAllResponseHeaders().indexOf("Access-Control-Allow-Origin") >= 0)
+        check = true;
+    console.log("check")
+    console.log('"'+xhr.getAllResponseHeaders()+'"')
+  } catch (e) {console.log(e)}
+  console.log(check)
+  return check;
 }
 
 function GetData()  {
     const xhr = new XMLHttpRequest;
     let urlArtikel = $("#url-artikel").val();
     let cek = checkAccessControlAllowOrigin(urlArtikel);
-    console.log(cek);
     if (cek) {
         xhr.open("GET", urlArtikel);
         xhr.responseType = 'document';
