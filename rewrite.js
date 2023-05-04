@@ -340,7 +340,6 @@ function GetData() {
         if (!test_res)
             test_res = htmlDoc.querySelector("div.entry-content");
         var scrapeHTML = test_res.innerHTML;
-        console.log(scrapeHTML)
         editor.blocks.renderFromHTML(scrapeHTML)
     });
 }
