@@ -330,8 +330,10 @@ function GetDataX()  {
     xhr.send();
 }
 
-function GetDataBypass(urlArtikel) {
+function GetDataCORSBypass(urlArtikel) {
     try {
+        alert("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
+        console.log("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
         $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel)+'&callback=?', function (data) {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(data.contents, 'text/html');
@@ -342,39 +344,55 @@ function GetDataBypass(urlArtikel) {
             editor.blocks.renderFromHTML(scrapeHTML)
         });
     } catch(err) {
-        console.log(err);
+        // console.log(err);
         alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
     }
+}
+
+function checkAccessControlAllowOrigin(url) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('HEAD', url, false);
+  try {
+    xhr.send();
+  } catch (e) {
+    console.log('AccessControlAllowOrigin tidak diizinkan!');
+  }
+  return xhr.getResponseHeader('Access-Control-Allow-Origin') !== null;
 }
 
 function GetData()  {
     const xhr = new XMLHttpRequest;
     let urlArtikel = $("#url-artikel").val();
-    xhr.open("GET", urlArtikel);
-    xhr.responseType = 'document';
-    xhr.onload = () => {
-        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-            try {
-                var XMLResult = xhr.responseXML;
-                var test_res = XMLResult.querySelector("div#main-content");
-                if (!test_res)
-                    test_res = XMLResult.querySelector("div.entry-content");
-                var scrapeHTML = test_res.innerHTML;
-                console.log(scrapeHTML)
-                editor.blocks.renderFromHTML(scrapeHTML)
-            } catch(err) {
+    let cek = checkAccessControlAllowOrigin(urlArtikel);
+    console.log(cek);
+    if (cek) {
+        xhr.open("GET", urlArtikel);
+        xhr.responseType = 'document';
+        xhr.onload = () => {
+            if (xhr.readyState === xhr.DONE && xhr.status === 200) {
                 try {
-
+                    var XMLResult = xhr.responseXML;
+                    var test_res = XMLResult.querySelector("div#main-content");
+                    if (!test_res)
+                        test_res = XMLResult.querySelector("div.entry-content");
+                    var scrapeHTML = test_res.innerHTML;
+                    console.log(scrapeHTML)
+                    editor.blocks.renderFromHTML(scrapeHTML)
                 } catch(err) {
-                    GetDataCORSBypass(urlArtikel)
-                    console.log(err)
-                    alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+                    try {
+                        GetDataCORSBypass(urlArtikel)
+                    } catch(err) {
+                        // console.log(err)
+                        alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+                    }
                 }
             }
-        }
-    };
+        };
 
-    xhr.send();
+        xhr.send();
+    } else {
+        GetDataCORSBypass(urlArtikel)
+    }
 }
   
 document.querySelector("#getDataBtn").addEventListener('click', GetData);
