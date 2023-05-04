@@ -155,11 +155,11 @@ $("#btnGenerateOne").click(function () {
             if (dataType === 'p') openTag = "<p>", closeTag = "</p>"
             if (dataType === 'img') openTag = '<img src="', closeTag = '" alt="" width="NaN" height="NaN"></img>'
             if (dataType[0] === 'h') openTag = "<"+dataType+">", closeTag = "</"+dataType+">"
-            if (dataType[0] != 'h') 
+            if (dataType[0] != 'h' && dataType != 'img') 
                 resultHtml += sentence.length_of_other_sentences > 0 ? openTag + '{' : openTag;
             if (dataType[0] != 'h' && dataType != 'img') 
                 renderHtml += sentence.length_of_other_sentences > 0 ? openTag + '{' : openTag;
-            if (dataType[0] == 'h') resultHtml += openTag;
+            if (dataType[0] == 'h' || dataType == 'img') resultHtml += openTag;
             if (dataType[0] == 'h' || dataType == 'img') renderHtml += openTag;
 
             if (dataType === 'p') 
@@ -174,11 +174,11 @@ $("#btnGenerateOne").click(function () {
 
             if (sentence.length_of_other_sentences > 0)
                 sentence.other_sentences.forEach((other_sentence_item, other_sentence_index) => {
-                    if (dataType === 'p' || dataType === 'img') resultHtml += "|" + other_sentence_item;
+                    if (dataType === 'p') resultHtml += "|" + other_sentence_item;
                     if (dataType === 'p') renderHtml += "|" + other_sentence_item;
                 });
 
-            if (dataType[0] != 'h') 
+            if (dataType[0] != 'h' && dataType != 'img') 
                 resultHtml += sentence.length_of_other_sentences > 0 ? '} ' + closeTag : '' + closeTag,
                 renderHtml += sentence.length_of_other_sentences > 0 ? '} ' + closeTag : '' + closeTag;
             else resultHtml += closeTag, renderHtml += closeTag;
