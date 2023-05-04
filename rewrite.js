@@ -330,18 +330,51 @@ function GetDataX()  {
     xhr.send();
 }
 
-function GetData() {
+function GetDataBypass(urlArtikel) {
+    try {
+        $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel)+'&callback=?', function (data) {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(data.contents, 'text/html');
+            var test_res = htmlDoc.querySelector("div#main-content");
+            if (!test_res)
+                test_res = htmlDoc.querySelector("div.entry-content");
+            var scrapeHTML = test_res.innerHTML;
+            editor.blocks.renderFromHTML(scrapeHTML)
+        });
+    } catch(err) {
+        console.log(err);
+        alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+    }
+}
+
+function GetData()  {
     const xhr = new XMLHttpRequest;
     let urlArtikel = $("#url-artikel").val();
-    $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel)+'&callback=?', function (data) {
-        const parser = new DOMParser();
-        const htmlDoc = parser.parseFromString(data.contents, 'text/html');
-        var test_res = htmlDoc.querySelector("div#main-content");
-        if (!test_res)
-            test_res = htmlDoc.querySelector("div.entry-content");
-        var scrapeHTML = test_res.innerHTML;
-        editor.blocks.renderFromHTML(scrapeHTML)
-    });
+    xhr.open("GET", urlArtikel);
+    xhr.responseType = 'document';
+    xhr.onload = () => {
+        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+            try {
+                var XMLResult = xhr.responseXML;
+                var test_res = XMLResult.querySelector("div#main-content");
+                if (!test_res)
+                    test_res = XMLResult.querySelector("div.entry-content");
+                var scrapeHTML = test_res.innerHTML;
+                console.log(scrapeHTML)
+                editor.blocks.renderFromHTML(scrapeHTML)
+            } catch(err) {
+                try {
+
+                } catch(err) {
+                    GetDataCORSBypass(urlArtikel)
+                    console.log(err)
+                    alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+                }
+            }
+        }
+    };
+
+    xhr.send();
 }
   
 document.querySelector("#getDataBtn").addEventListener('click', GetData);
