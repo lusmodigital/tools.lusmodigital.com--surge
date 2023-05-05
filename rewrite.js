@@ -546,9 +546,12 @@ function removeAnchorTags(text) {
 
   return div.innerHTML;
 }
-const textWithAnchors = '<p>Budidaya burung walet jelas sangat berbeda dengan&nbsp;<a href="https://lifepal.co.id/media/budidaya-ikan-lele/?utm_campaign=MEDIA_sarang-burung-walet&amp;utm_source=media&amp;utm_medium=inarticle_text&amp;utm_content=sarang-burung-walet">ternak ikan lele</a>&nbsp;atau&nbsp;<a href="https://lifepal.co.id/media/ikan-koi/?utm_campaign=MEDIA_sarang-burung-walet&amp;utm_source=media&amp;utm_medium=inarticle_text&amp;utm_content=sarang-burung-walet">ikan koi&nbsp;</a>yang bisa dipanen dalam jangka waktu tiga bulan dengan proses persiapan yang lebih cepat.</p>';
-const textWithoutAnchors = removeAnchorTags(textWithAnchors);
-console.log(textWithoutAnchors); // Output: "<p>Some text with link.</p>"
+
+function removeHtmlTags(text) {
+  const div = document.createElement("div");
+  div.innerHTML = text;
+  return div.textContent || div.innerText || "";
+}
   
 document.querySelector("#getDataBtn").addEventListener('click', GetData);
 
@@ -623,7 +626,7 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
         massGenerateArticle =`
             <center>
                 <br>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate Article</button>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate HTML</button>
                 <br><br>
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
@@ -674,7 +677,8 @@ function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
         massGenerateArticle =`
             <center>
                 <br>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate Article</button>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate HTML</button>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraphPlain('${current_index}')">Generate Plain Text</button>
                 <br><br>
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
@@ -723,7 +727,7 @@ function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate =
         massGenerateArticle =`
             <center>
                 <br>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate Article</button>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate HTML</button>
                 <br><br>
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
@@ -773,7 +777,8 @@ function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
         massGenerateArticle =`
             <center>
                 <br>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate Article</button>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate HTML</button>
+                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraphPlain('${current_index}')">Generate Plain Text</button>
                 <br><br>
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
@@ -864,6 +869,15 @@ function GenerateArticleColumnParagraph(current_index) {
     });
     console.log(resultHtml);
     $("#artikel-"+current_index).html(resultHtml);
+}
+
+function GenerateArticleColumnParagraphPlain(current_index) {
+    let resultHtml = '';
+    paragraphs_object.forEach((paragraph, paragraph_index) => {
+        resultHtml += paragraph.other_paragraphs[current_index] + '&#10;&#10;';
+    });
+    console.log(removeHtmlTags(resultHtml));
+    $("#artikel-"+current_index).html(removeHtmlTags(resultHtml));
 }
 
 function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
