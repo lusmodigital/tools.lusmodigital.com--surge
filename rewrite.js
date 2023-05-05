@@ -103,7 +103,7 @@ $("#btnProcessSplitParagraph").click(function () {
             console.log("data")
             console.log(data)
             if (tipe == 'image') data = data["url"], articleText += '[img] '+data+'\n'
-            else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '[h'+level+'] '+data+'\n'
+            else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '<h'+level+'>'+data+'</h'+level+'>\n'
             else if (tipe == 'list') 
             {
                 var dataList = data["items"];
@@ -348,7 +348,7 @@ function showOtherSentences(paragraph_index, sentence_index) {
 $("#generate-input-open-ai").click(function () {
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach( (sentence, sentence_index) => {
-            if (sentence["sentence_item"].slice(0, 2) != '[h')
+            if (sentence["sentence_item"].slice(0, 2) != '<h')
                 AddOpenAIText(paragraph_index, sentence_index, true);
             else AddOpenAITextHeader(paragraph_index, sentence_index, true);
         });
@@ -357,7 +357,7 @@ $("#generate-input-open-ai").click(function () {
 
 $("#generate-paragraph-open-ai").click(function () {
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
-        if (paragraph.paragraph_item.slice(0, 2) != '[h')
+        if (paragraph.paragraph_item.slice(0, 2) != '<h')
             AddOpenAIParagraph(paragraph_index, true);
         else AddOpenAIParagraphHeader(paragraph_index, true);
     });
@@ -390,13 +390,13 @@ function generateOpenAiVerticalOtherSentences(other_sentence_vertical_index) {
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach( (sentence, sentence_index) => {
             console.log("kam", sentence_index)
-            if (sentence["sentence_item"].slice(0, 5) != '[img]' && sentence["sentence_item"].slice(0, 2) != '[h')
+            if (sentence["sentence_item"].slice(0, 5) != '[img]' && sentence["sentence_item"].slice(0, 2) != '<h')
             {
                 console.log(totalKalimat, htmlElement)
                 if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, 'p')
                 GenerateOpenAI(paragraph_index,sentence_index, other_sentence_vertical_index);
             }
-            else if(sentence["sentence_item"].slice(0, 2) == '[h') 
+            else if(sentence["sentence_item"].slice(0, 2) == '<h') 
             {
                 console.log(totalKalimat, htmlElement)
                 if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, sentence["sentence_item"].slice(1, 3))
@@ -416,13 +416,13 @@ function generateOpenAiVerticalOtherSentences(other_sentence_vertical_index) {
 function generateOpenAiVerticalOtherParagraphs(other_sentence_vertical_index) {
     let totalKalimat = 0
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
-        if (paragraph.paragraph_item.slice(0, 5) != '[img]' && paragraph.paragraph_item.slice(0, 2) != '[h')
+        if (paragraph.paragraph_item.slice(0, 5) != '[img]' && paragraph.paragraph_item.slice(0, 2) != '<h')
         {
             console.log(totalKalimat, htmlElement)
             if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, 'p')
             GenerateOpenAIParagraph(paragraph_index, other_sentence_vertical_index);
         }
-        else if(paragraph.paragraph_item.slice(0, 2) == '[h') 
+        else if(paragraph.paragraph_item.slice(0, 2) == '<h') 
         {
             console.log(totalKalimat, htmlElement)
             if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, paragraph.paragraph_item.slice(1, 3))
