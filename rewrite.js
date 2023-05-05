@@ -41,8 +41,8 @@ $("#btnProcessSplit").click(function () {
         for (var i = 0; i < outputData["blocks"].length; i++){
             var dataNya = outputData["blocks"][i]
             var tipe = dataNya["type"], data = dataNya["data"], level = data;
-            if (tipe == 'image') data = data["url"], articleText += '[img] '+data+'\n'
-            else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '[h'+level+'] '+data+'\n'
+            if (tipe == 'image') data = data["url"], articleText += '<img src="'+data+'"/>\n'
+            else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '<h'+level+'> '+data+'</h'+level+'>\n'
             else data = data["text"], articleText += data+'\n'
             console.log(tipe, "-", data)
         }
@@ -443,9 +443,12 @@ function GetDataCORSBypass(urlArtikel) {
         $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel)+'&callback=?', function (data) {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(data.contents, 'text/html');
+            console.log(htmlDoc)
             var test_res = htmlDoc.querySelector("div#main-content");
             if (!test_res)
                 test_res = htmlDoc.querySelector("div.entry-content");
+            if (!test_res)
+                test_res = htmlDoc.querySelector("div.text");
             var scrapeHTML = test_res.innerHTML;
             editor.blocks.renderFromHTML(scrapeHTML)
         });
@@ -533,6 +536,23 @@ function download(current_index) {
     }
     else alert("Artikel spin ke-"+(current_index+1)+" belum ter-generate, mohon klik 'Generate Artikel' di atas terlebih dahulu!")
 }
+function download(current_index) {
+    var element = document.createElement('a');
+    var text = document.getElementById('artikel-'+current_index).value;
+    if (text != null && text && "\0" && text != "")
+    {
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', 'artikel-'+(current_index+1)+'.txt');
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+
+        document.body.removeChild(element);
+    }
+    else alert("Artikel spin ke-"+(current_index+1)+" belum ter-generate, mohon klik 'Generate Artikel' di atas terlebih dahulu!")
+}
 
 function exportHTML() {
     var element = document.createElement('a');
@@ -575,6 +595,7 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
+                <button class="btn btn-md btn-primary mt-2" onclick="downloadHTML(${current_index})">Download HTML</button>
             </center>
         `;
     }
