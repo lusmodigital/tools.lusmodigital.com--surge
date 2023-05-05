@@ -136,9 +136,9 @@ $("#btnProcessSplitParagraph").click(function () {
             paragraphs.forEach((paragraph_item, paragraph_index) => {
                 if (paragraph_item === '') return; 
                     
-                let paragraph = paragraph_item;
+                let paragraph = removeAnchorTags(paragraph_item);
                 console.log("paragraph_item")
-                console.log(paragraph_item)
+                console.log(paragraph)
                 let sentences = paragraph.split(/\.\s|\?\s/);
 
                 let sentences_object = [];
@@ -154,7 +154,7 @@ $("#btnProcessSplitParagraph").click(function () {
 
                 paragraphs_object.push({
                     "paragraph_index": paragraph_index,
-                    "paragraph_item": paragraph_item,
+                    "paragraph_item": paragraph,
                     "other_paragraphs": [],
                     "other_paragraph_ids": [],
                     "length_of_other_paragraphs": 0,
@@ -532,6 +532,23 @@ function GetData()  {
         GetDataCORSBypass(urlArtikel)
     }
 }
+
+function removeAnchorTags(text) {
+  const div = document.createElement('div');
+  div.innerHTML = text;
+  const anchors = div.getElementsByTagName('a');
+  
+  for (let i = anchors.length - 1; i >= 0; i--) {
+    const anchor = anchors[i];
+    const content = document.createTextNode(anchor.textContent);
+    anchor.parentNode.replaceChild(content, anchor);
+  }
+
+  return div.innerHTML;
+}
+const textWithAnchors = '<p>Budidaya burung walet jelas sangat berbeda dengan&nbsp;<a href="https://lifepal.co.id/media/budidaya-ikan-lele/?utm_campaign=MEDIA_sarang-burung-walet&amp;utm_source=media&amp;utm_medium=inarticle_text&amp;utm_content=sarang-burung-walet">ternak ikan lele</a>&nbsp;atau&nbsp;<a href="https://lifepal.co.id/media/ikan-koi/?utm_campaign=MEDIA_sarang-burung-walet&amp;utm_source=media&amp;utm_medium=inarticle_text&amp;utm_content=sarang-burung-walet">ikan koi&nbsp;</a>yang bisa dipanen dalam jangka waktu tiga bulan dengan proses persiapan yang lebih cepat.</p>';
+const textWithoutAnchors = removeAnchorTags(textWithAnchors);
+console.log(textWithoutAnchors); // Output: "<p>Some text with link.</p>"
   
 document.querySelector("#getDataBtn").addEventListener('click', GetData);
 
@@ -636,7 +653,7 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
         ${massGenerateArticle}
     </div> `;
 
-    $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
+    $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(removeAnchorTags(result));
 }
 
 function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
@@ -685,7 +702,7 @@ function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
         ${massGenerateArticle}
     </div> `;
 
-    $(`#section-sentence-horizontal-paragraph-${paragraph_index}`).append(result);
+    $(`#section-sentence-horizontal-paragraph-${paragraph_index}`).append(removeAnchorTags(result));
 }
 
 function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate = false) {
@@ -735,7 +752,7 @@ function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate =
         ${massGenerateArticle}
     </div> `;
 
-    $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(result);
+    $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(removeAnchorTags(result));
 }
 
 function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
@@ -784,7 +801,7 @@ function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
         ${massGenerateArticle}
     </div> `;
 
-    $(`#section-sentence-horizontal-paragraph-${paragraph_index}`).append(result);
+    $(`#section-sentence-horizontal-paragraph-${paragraph_index}`).append(removeAnchorTags(result));
 }
 
 function DeleteHorizontalSentence(paragraph_index, sentence_index) {
