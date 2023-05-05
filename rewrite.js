@@ -43,7 +43,16 @@ $("#btnProcessSplit").click(function () {
             var tipe = dataNya["type"], data = dataNya["data"], level = data;
             if (tipe == 'image') data = data["url"], articleText += '<img src="'+data+'"/>\n'
             else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '<h'+level+'> '+data+'</h'+level+'>\n'
-            else data = data["text"], articleText += data+'\n'
+            else if (tipe == 'list') 
+            {
+                var dataList = data["items"];
+                for (var j = 0; j < dataList.length; j++)
+                {
+                    articleText += '- '+dataList[j]+'\n';
+                    console.log("list ke-",j,dataList[j]);
+                }
+            }
+            else data = data["text"], articleText += '<p>'+data+'</p>\n'
             console.log(tipe, "-", data)
         }
         let answer = window.confirm("Continue to Split this Article?");
@@ -113,7 +122,7 @@ $("#btnProcessSplitParagraph").click(function () {
                     console.log("list ke-",j,dataList[j]);
                 }
             }
-            else data = data["text"], articleText += data+'\n'
+            else data = data["text"], articleText += '<p>'+data+'</p>\n'
             console.log(tipe, "-", data)
         }
         let answer = window.confirm("Continue to Split this Article?");
@@ -413,21 +422,28 @@ function generateOpenAiVerticalOtherSentences(other_sentence_vertical_index) {
     
 } 
 
-function generateOpenAiVerticalOtherParagraphs(other_sentence_vertical_index) {
+function generateOpenAiVerticalOtherParagraphs(other_paragraph_vertical_index) {
     let totalKalimat = 0
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
         if (paragraph.paragraph_item.slice(0, 5) != '[img]' && paragraph.paragraph_item.slice(0, 2) != '<h')
         {
             console.log(totalKalimat, htmlElement)
             if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, 'p')
-            GenerateOpenAIParagraph(paragraph_index, other_sentence_vertical_index);
+            GenerateOpenAIParagraph(paragraph_index, other_paragraph_vertical_index);
         }
         else if(paragraph.paragraph_item.slice(0, 2) == '<h') 
         {
             console.log(totalKalimat, htmlElement)
             if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, paragraph.paragraph_item.slice(1, 3))
-            paragraphs_object[paragraph_index].other_paragraphs[other_sentence_vertical_index] = paragraphs_object[paragraph_index].paragraph_item,
-            $(`#open-ai-paragraph-${paragraph_index}-${other_sentence_vertical_index}`).val(paragraphs_object[paragraph_index].paragraph_item);
+            paragraphs_object[paragraph_index].other_paragraphs[other_paragraph_vertical_index] = paragraphs_object[paragraph_index].paragraph_item,
+            $(`#open-ai-paragraph-${paragraph_index}-${other_paragraph_vertical_index}`).val(paragraphs_object[paragraph_index].paragraph_item);
+        }
+        else if(paragraph.paragraph_item.slice(0, 2) == '- ') 
+        {
+            console.log(totalKalimat, htmlElement)
+            if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, paragraph.paragraph_item.slice(1, 3))
+            paragraphs_object[paragraph_index].other_paragraphs[other_paragraph_vertical_index] = paragraphs_object[paragraph_index].paragraph_item,
+            $(`#open-ai-paragraph-${paragraph_index}-${other_paragraph_vertical_index}`).val(paragraphs_object[paragraph_index].paragraph_item);
         }
         else if(paragraph.paragraph_item.slice(0, 5) == '[img]')
         {
@@ -937,8 +953,8 @@ function GenerateOpenAIParagraph(paragraph_index, current_index) {
 
             let tokens = response.usage.total_tokens;
 
-            paragraphs_object[paragraph_index].other_paragraphs[current_index] = result;
-            $(`#open-ai-paragraph-${paragraph_index}-${current_index}`).val(result);
+            paragraphs_object[paragraph_index].other_paragraphs[current_index] = '<p>'+result+'</p>';
+            $(`#open-ai-paragraph-${paragraph_index}-${current_index}`).val('<p>'+result+'</p>');
 
             totalToken += tokens;
             console.log("Total Token Updated to: ", totalToken);
