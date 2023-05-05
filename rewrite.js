@@ -100,8 +100,19 @@ $("#btnProcessSplitParagraph").click(function () {
         for (var i = 0; i < outputData["blocks"].length; i++){
             var dataNya = outputData["blocks"][i]
             var tipe = dataNya["type"], data = dataNya["data"], level = data;
+            console.log("data")
+            console.log(data)
             if (tipe == 'image') data = data["url"], articleText += '[img] '+data+'\n'
             else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '[h'+level+'] '+data+'\n'
+            else if (tipe == 'list') 
+            {
+                var dataList = data["items"];
+                for (var j = 0; j < dataList.length; j++)
+                {
+                    articleText += '- '+dataList[j]+'\n';
+                    console.log("list ke-",j,dataList[j]);
+                }
+            }
             else data = data["text"], articleText += data+'\n'
             console.log(tipe, "-", data)
         }
@@ -425,35 +436,6 @@ function generateOpenAiVerticalOtherParagraphs(other_sentence_vertical_index) {
         }
     });
     
-} 
-
-function GetDataX()  {
-    const xhr = new XMLHttpRequest;
-    let urlArtikel = $("#url-artikel").val();
-    const proxyUrl = "https://api.allorigins.win/raw?url=";
-    const fullUrl = proxyUrl + encodeURIComponent(urlArtikel);
-    
-    xhr.open("GET", fullUrl);
-    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-    xhr.responseType = 'document';
-    xhr.onload = () => {
-        if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-            try {
-                var XMLResult = xhr.responseXML;
-                var test_res = XMLResult.querySelector("div#main-content");
-                if (!test_res)
-                    test_res = XMLResult.querySelector("div.entry-content");
-                var scrapeHTML = test_res.innerHTML;
-                console.log(scrapeHTML)
-                editor.blocks.renderFromHTML(scrapeHTML)
-            } catch(err) {
-                console.log(err)
-                alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
-            }
-        }
-    };
-
-    xhr.send();
 }
 
 function GetDataCORSBypass(urlArtikel) {
@@ -506,9 +488,12 @@ function GetData()  {
             if (xhr.readyState === xhr.DONE && xhr.status === 200) {
                 try {
                     var XMLResult = xhr.responseXML;
+                    console.log(XMLResult);
                     var test_res = XMLResult.querySelector("div#main-content");
                     if (!test_res)
                         test_res = XMLResult.querySelector("div.entry-content");
+                    if (!test_res)
+                        test_res = XMLResult.querySelector("div.text");
                     var scrapeHTML = test_res.innerHTML;
                     console.log(scrapeHTML)
                     editor.blocks.renderFromHTML(scrapeHTML)
