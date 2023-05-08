@@ -465,6 +465,8 @@ function GetDataCORSBypass(urlArtikel) {
                 test_res = htmlDoc.querySelector("div.entry-content");
             if (!test_res)
                 test_res = htmlDoc.querySelector("div.text");
+            if (!test_res)
+                test_res = htmlDoc.querySelector("div.post-content");
             var scrapeHTML = test_res.innerHTML;
             editor.blocks.renderFromHTML(scrapeHTML)
         });
@@ -513,6 +515,8 @@ function GetData()  {
                         test_res = XMLResult.querySelector("div.entry-content");
                     if (!test_res)
                         test_res = XMLResult.querySelector("div.text");
+                    if (!test_res)
+                        test_res = XMLResult.querySelector("div.post-content");
                     var scrapeHTML = test_res.innerHTML;
                     console.log(scrapeHTML)
                     editor.blocks.renderFromHTML(scrapeHTML)
