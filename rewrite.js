@@ -678,7 +678,7 @@ function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
             <center>
                 <br>
                 <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate HTML</button>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraphPlain('${current_index}')">Generate Plain Text</button>
+                <button class="btn btn-md btn-warning mt-1" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraphPlain('${current_index}')">Generate Plain Text</button>
                 <br><br>
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
@@ -729,6 +729,7 @@ function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate =
             <center>
                 <br>
                 <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate HTML</button>
+                <button class="btn btn-md btn-warning mt-1" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraphPlain('${current_index}')">Generate Plain Text</button>
                 <br><br>
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
