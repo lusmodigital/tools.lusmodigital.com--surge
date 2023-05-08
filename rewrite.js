@@ -454,6 +454,24 @@ function generateOpenAiVerticalOtherParagraphs(other_paragraph_vertical_index) {
     
 }
 
+function removeEmptyElements(html) {
+    const regex = /<(\w+)[^>]*>\s*<\/\1>/g;
+    return html.replace(regex, "");
+  }
+
+function removeSequentialWhitespaces(text) {
+  return text.replace(/[\s]{2,}/g, ' ').trim();
+}
+
+function createParagraphs(text) {
+  const textArray = text.split("<br>");
+  console.log("textarr", textArray)
+  const paragraphs = textArray.map(text => {
+    return `<p>${text.replace("\n","").replace('"',"").replace("'","")}</p>`;
+  });
+  return paragraphs.join("");
+}
+
 function GetDataCORSBypass(urlArtikel) {
     try {
         $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel)+'&callback=?', function (data) {
@@ -468,7 +486,7 @@ function GetDataCORSBypass(urlArtikel) {
             if (!test_res)
                 test_res = htmlDoc.querySelector("div.post-content");
             var scrapeHTML = test_res.innerHTML;
-            var formattedHTML = scrapeHTML.replace(/<br\s*\/?>/gm, '\n');
+            var formattedHTML = scrapeHTML;
             console.log(formattedHTML);
             editor.blocks.renderFromHTML(formattedHTML);
         });
@@ -520,8 +538,8 @@ function GetData()  {
                     if (!test_res)
                         test_res = XMLResult.querySelector("div.post-content");
                     var scrapeHTML = test_res.innerHTML;
-                    var formattedHTML = scrapeHTML.replace(/<br\s*\/?>/gm, '\n');
-                    console.log(formattedHTML)
+                    var formattedHTML = removeEmptyElements(createParagraphs(removeSequentialWhitespaces(scrapeHTML)));
+                    console.log("hasilnya",formattedHTML)
                     editor.blocks.renderFromHTML(formattedHTML)
                 } catch(err) {
                     try {
