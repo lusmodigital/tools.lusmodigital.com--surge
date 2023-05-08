@@ -7,6 +7,11 @@ const editor = new EditorJS({
         tools: {
             header: Header,
             image: SimpleImage,
+            breakLine: {
+              class: BreakLine,
+              inlineToolbar: true,
+              shortcut: 'CMD+SHIFT+ENTER',
+            },
             paragraph: {
                 class: Paragraph,
                 inlineToolbar: true,

@@ -325,7 +325,7 @@ function showParagraphSplit() {
                 <textarea class="form-control" name="paragraph" rows="3">${paragraph.paragraph_item}</textarea>
                 <center>
                     <button class="btn btn-sm btn-info" onclick="AddOpenAITextParagraph('${paragraph_index}')">Add</button>
-                    <button class="btn btn-sm btn-danger" onclick="DeleteHorizontalSentenceParagraph('${paragraph_index}')">Delete</button>
+                    <button class="btn btn-sm btn-danger" onclick="DeleteHorizontalParagraph('${paragraph_index}')">Delete</button>
                 </center>
             </div> `;
         result += `</div>`;
@@ -386,8 +386,8 @@ function deleteVerticalOtherSentences(other_sentence_vertical_index) {
 
 function deleteVerticalOtherParagraphs(other_paragraph_vertical_index) {
     paragraphs_object.forEach( (paragraph, paragraph_index) => {
-        $(`#open-ai-div-paragraph-${paragraph_index}-${other_sentence_vertical_index}`).remove();
-        DeleteParagraphOpenAI(paragraph_index, other_sentence_vertical_index);
+        $(`#open-ai-div-paragraph-${paragraph_index}-${other_paragraph_vertical_index}`).remove();
+        DeleteParagraphOpenAI(paragraph_index, other_paragraph_vertical_index);
     });
     
     $(`btn-generate-vertical-other-paragraph-${other_paragraph_vertical_index}`).remove();
@@ -468,7 +468,9 @@ function GetDataCORSBypass(urlArtikel) {
             if (!test_res)
                 test_res = htmlDoc.querySelector("div.post-content");
             var scrapeHTML = test_res.innerHTML;
-            editor.blocks.renderFromHTML(scrapeHTML)
+            var formattedHTML = scrapeHTML.replace(/<br\s*\/?>/gm, '\n');
+            console.log(formattedHTML);
+            editor.blocks.renderFromHTML(formattedHTML);
         });
         $('#modalTunggu').modal('show');
         console.log("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
@@ -518,8 +520,9 @@ function GetData()  {
                     if (!test_res)
                         test_res = XMLResult.querySelector("div.post-content");
                     var scrapeHTML = test_res.innerHTML;
-                    console.log(scrapeHTML)
-                    editor.blocks.renderFromHTML(scrapeHTML)
+                    var formattedHTML = scrapeHTML.replace(/<br\s*\/?>/gm, '\n');
+                    console.log(formattedHTML)
+                    editor.blocks.renderFromHTML(formattedHTML)
                 } catch(err) {
                     try {
                         GetDataCORSBypass(urlArtikel)
@@ -700,7 +703,7 @@ function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
         <textarea class="form-control" name="paragraph" rows="3" id="open-ai-paragraph-${paragraph_index}-${current_index}" onchange="updateOtherParagraph('${paragraph_index}','${current_index}')"></textarea> 
         <center>
             <button class="btn btn-sm btn-success" onclick="GenerateOpenAIParagraph('${paragraph_index}','${current_index}')">Generate Open AI</button>
-            <button class="btn btn-sm btn-danger" onclick="DeleteParagraphOpenAI'${paragraph_index}', '${current_index}')">Close</button>
+            <button class="btn btn-sm btn-danger" onclick="DeleteParagraphOpenAI('${paragraph_index}', '${current_index}')">Close</button>
             <div style="display: flex; justify-content: center; align-items: center;">
                 <a style="margin: 0;">Total Tokens</a>
                 <div style="position: relative;">
@@ -803,7 +806,7 @@ function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
         <textarea disabled class="form-control" name="paragraph" rows="3" id="open-ai-paragraph-${paragraph_index}-${current_index}" onchange="updateOtherParagraph('${paragraph_index}','${current_index}')"></textarea> 
         <center>
             <button class="btn btn-sm btn-success" onclick="GenerateOpenAIParagraph('${paragraph_index}','${current_index}')">Generate Open AI</button>
-            <button class="btn btn-sm btn-danger" onclick="DeleteParagraphOpenAI'${paragraph_index}', '${current_index}')">Close</button>
+            <button class="btn btn-sm btn-danger" onclick="DeleteParagraphOpenAI('${paragraph_index}', '${current_index}')">Close</button>
             <div style="display: flex; justify-content: center; align-items: center;">
                 <a style="margin: 0;">Total Tokens</a>
                 <div style="position: relative;">
@@ -869,11 +872,11 @@ function DeleteTextOpenAI(paragraph_index, sentence_index, current_index) {
 function DeleteParagraphOpenAI(paragraph_index, current_index) {
     $(`#open-ai-div-paragraph-${paragraph_index}-${current_index}`).remove();
 
-    let index = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.findIndex(item => item == current_index);
+    let index = paragraphs_object[paragraph_index].other_paragraph_ids.findIndex(item => item == current_index);
     
-    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.splice(index, 1);
-    paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentence_ids.splice(index, 1);
-    paragraphs_object[paragraph_index].sentences_object[sentence_index].length_of_other_sentences = paragraphs_object[paragraph_index].sentences_object[sentence_index].other_sentences.length;
+    paragraphs_object[paragraph_index].other_paragraphs.splice(index, 1);
+    paragraphs_object[paragraph_index].other_paragraph_ids.splice(index, 1);
+    paragraphs_object[paragraph_index].length_of_other_paragraphs = paragraphs_object[paragraph_index].other_paragraphs.length;
 }
 
 function GenerateArticleColumn(current_index) {
