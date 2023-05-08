@@ -631,7 +631,7 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
-                <button class="btn btn-md btn-primary mt-2" onclick="downloadHTML(${current_index})">Download HTML</button>
+                <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
             </center>
         `;
     }
@@ -683,6 +683,7 @@ function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
+                <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
             </center>
         `;
     }
@@ -732,7 +733,8 @@ function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate =
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
-            </center>
+                <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
+                </center>
         `;
     }
 
@@ -783,6 +785,7 @@ function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
                 <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
+                <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
             </center>
         `;
     }
@@ -807,6 +810,25 @@ function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
     </div> `;
 
     $(`#section-sentence-horizontal-paragraph-${paragraph_index}`).append(removeAnchorTags(result));
+}
+
+function copyArticle($current_index) {
+  // Get the text from the textarea
+  var text = $('#artikel-'+$current_index).val();
+
+  // Create a temporary textarea element to hold the text
+  var temp = $('<textarea>');
+  $('body').append(temp);
+  temp.val(text).select();
+
+  // Copy the text to the clipboard
+  document.execCommand('copy');
+
+  // Remove the temporary element
+  temp.remove();
+
+  // Show a success message
+  alert('Berhasil melakukan copy artikel ke clipboard!');
 }
 
 function DeleteHorizontalSentence(paragraph_index, sentence_index) {
