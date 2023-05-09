@@ -645,8 +645,8 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
         `;
     }
     console.log("test: masuk di " + current_index + " - " + paragraph_index);
-
     if (is_mass_generate && sentence_index==totalKalimatParagrafAkhir-1 && paragraph_index==paragraphs_object.length-1) {
+        createEditorJS('editorjs-'+current_index)
         console.log("masuk di " + current_index + " - " + paragraph_index);
         massGenerateArticle =`
             <center>
@@ -657,6 +657,12 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
                 <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
+                <div class="container bg-white mt-2 border border-secondary-30 rounded mb-3 justify-content-center">
+                    <div class="py-3 text-center">
+                        <h4>Output Artikel</h4>
+                    </div>
+                    <div id="editorjs-${current_index}" class="mb-5 ml-3 mr-3"></div>
+                </div>
             </center>
         `;
     }
@@ -696,8 +702,8 @@ function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
         `;
     }
     console.log("test: masuk di " + paragraph_index);
-
     if (is_mass_generate && paragraph_index==paragraphs_object.length-1) {
+        createEditorJS('editorjs-'+current_index)
         console.log("masuk di " + current_index + " - " + paragraph_index);
         massGenerateArticle =`
             <center>
@@ -709,6 +715,12 @@ function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
                 <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
+                <div class="container bg-white mt-2 border border-secondary-30 rounded mb-3 justify-content-center">
+                    <div class="py-3 text-center">
+                        <h4>Output Artikel</h4>
+                    </div>
+                    <div id="editorjs-${current_index}" class="mb-5 ml-3 mr-3"></div>
+                </div>
             </center>
         `;
     }
@@ -747,10 +759,10 @@ function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate =
         `;
     }
     console.log("test: masuk di " + current_index + " - " + paragraph_index);
-
     if (is_mass_generate && sentence_index==totalKalimatParagrafAkhir-1 && paragraph_index==paragraphs_object.length-1) {
         console.log("masuk di " + current_index + " - " + paragraph_index);
-        massGenerateArticle =`
+        createEditorJS('editorjs-'+current_index)
+        massGenerateArticle = `
             <center>
                 <br>
                 <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate HTML</button>
@@ -760,7 +772,13 @@ function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate =
                 <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
                 <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
-                </center>
+                <div class="container bg-white mt-2 border border-secondary-30 rounded mb-3 justify-content-center">
+                    <div class="py-3 text-center">
+                        <h4>Output Artikel</h4>
+                    </div>
+                    <div id="editorjs-${current_index}" class="mb-5 ml-3 mr-3"></div>
+                </div>
+            </center>
         `;
     }
 
@@ -799,9 +817,9 @@ function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
         `;
     }
     console.log("test: masuk di " + paragraph_index);
-
     if (is_mass_generate && paragraph_index==paragraphs_object.length-1) {
         console.log("masuk di " + current_index + " - " + paragraph_index);
+        createEditorJS('editorjs-'+current_index)
         massGenerateArticle =`
             <center>
                 <br>
@@ -812,6 +830,12 @@ function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
                 <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
                 <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
+                <div class="container bg-white mt-2 border border-secondary-30 rounded mb-3 justify-content-center">
+                    <div class="py-3 text-center">
+                        <h4>Output Artikel</h4>
+                    </div>
+                    <div id="editorjs-${current_index}" class="mb-5 ml-3 mr-3"></div>
+                </div>
             </center>
         `;
     }
@@ -839,23 +863,25 @@ function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
 }
 
 function copyArticle($current_index) {
-  // Get the text from the textarea
-  var text = $('#artikel-'+$current_index).val();
-
-  // Create a temporary textarea element to hold the text
-  var temp = $('<textarea>');
-  $('body').append(temp);
-  temp.val(text).select();
-
-  // Copy the text to the clipboard
-  document.execCommand('copy');
-
-  // Remove the temporary element
-  temp.remove();
-
-  // Show a success message
-  alert('Berhasil melakukan copy artikel ke clipboard!');
-}
+    // Get the text from the textarea
+    var text = $('#artikel-'+$current_index).val();
+  
+    // Create a temporary textarea element to hold the text
+    var temp = $('<textarea>');
+    $('body').append(temp);
+    temp.val(text).select();
+  
+    // Copy the text to the clipboard
+    document.execCommand('copy');
+  
+    // Remove the temporary element
+    temp.remove();
+  
+    // Show a success message using Bootstrap toast
+    $('#liveToast').toast('show');
+    $('#liveToast').toast({ delay: 3000 });
+  }
+  
 
 function DeleteHorizontalSentence(paragraph_index, sentence_index) {
     $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).remove();
