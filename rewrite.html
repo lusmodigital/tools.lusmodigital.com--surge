@@ -25,10 +25,6 @@
             z-index: 100;
         }
 
-        .my-float {
-            margin-top: 16px;
-        }
-
         #btnGenerateTwo {
             background-color: #0abbff;
             right: 50px;
@@ -66,16 +62,20 @@
         .ce-block__content, .ce-toolbar__content { max-width:calc(100% - 80px) !important; } .cdx-block { max-width: 100% !important; }
     </style>
     <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body class="bg-light">
     <button class="float" id="btnGenerateOne">
-        <i class="fa fa-whatsapp my-float">Generate Spinner</i>
+        <span>
+            <i class="fa fa-spinner mr-1"></i>Generate Spinner
+        </span>
     </button>
 
     <button class="float" id="btnGenerateTwo">
-        <i class="fa fa-whatsapp my-float">Generate Result</i>
+        <span>
+            <i class="fa fa-bookmark-o mr-2"></i>Generate Result
+        </span>
     </button>
     <div class="container bg-white mt-3">
         <div class="py-3 text-center">
@@ -225,7 +225,7 @@
             <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
                 <div class="toast-header">
                     <span class="text-success mr-2">
-                      <i class="fas fa-check-circle"></i>
+                      <i class="fa fa-check-circle"></i>
                     </span>
                     <strong class="mr-auto">Berhasil!</strong>
                     <small>Rewrite Tool</small>
