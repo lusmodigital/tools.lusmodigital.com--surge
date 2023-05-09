@@ -467,7 +467,7 @@ function createParagraphs(text) {
   const textArray = text.split("<br>");
   console.log("textarr", textArray)
   const paragraphs = textArray.map(text => {
-    return `<p>${text.replace("\n","").replace('"',"").replace("'","")}</p>`;
+    return `<p>${text.replace("\n","")}</p>`;
   });
   return paragraphs.join("");
 }
@@ -934,6 +934,9 @@ function GenerateArticleColumn(current_index) {
     });
     console.log(resultHtml);
     $("#artikel-"+current_index).html(resultHtml);
+    if (num==1) editor1.blocks.renderFromHTML(resultHtml)
+    if (num==2) editor2.blocks.renderFromHTML(resultHtml)
+    if (num==3) editor3.blocks.renderFromHTML(resultHtml)
 }
 
 function GenerateArticleColumnParagraph(current_index) {
@@ -956,7 +959,7 @@ function GenerateArticleColumnParagraphPlain(current_index) {
 
 function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
     let instruction = $("#instruction-open-ai").val();
-    let kalimat =  paragraphs_object[paragraph_index].sentences[sentence_index];
+    let kalimat =  encodeURIComponent(paragraphs_object[paragraph_index].sentences[sentence_index]);
     let keyword =  $(`#open-ai-text-${paragraph_index}-${sentence_index}-${current_index}`).val();
 
     let apiKey = $("#api-key").val();
@@ -999,10 +1002,10 @@ function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
 
             // Menghitung biaya berdasarkan jumlah token yang digunakan
             function tokenToRupiah(numTokens) {
-            const numK = numTokens / TOKENS_PER_K; // Konversi ke ribuan (K)
-            const costUSD = numK * TOKEN_PRICE_USD; // Biaya dalam USD
-            const costIDR = costUSD * 15500; // Konversi ke IDR (asumsi kurs 15500)
-            return costIDR;
+                const numK = numTokens / TOKENS_PER_K; // Konversi ke ribuan (K)
+                const costUSD = numK * TOKEN_PRICE_USD; // Biaya dalam USD
+                const costIDR = costUSD * 15500; // Konversi ke IDR (asumsi kurs 15500)
+                return costIDR;
             }
 
             $("#total-tokens").text("Total token yang terpakai: " + totalToken);
@@ -1028,7 +1031,7 @@ function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
 
 function GenerateOpenAIParagraph(paragraph_index, current_index) {
     let instruction = $("#instruction-open-ai").val();
-    let paragraf =  paragraphs_object[paragraph_index].paragraph_item;
+    let paragraf =  encodeURIComponent(paragraphs_object[paragraph_index].paragraph_item);
 
     let apiKey = $("#api-key").val();
     LOADING.show();
