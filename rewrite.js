@@ -946,6 +946,9 @@ function GenerateArticleColumnParagraph(current_index) {
     });
     console.log(resultHtml);
     $("#artikel-"+current_index).html(resultHtml);
+    if (num==1) editor1.blocks.renderFromHTML(resultHtml)
+    if (num==2) editor2.blocks.renderFromHTML(resultHtml)
+    if (num==3) editor3.blocks.renderFromHTML(resultHtml)
 }
 
 function GenerateArticleColumnParagraphPlain(current_index) {

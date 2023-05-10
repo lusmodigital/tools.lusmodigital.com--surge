@@ -77,19 +77,17 @@
             <i class="fa fa-bookmark-o mr-2"></i>Generate Result
         </span>
     </button>
-    <div class="container bg-white mt-3">
-        <div class="py-3 text-center">
-            <h2>Split Artikel</h2>
-        </div>
-        <div class="row p-2">
+    <div class="container mt-3 pb-5">
+        <div class="py-3">
+            <div class="text-center">
+                <h2>Split Artikel</h2>
+            </div>
             <form class="form-inline">
                 <div class="form-group">
                     <input class="form-control mr-3" placeholder="URL Artikel" type="text" id="url-artikel" value="">
                 </div>
                 <button type="button" class="btn btn-primary" id="getDataBtn">Fetch!</button>
             </form>
-            <div class="container">
-            </div>
             <div class="py-1 mt-1">
                 <p id="statusText">(Status EditorJS)</p>
             </div>
@@ -99,22 +97,19 @@
                 </div>
                 <div id="editorjs" class="mb-5 ml-3 mr-3"></div>
             </div>
-            <input class="form-control mb-3" placeholder="Api Key" type="text" id="api-key" value="">
+            <input class="form-control" placeholder="Api Key" type="text" id="api-key" value="">
             <br>
-            <input class="form-control mb-3" placeholder="Model OPEN AI" type="text" id="model-open-ai" value="" disabled>
+            <input class="form-control" placeholder="Model OPEN AI" type="text" id="model-open-ai" value="" disabled>
             <br>
             <div id="instruction-container">
               <select class="form-control" placeholder="Instruction" type="text" id="instruction-open-ai" value="">
                 <option value="">Pilih Instruksi</option>
               </select>
             </div>
-            <button type="button" class="btn btn-danger mt-3 pull-right" id="btnClearArticle">Kosongkan Artikel</button>
-            <button type="button" class="btn btn-success mt-3 ml-2 pull-right" id="btnProcessSplit">Split Kalimat</button>
-            <button type="button" class="btn btn-primary mt-3 ml-2 pull-right" id="btnProcessSplitParagraph">Split Paragraf</button>
-            <!-- <textarea disabled class="form-control" id="fetchArtikelHeadings" rows="5"></textarea>
-            <textarea disabled class="form-control mt-2" id="fetchArtikelContents" rows="10"></textarea> -->
+            <button type="button" class="btn btn-danger mt-3 pull-left" id="btnClearArticle">Kosongkan Artikel</button>
+            <button type="button" class="btn btn-success mt-3 ml-2 pull-left" id="btnProcessSplit">Split Kalimat</button>
+            <button type="button" class="btn btn-primary mt-3 ml-2 pull-left" id="btnProcessSplitParagraph">Split Paragraf</button>
         </div>
-
         <div class="loading-overlay-container" id="loading-overlay">
             <div class="loading-overlay">
                 <div class="spinner-grow text-danger" role="status">
@@ -130,12 +125,12 @@
         </div>
 
         <div class="container-fluid mt-3 mb-5 pb-5">
-            <div class="py-3">
+            <div class="py-5">
                 <div class="text-center">
                     <h2>Hasil Split</h2>
                 </div>
-                <button type="button" class="btn btn-secondary mt-2 pull-right" id="generate-input-open-ai">Add Input text Open AI</button>
-                <button type="button" class="btn btn-primary mt-2 pull-right" id="generate-paragraph-open-ai">Add Input Paragraph Open AI</button>
+                <button type="button" class="btn btn-secondary mt-2 pull-left" id="generate-input-open-ai">Add Input text Open AI</button>
+                <button type="button" class="btn btn-primary mt-2 ml-2 pull-left" id="generate-paragraph-open-ai">Add Input Paragraph Open AI</button>
                 <br>
                 <div id="ContainerSplitGroup" class="row flex-row flex-nowrap">
                     <ul class="mr-5 connected-sortable" id="containerSplitPerArticle"
