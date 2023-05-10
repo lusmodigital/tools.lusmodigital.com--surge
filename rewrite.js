@@ -306,7 +306,18 @@ function showDataSplit() {
                     </center>
                 </div> `;
             result += `</div>`;
-
+            if (paragraph_index == paragraphs_object.length-1)
+            {
+                result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${paragraph_index+1 % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
+                <center><h6>Output</h6></center><hr>`;
+                result += `<div class="section-sentence-horizontal" id="section-sentence-horizontal-${paragraph_index}-${sentence_index}-output">`;
+                result += `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+                    <center>
+                    <b class="mb-2">Hasil Artikel ke-0</b>
+                    </div>`;
+                result += `</div>`;
+                result += `</div>`;
+            }
         });
         result += `</div>`;
 
@@ -330,6 +341,19 @@ function showParagraphSplit() {
             </div> `;
         result += `</div>`;
         result += `</div>`;
+        if (paragraph_index == paragraphs_object.length-1)
+        {
+            result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${paragraph_index+1 % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
+            <center><h6>Output</h6></center><hr>`;
+            result += `<div class="section-sentence-horizontal" id="section-sentence-horizontal-paragraph-${paragraph_index}-output">`;
+            result += 
+                    `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+                        <center>
+                        <b class="mb-2">Hasil Artikel ke-0</b>
+                    </div>`;
+            result += `</div>`;
+            result += `</div>`;
+        }
 
         $('#containerSplitPerArticle').append(result);
     });
@@ -650,10 +674,10 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
         console.log("masuk di " + current_index + " - " + paragraph_index);
         massGenerateArticle =`
             <center>
+                <b class="mb-2">Hasil Artikel ke-${current_index+1}</b>
                 <br>
                 <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate HTML</button>
                 <br><br>
-                <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
                 <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
@@ -684,10 +708,16 @@ function AddOpenAIText(paragraph_index, sentence_index, is_mass_generate = false
                 </div>
             </div>
         </center>
-        ${massGenerateArticle}
-    </div> `;
-
+    </div>`;
     $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(removeAnchorTags(result));
+    if (is_mass_generate && sentence_index==totalKalimatParagrafAkhir-1 && paragraph_index==paragraphs_object.length-1)
+    {
+        var hasil = 
+        `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+            ${massGenerateArticle}
+        </div>`
+        $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}-output`).append(removeAnchorTags(hasil));
+    }
 }
 
 function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
@@ -707,11 +737,11 @@ function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
         console.log("masuk di " + current_index + " - " + paragraph_index);
         massGenerateArticle =`
             <center>
+                <b class="mb-2">Hasil Artikel ke-${current_index+1}</b>
                 <br>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate HTML</button>
+                <button class="btn btn-md btn-warning mt-2" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate HTML</button>
                 <button class="btn btn-md btn-warning mt-1" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraphPlain('${current_index}')">Generate Plain Text</button>
                 <br><br>
-                <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
                 <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
@@ -727,7 +757,8 @@ function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
     paragraphs_object[paragraph_index].length_of_other_paragraphs = current_index+1;
     paragraphs_object[paragraph_index].other_paragraphs.push('');
     paragraphs_object[paragraph_index].other_paragraph_ids.push(current_index);
-    result = `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="open-ai-div-paragraph-${paragraph_index}-${current_index}">
+    result = 
+    `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="open-ai-div-paragraph-${paragraph_index}-${current_index}">
         ${massDeleteButton}
         <a>Paragraf ${paragraph_index+1}</a>
         <textarea class="form-control" name="paragraph" rows="3" id="open-ai-paragraph-${paragraph_index}-${current_index}" onchange="updateOtherParagraph('${paragraph_index}','${current_index}')"></textarea> 
@@ -741,8 +772,15 @@ function AddOpenAIParagraph(paragraph_index, is_mass_generate = false) {
                 </div>
             </div>
         </center>
-        ${massGenerateArticle}
-    </div> `;
+    </div>`;
+    if (is_mass_generate && paragraph_index==paragraphs_object.length-1)
+    {
+        var hasil = 
+        `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+            ${massGenerateArticle}
+        </div>`
+        $(`#section-sentence-horizontal-paragraph-${paragraph_index}-output`).append(removeAnchorTags(hasil));
+    }
 
     $(`#section-sentence-horizontal-paragraph-${paragraph_index}`).append(removeAnchorTags(result));
 }
@@ -764,11 +802,11 @@ function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate =
         createEditorJS('editorjs-'+current_index)
         massGenerateArticle = `
             <center>
+                <b class="mb-2">Hasil Artikel ke-${current_index+1}</b>
                 <br>
                 <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-sentence-${current_index}" onclick="GenerateArticleColumn('${current_index}')">Generate HTML</button>
                 <button class="btn btn-md btn-warning mt-1" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraphPlain('${current_index}')">Generate Plain Text</button>
                 <br><br>
-                <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
                 <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
@@ -799,8 +837,15 @@ function AddOpenAITextHeader(paragraph_index, sentence_index, is_mass_generate =
                 </div>
             </div>
         </center>
-        ${massGenerateArticle}
-    </div> `;
+    </div>`;
+    if (is_mass_generate && sentence_index==totalKalimatParagrafAkhir-1 && paragraph_index==paragraphs_object.length-1)
+    {
+        var hasil = 
+        `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+            ${massGenerateArticle}
+        </div>`
+        $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}-output`).append(removeAnchorTags(hasil));
+    }
 
     $(`#section-sentence-horizontal-${paragraph_index}-${sentence_index}`).append(removeAnchorTags(result));
 }
@@ -822,11 +867,11 @@ function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
         createEditorJS('editorjs-'+current_index)
         massGenerateArticle =`
             <center>
+                <b class="mb-2">Hasil Artikel ke-${current_index+1}</b>
                 <br>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate HTML</button>
-                <button class="btn btn-md btn-warning" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraphPlain('${current_index}')">Generate Plain Text</button>
+                <button class="btn btn-md btn-warning mt-2" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraph('${current_index}')">Generate HTML</button>
+                <button class="btn btn-md btn-warning mt-2" id="btn-generate-vertical-other-paragraph-${current_index}" onclick="GenerateArticleColumnParagraphPlain('${current_index}')">Generate Plain Text</button>
                 <br><br>
-                <b>Hasil Artikel ke-${current_index+1}</b>
                 <textarea disabled class="form-control" name="artikel-${current_index}" rows="10" id="artikel-${current_index}"></textarea> 
                 <button class="btn btn-md btn-primary mt-2" onclick="download(${current_index})">Download Article</button>
                 <button class="btn btn-md btn-primary mt-1" onclick="copyArticle(${current_index})">Copy to Clipboard</button>
@@ -856,8 +901,16 @@ function AddOpenAIParagraphHeader(paragraph_index, is_mass_generate = false) {
                 </div>
             </div>
         </center>
-        ${massGenerateArticle}
-    </div> `;
+    </div>`;
+    
+    if (is_mass_generate && paragraph_index==paragraphs_object.length-1)
+    {
+        var hasil = 
+        `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+            ${massGenerateArticle}
+        </div>`
+        $(`#section-sentence-horizontal-paragraph-${paragraph_index}-output`).append(removeAnchorTags(hasil));
+    }
 
     $(`#section-sentence-horizontal-paragraph-${paragraph_index}`).append(removeAnchorTags(result));
 }
