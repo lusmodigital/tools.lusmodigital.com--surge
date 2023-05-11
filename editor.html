@@ -134,7 +134,7 @@
                 const parser = new DOMParser();
                 const htmlDoc = parser.parseFromString(data.contents, 'text/html');
                 console.log(htmlDoc)
-                $('entry-content').val(htmlDoc)
+                $('#html-input').val(htmlDoc)
             });
             $('#modalTunggu').modal('show');
             console.log("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
@@ -177,7 +177,9 @@
                     try {
                         var XMLResult = xhr.responseXML;
                         console.log(XMLResult);
-                        $('entry-content').val(XMLResult)
+                        var serializer = new XMLSerializer();
+                        var htmlString = serializer.serializeToString(XMLResult);
+                        $('#html-input').val(htmlString);
                     } catch(err) {
                         try {
                             GetDataCORSBypass(urlArtikel)
