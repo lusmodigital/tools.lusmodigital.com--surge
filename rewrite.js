@@ -981,6 +981,7 @@ function GenerateArticleColumn(current_index) {
     paragraphs_object.forEach((paragraph, paragraph_index) => {
         paragraph.sentences_object.forEach((sentence, sentence_index) => {
             console.log(sentence);
+            if (sentence.other_sentences[current_index] != undefined)
             resultHtml += sentence.other_sentences[current_index] + " "
         });
         resultHtml += '&#10;&#10;';
