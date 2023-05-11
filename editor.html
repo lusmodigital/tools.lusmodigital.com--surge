@@ -12,17 +12,29 @@
         padding: 8px;
       }
     </style>
+    
     <script type="module">
       (async ({ chrome, netscape }) => {
         // add Safari polyfill if needed
         if (!chrome && !netscape)
           await import("https://unpkg.com/@ungap/custom-elements");
-
+    
         const { default: HighlightedCode } = await import(
           "https://unpkg.com/highlighted-code"
         );
-
+    
         HighlightedCode.useTheme("github-dark");
+    
+        // get the textarea element
+        const textarea = document.querySelector("#html-input");
+    
+        // add an event listener to remove the wrapping HTML tags
+        textarea.addEventListener("change", () => {
+          const value = textarea.value
+            .replace(/^\<html\>\<head\>\<\/head\>\<body\>/i, "")
+            .replace(/\<\/body\>\<\/html\>$/i, "");
+          textarea.value = value;
+        });
       })(self);
     </script>
   </head>
@@ -197,7 +209,6 @@
       }
     </script>
     <script>
-      const htmlInput = document.getElementById("html-input");
       const metaTitleContainer = document.getElementById(
         "meta-title-container"
       );
@@ -220,6 +231,7 @@
       const entryContentInput = document.getElementById("entry-content");
       const updateHtmlBtn = document.getElementById("update-html-btn");
 
+      const htmlInput = document.getElementById("html-input");
       htmlInput.addEventListener("input", () => {
         const htmlText = htmlInput.value;
         const parser = new DOMParser();
@@ -323,7 +335,8 @@
           entryContentContainer.style.display = "none";
         }
 
-        htmlInput.value = htmlDocument.documentElement.outerHTML;
+        htmlInput.value = htmlDocument.documentElement.outerHTML.replace(/^\<html\>\<head\>\<\/head\>\<body\>/i, "")
+          .replace(/\<\/body\>\<\/html\>$/i, "");
         updateHtmlBtn.style.display = "block";
       });
 
