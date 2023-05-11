@@ -29,6 +29,12 @@
   <body>
     <div class="my-5" style="margin-left: 20rem; margin-right: 20rem">
       <h1>Editor HTML</h1>
+      <form class="form-inline">
+        <div class="form-group">
+            <input class="form-control mr-3" placeholder="URL Artikel" type="text" id="url-artikel" value="">
+        </div>
+        <button type="button" class="btn btn-primary" id="getDataBtn">Fetch!</button>
+      </form>
       <form>
         <div class="form-group">
           <label for="html-input">Masukkan Teks HTML:</label>
@@ -99,10 +105,95 @@
         </div>
       </form>
       <div class="alert-container"></div>
+      <div id="modalTunggu" class="modal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Mohon Tunggu!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Sistem sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik-1 menit.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Baik</button>
+              </div>
+            </div>
+          </div>
+      </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+      function GetDataCORSBypass(urlArtikel) {
+        try {
+            $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel)+'&callback=?', function (data) {
+                const parser = new DOMParser();
+                const htmlDoc = parser.parseFromString(data.contents, 'text/html');
+                console.log(htmlDoc)
+                $('entry-content').val(htmlDoc)
+            });
+            $('#modalTunggu').modal('show');
+            console.log("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
+        } catch(err) {
+            console.log(err);
+            alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+        }
+      }
+      
+      function checkAccessControlAllowOrigin(url) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('HEAD', url, false);
+        try {
+          xhr.send();
+        } catch (e) {
+          console.log('AccessControlAllowOrigin tidak diizinkan!');
+        }
+        let check = false;
+        try {
+          if (xhr.getAllResponseHeaders() != '') check = true;
+          if (xhr.getAllResponseHeaders().indexOf("Access-Control-Allow-Origin") >= 0)
+              check = true;
+          console.log("check")
+          console.log('"'+xhr.getAllResponseHeaders()+'"')
+        } catch (e) {console.log(e)}
+        console.log(check)
+        return check;
+      }
+
+      document.querySelector("#getDataBtn").addEventListener('click', GetData);
+      function GetData()  {
+        const xhr = new XMLHttpRequest;
+        let urlArtikel = $("#url-artikel").val();
+        let cek = checkAccessControlAllowOrigin(urlArtikel);
+        if (cek) {
+            xhr.open("GET", urlArtikel);
+            xhr.responseType = 'document';
+            xhr.onload = () => {
+                if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+                    try {
+                        var XMLResult = xhr.responseXML;
+                        console.log(XMLResult);
+                        $('entry-content').val(XMLResult)
+                    } catch(err) {
+                        try {
+                            GetDataCORSBypass(urlArtikel)
+                        } catch(err) {
+                            alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+                        }
+                    }
+                }
+            };
+    
+            xhr.send();
+        } else {
+            GetDataCORSBypass(urlArtikel)
+        }
+      }
+    </script>
     <script>
       const htmlInput = document.getElementById("html-input");
       const metaTitleContainer = document.getElementById(

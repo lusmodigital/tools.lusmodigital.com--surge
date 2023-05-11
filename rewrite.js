@@ -995,7 +995,9 @@ function GenerateArticleColumn(current_index) {
 function GenerateArticleColumnParagraph(current_index) {
     let resultHtml = '';
     paragraphs_object.forEach((paragraph, paragraph_index) => {
-        resultHtml += paragraph.other_paragraphs[current_index] + '&#10;&#10;';
+        console.log(paragraph.other_paragraphs[current_index])
+        if (paragraph.other_paragraphs[current_index] != undefined)
+            resultHtml += paragraph.other_paragraphs[current_index] + '&#10;&#10;';
     });
     console.log(resultHtml);
     $("#artikel-"+current_index).html(resultHtml);
