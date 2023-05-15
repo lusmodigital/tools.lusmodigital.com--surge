@@ -510,7 +510,7 @@ function GetDataCORSBypass(urlArtikel) {
             if (!test_res)
                 test_res = htmlDoc.querySelector("div.post-content");
             if (!test_res)
-                test_res = XMLResult.querySelector("div.itp_bodycontent");
+                test_res = htmlDoc.querySelector("div.itp_bodycontent");
             var scrapeHTML = test_res.innerHTML;
             var formattedHTML = scrapeHTML;
             console.log(formattedHTML);
