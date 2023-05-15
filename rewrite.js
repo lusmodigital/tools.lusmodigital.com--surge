@@ -509,6 +509,8 @@ function GetDataCORSBypass(urlArtikel) {
                 test_res = htmlDoc.querySelector("div.text");
             if (!test_res)
                 test_res = htmlDoc.querySelector("div.post-content");
+            if (!test_res)
+                test_res = XMLResult.querySelector("div.itp_bodycontent");
             var scrapeHTML = test_res.innerHTML;
             var formattedHTML = scrapeHTML;
             console.log(formattedHTML);
@@ -561,6 +563,8 @@ function GetData()  {
                         test_res = XMLResult.querySelector("div.text");
                     if (!test_res)
                         test_res = XMLResult.querySelector("div.post-content");
+                    if (!test_res)
+                        test_res = XMLResult.querySelector("div.itp_bodycontent");
                     var scrapeHTML = test_res.innerHTML;
                     var formattedHTML = removeEmptyElements(createParagraphs(removeSequentialWhitespaces(scrapeHTML)));
                     console.log("hasilnya",formattedHTML)
