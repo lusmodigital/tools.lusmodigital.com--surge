@@ -7,36 +7,6 @@
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     />
-    <style>
-      textarea[is="highlighted-code"] {
-        padding: 8px;
-      }
-    </style>
-    
-    <script type="module">
-      (async ({ chrome, netscape }) => {
-        // add Safari polyfill if needed
-        if (!chrome && !netscape)
-          await import("https://unpkg.com/@ungap/custom-elements");
-    
-        const { default: HighlightedCode } = await import(
-          "https://unpkg.com/highlighted-code"
-        );
-    
-        HighlightedCode.useTheme("github-dark");
-    
-        // get the textarea element
-        const textarea = document.querySelector("#html-input");
-    
-        // add an event listener to remove the wrapping HTML tags
-        textarea.addEventListener("change", () => {
-          const value = textarea.value
-            .replace(/^\<html\>\<head\>\<\/head\>\<body\>/i, "")
-            .replace(/\<\/body\>\<\/html\>$/i, "");
-          textarea.value = value;
-        });
-      })(self);
-    </script>
   </head>
   <body>
     <div class="my-5" style="margin-left: 20rem; margin-right: 20rem">
@@ -55,8 +25,6 @@
             name="html-input"
             class="form-control"
             rows="10"
-            is="highlighted-code"
-            language="html"
           ></textarea>
         </div>
         <div id="meta-title-container" style="display: none">
