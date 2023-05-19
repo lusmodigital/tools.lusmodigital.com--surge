@@ -60,6 +60,12 @@
             <input id="entry-title" name="entry-title" class="form-control" />
           </div>
         </div>
+        <div id="images-container" style="display: none">
+          <div class="form-group">
+            <label for="images">Images:</label>
+            <input id="images" name="images" class="form-control" />
+          </div>
+        </div>
         <div id="entry-content-container" style="display: none">
           <div class="form-group">
             <label for="entry-content">Entry Content:</label>
@@ -193,6 +199,10 @@
         "entry-title-container"
       );
       const entryTitleInput = document.getElementById("entry-title");
+      const imagesContainer = document.getElementById(
+        "images-container"
+      );
+      const imagesInput = document.getElementById("images");
       const entryContentContainer = document.getElementById(
         "entry-content-container"
       );
@@ -303,6 +313,20 @@
           entryContentContainer.style.display = "none";
         }
 
+        // Image content detection logic
+        const imagesElement = htmlDocument.querySelector(
+          '.wp-post-image'
+        );
+        console.log(imagesElement)
+        if (imagesElement) {
+          imagesInput.value = imagesElement.src;
+          console.log("what", imagesElement.src)
+          imagesContainer.style.display = "block";
+          imagesElement.innerHTML = imagesInput.value;
+        } else {
+          imagesContainer.style.display = "none";
+        }
+
         htmlInput.value = htmlDocument.documentElement.outerHTML.replace(/^\<html\>\<head\>\<\/head\>\<body\>/i, "")
           .replace(/\<\/body\>\<\/html\>$/i, "");
         updateHtmlBtn.style.display = "block";
@@ -408,6 +432,20 @@
           entryContentElement.innerHTML = entryContentInput.value;
         } else {
           entryContentContainer.style.display = "none";
+        }
+        
+        // Image content detection logic
+        const imagesElement = htmlDocument.querySelector(
+          '.wp-post-image'
+        );
+        console.log(imagesElement)
+        if (imagesElement) {
+          imagesInput.value = imagesElement.src;
+          console.log("what", imagesElement.src)
+          imagesContainer.style.display = "block";
+          imagesElement.innerHTML = imagesInput.value;
+        } else {
+          imagesContainer.style.display = "none";
         }
 
         htmlInput.value = htmlDocument.documentElement.outerHTML.replace(/^\<html\>\<head\>\<\/head\>\<body\>/i, "")
