@@ -113,6 +113,7 @@
                 const htmlDoc = parser.parseFromString(data.contents, 'text/html');
                 console.log(htmlDoc)
                 $('#html-input').val(htmlDoc)
+                changeForm()
             });
             $('#modalTunggu').modal('show');
             console.log("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
@@ -158,6 +159,7 @@
                         var serializer = new XMLSerializer();
                         var htmlString = serializer.serializeToString(XMLResult);
                         $('#html-input').val(htmlString);
+                        changeForm()
                     } catch(err) {
                         try {
                             GetDataCORSBypass(urlArtikel)
@@ -198,7 +200,114 @@
       const updateHtmlBtn = document.getElementById("update-html-btn");
 
       const htmlInput = document.getElementById("html-input");
-      htmlInput.addEventListener("input", () => {
+      function changeForm() {
+        const htmlText = htmlInput.value;
+        const parser = new DOMParser();
+        const htmlDocument = parser.parseFromString(htmlText, "text/html");
+
+        const titleElement = htmlDocument.querySelector("head title");
+        const ogTitleElement = htmlDocument.querySelector(
+          'meta[property="og:title"]'
+        );
+        const twitterTitleElement = htmlDocument.querySelector(
+          'meta[name="twitter:title"]'
+        );
+        const descriptionElement = htmlDocument.querySelector(
+          'head meta[name="description"]'
+        );
+        const ogDescriptionElement = htmlDocument.querySelector(
+          'meta[property="og:description"]'
+        );
+        const twitterDescriptionElement = htmlDocument.querySelector(
+          'meta[name="twitter:description"]'
+        );
+        const canonicalElement = htmlDocument.querySelector(
+          'head link[rel="canonical"]'
+        );
+        const entryTitleElement = htmlDocument.querySelector(
+          'h1[class="entry-title"]'
+        );
+        const entryContentElement =
+          htmlDocument.querySelector(".entry-content");
+
+        if (titleElement) {
+          metaTitleInput.value = titleElement.innerText
+            .replace(/\s+/g, " ")
+            .trim();
+          metaTitleContainer.style.display = "block";
+          titleElement.innerText = metaTitleInput.value;
+        } else if (!titleElement && ogTitleElement) {
+          metaTitleInput.value = ogTitleElement.getAttribute("content");
+          metaTitleContainer.style.display = "block";
+        } else if (!titleElement && !ogTitleElement && twitterTitleElement) {
+          metaTitleInput.value = twitterTitleElement.getAttribute("content");
+          metaTitleContainer.style.display = "block";
+        } else {
+          metaTitleContainer.style.display = "none";
+        }
+
+        if (descriptionElement) {
+          metaDescriptionInput.value =
+            descriptionElement.getAttribute("content");
+          metaDescriptionContainer.style.display = "block";
+          descriptionElement.setAttribute(
+            "content",
+            metaDescriptionInput.value
+          );
+        } else if (!descriptionElement && ogDescriptionElement) {
+          metaDescriptionInput.value =
+            ogDescriptionElement.getAttribute("content");
+          metaDescriptionContainer.style.display = "block";
+        } else if (
+          !descriptionElement &&
+          !ogDescriptionElement &&
+          twitterDescriptionElement
+        ) {
+          metaDescriptionInput.value =
+            twitterDescriptionElement.getAttribute("content");
+          metaDescriptionContainer.style.display = "block";
+        } else {
+          metaDescriptionContainer.style.display = "none";
+        }
+        console.log("ini input", metaDescriptionInput.value);
+
+        if (canonicalElement) {
+          canonicalUrlInput.value = canonicalElement.getAttribute("href");
+          canonicalUrlContainer.style.display = "block";
+          canonicalElement.setAttribute("href", canonicalUrlInput.value);
+          const ogUrlElement = htmlDocument.querySelector(
+            'meta[property="og:url"]'
+          );
+          if (ogUrlElement) {
+            ogUrlElement.setAttribute("content", canonicalUrlInput.value);
+          }
+        } else {
+          canonicalUrlContainer.style.display = "none";
+        }
+
+        if (entryTitleElement) {
+          entryTitleInput.value = entryTitleElement.innerText
+            .replace(/\s+/g, " ")
+            .trim();
+          entryTitleContainer.style.display = "block";
+          entryTitleElement.innerText = entryTitleInput.value;
+        } else {
+          metaTitleContainer.style.display = "none";
+        }
+
+        if (entryContentElement) {
+          entryContentInput.value = entryContentElement.innerHTML;
+          entryContentContainer.style.display = "block";
+          entryContentElement.innerHTML = entryContentInput.value;
+        } else {
+          entryContentContainer.style.display = "none";
+        }
+
+        htmlInput.value = htmlDocument.documentElement.outerHTML.replace(/^\<html\>\<head\>\<\/head\>\<body\>/i, "")
+          .replace(/\<\/body\>\<\/html\>$/i, "");
+        updateHtmlBtn.style.display = "block";
+      }
+      htmlInput.addEventListener("change", () => {
         const htmlText = htmlInput.value;
         const parser = new DOMParser();
         const htmlDocument = parser.parseFromString(htmlText, "text/html");
