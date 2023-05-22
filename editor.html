@@ -209,6 +209,15 @@
       const entryContentInput = document.getElementById("entry-content");
       const updateHtmlBtn = document.getElementById("update-html-btn");
 
+      function extractDomain(url) {
+        const domainRegex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:/\n]+)/i;
+        const matches = url.match(domainRegex);
+        if (matches && matches.length > 1) {
+          return matches[1];
+        }
+        return null;
+      }
+
       const htmlInput = document.getElementById("html-input");
       function changeForm() {
         const htmlText = htmlInput.value;
@@ -319,8 +328,10 @@
         );
         console.log(imagesElement)
         if (imagesElement) {
+          const requestedUrl = "https://" + extractDomain($("#url-artikel").val()); // Replace with your requested URL
+          const updatedImageUrl = imagesElement.src.replace(extractDomain(imagesElement.src), requestedUrl);
           imagesInput.value = imagesElement.src;
-          console.log("what", imagesElement.src)
+          console.log("what", updatedImageUrl)
           imagesContainer.style.display = "block";
           imagesElement.innerHTML = imagesInput.value;
         } else {
@@ -440,8 +451,10 @@
         );
         console.log(imagesElement)
         if (imagesElement) {
+          const requestedUrl = "https://" + extractDomain($("#url-artikel").val()); // Replace with your requested URL
+          const updatedImageUrl = imagesElement.src.replace(extractDomain(imagesElement.src), requestedUrl);
           imagesInput.value = imagesElement.src;
-          console.log("what", imagesElement.src)
+          console.log("what", updatedImageUrl)
           imagesContainer.style.display = "block";
           imagesElement.innerHTML = imagesInput.value;
         } else {
