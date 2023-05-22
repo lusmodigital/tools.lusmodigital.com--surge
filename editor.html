@@ -581,6 +581,16 @@
           }
         }
 
+        // Image content detection logic
+        const imagesElement = htmlDocument.querySelector(
+          '.wp-post-image, .size-full, .wp-image'
+        );
+        console.log(imagesElement)
+        if (imagesElement && imagesInput.value !== "") {
+          imagesElement.setAttribute("href", imagesInput.value);
+          imagesElement.setAttribute("src", imagesInput.value);
+        }
+
         if (entryTitleElement && entryTitleInput.value !== "") {
           entryTitleElement.innerText = entryTitleInput.value;
         }
