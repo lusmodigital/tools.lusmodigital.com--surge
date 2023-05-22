@@ -108,7 +108,7 @@
           </div>
       </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script>
@@ -210,12 +210,17 @@
       const updateHtmlBtn = document.getElementById("update-html-btn");
 
       function extractDomain(url) {
-        const domainRegex = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:/\n]+)/i;
-        const matches = url.match(domainRegex);
-        if (matches && matches.length > 1) {
-          return matches[1];
+        // Remove "http://" or "https://" from the beginning of the URL
+        var hostnameWithPort = url.replace(/^(https?:\/\/)?/, '');
+        // Extract the hostname and port
+        var match = hostnameWithPort.match(/([^\/:]+)(:\d+)?/);
+        if (match) {
+          // Return the hostname and port
+          return match[0];
+        } else {
+          // Return an empty string if no match found
+          return '';
         }
-        return null;
       }
 
       const htmlInput = document.getElementById("html-input");
@@ -328,10 +333,9 @@
         );
         console.log(imagesElement)
         if (imagesElement) {
-          const requestedUrl = "https://" + extractDomain($("#url-artikel").val()); // Replace with your requested URL
+          const requestedUrl = extractDomain($("#url-artikel").val()); // Replace with your requested URL
           const updatedImageUrl = imagesElement.src.replace(extractDomain(imagesElement.src), requestedUrl);
-          imagesInput.value = imagesElement.src;
-          console.log("what", updatedImageUrl)
+          imagesInput.value = updatedImageUrl;
           imagesContainer.style.display = "block";
           imagesElement.innerHTML = imagesInput.value;
         } else {
@@ -451,10 +455,9 @@
         );
         console.log(imagesElement)
         if (imagesElement) {
-          const requestedUrl = "https://" + extractDomain($("#url-artikel").val()); // Replace with your requested URL
+          const requestedUrl = extractDomain($("#url-artikel").val()); // Replace with your requested URL
           const updatedImageUrl = imagesElement.src.replace(extractDomain(imagesElement.src), requestedUrl);
-          imagesInput.value = imagesElement.src;
-          console.log("what", updatedImageUrl)
+          imagesInput.value = updatedImageUrl;
           imagesContainer.style.display = "block";
           imagesElement.innerHTML = imagesInput.value;
         } else {
