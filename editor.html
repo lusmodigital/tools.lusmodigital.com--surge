@@ -326,10 +326,10 @@
         } else {
           entryContentContainer.style.display = "none";
         }
-
+        
         // Image content detection logic
         const imagesElement = htmlDocument.querySelector(
-          '.wp-post-image'
+          '.wp-post-image, .size-full, .wp-image'
         );
         console.log(imagesElement)
         if (imagesElement) {
@@ -451,7 +451,7 @@
         
         // Image content detection logic
         const imagesElement = htmlDocument.querySelector(
-          '.wp-post-image'
+          '.wp-post-image, .size-full, .wp-image'
         );
         console.log(imagesElement)
         if (imagesElement) {
