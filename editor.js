@@ -47,45 +47,45 @@ editor.isReady
 });
 
 const editorHasil = new EditorJS({
-    autofocuse: true,
-    onReady: () => {
-        new Undo({ editor });
-        new DragDrop(editor);
-    },
-    logLevel: 'ERROR',
-    tools: {
-        header: Header,
-        image: SimpleImage,
-        paragraph: {
-            class: Paragraph,
-            inlineToolbar: true,
-        },
-        list: {
-            class: List,
-            inlineToolbar: true,
-            config: {
+  autofocus: true,
+  holder: 'editorjs_hasil', // Move 'holder' property inside the configuration object
+  onReady: () => {
+      new Undo({ editor: editorHasil }); // Update 'editor' to 'editorHasil'
+      new DragDrop(editorHasil); // Update 'editor' to 'editorHasil'
+  },
+  logLevel: 'ERROR',
+  tools: {
+      header: Header,
+      image: SimpleImage,
+      paragraph: {
+          class: Paragraph,
+          inlineToolbar: true,
+      },
+      list: {
+          class: List,
+          inlineToolbar: true,
+          config: {
               defaultStyle: 'unordered'
-            }
-        },
-        olist: {
-            class: List,
-            inlineToolbar: true,
-            config: {
+          }
+      },
+      olist: {
+          class: List,
+          inlineToolbar: true,
+          config: {
               defaultStyle: 'ordered'
-            }
-        },
-        markdownParser: MDParser,
-        markdownImporter: MDImporter,
-    },
-    holder: 'editorjs_hasil',
-    minHeight : 0
+          }
+      },
+      markdownParser: MDParser,
+      markdownImporter: MDImporter,
+  },
+  minHeight: 0
 });
 
 editorHasil.isReady
-  .then(() => {
+.then(() => {
     document.getElementById('statusTextHasil').innerHTML = '<b>Status: </b>Editor.js sudah dapat digunakan!'
-  })
-  .catch((reason) => {
+})
+.catch((reason) => {
     document.getElementById('statusTextHasil').innerHTML = `<b>Status: </b>Editor.js gagal dijalankan karena ${reason}!`
 });
 

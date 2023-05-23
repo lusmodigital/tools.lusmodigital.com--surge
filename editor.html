@@ -7,6 +7,10 @@
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
+    />
   </head>
   <body>
     <div class="my-5" style="margin-left: 20rem; margin-right: 20rem">
@@ -111,6 +115,22 @@
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-html.min.js"></script>
+    <script>
+      // Get the HTML input textarea element
+      const htmlInputs = document.getElementById('html-input');
+
+      // Function to highlight HTML syntax using Prism.js
+      function highlightHTMLSyntax() {
+        const code = htmlInputs.value;
+        const highlightedCode = Prism.highlight(code, Prism.languages.html, 'html');
+        htmlInputs.innerHTML = highlightedCode;
+      }
+
+      // Call the function to initially highlight the HTML syntax
+      highlightHTMLSyntax();
+    </script>
     <script>
       function GetDataCORSBypass(urlArtikel) {
         try {
@@ -345,6 +365,7 @@
         htmlInput.value = htmlDocument.documentElement.outerHTML.replace(/^\<html\>\<head\>\<\/head\>\<body\>/i, "")
           .replace(/\<\/body\>\<\/html\>$/i, "");
         updateHtmlBtn.style.display = "block";
+        highlightHTMLSyntax();
       }
       htmlInput.addEventListener("change", () => {
         const htmlText = htmlInput.value;
@@ -467,6 +488,7 @@
         htmlInput.value = htmlDocument.documentElement.outerHTML.replace(/^\<html\>\<head\>\<\/head\>\<body\>/i, "")
           .replace(/\<\/body\>\<\/html\>$/i, "");
         updateHtmlBtn.style.display = "block";
+        highlightHTMLSyntax();
       });
 
       updateHtmlBtn.addEventListener("click", () => {
@@ -612,6 +634,7 @@
         setTimeout(() => {
           alertContainer.removeChild(alertElement);
         }, 3000);
+        highlightHTMLSyntax();
       });
     </script>
   </body>
