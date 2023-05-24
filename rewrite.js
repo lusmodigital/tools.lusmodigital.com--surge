@@ -41,7 +41,7 @@ $("#btnProcessSplit").click(function () {
         for (var i = 0; i < outputData["blocks"].length; i++){
             var dataNya = outputData["blocks"][i]
             var tipe = dataNya["type"], data = dataNya["data"], level = data;
-            if (tipe == 'image') data = data["url"], articleText += '<img src="'+data+'"/>\n'
+            if (tipe == 'image') data = data["url"], articleText += '[img] '+data+'\n'
             else if (tipe == 'header') level = data["level"], data = data["text"], articleText += '<h'+level+'> '+data+'</h'+level+'>\n'
             else if (tipe == 'list') 
             {
@@ -63,16 +63,36 @@ $("#btnProcessSplit").click(function () {
             let paragraphs = articleText.split(/\r?\n/);
 
             paragraphs_object = [];
-            console.log("paragraphs")
-            console.log(paragraphs)
+            console.log("paragraphs");
+            console.log(paragraphs);
             paragraphs.forEach((paragraph_item, paragraph_index) => {
-                if (paragraph_item === '') return; 
-                    
-                let paragraph = paragraph_item;
-                let sentences = paragraph.split(/\.\s|\?\s/);
+                if (paragraph_item === '') return;
+
+                let paragraph = paragraph_item.trim(); // Trim leading/trailing whitespace from the paragraph
+                let sentences = paragraph.split(/(?<=[.?!])(?=\s+|$)/); // Split sentences when there is a space or newline after the symbol
+
+                let mergedSentences = [];
+                let tempSentence = '';
+                sentences.forEach((sentence) => {
+                    if (sentence.endsWith('</p>')) {
+                        tempSentence += sentence;
+                        mergedSentences.push(tempSentence);
+                        tempSentence = '';
+                    } else {
+                        if (tempSentence !== '') {
+                            mergedSentences.push(tempSentence);
+                            tempSentence = '';
+                        }
+                        tempSentence += sentence;
+                    }
+                });
+
+                if (tempSentence !== '') {
+                    mergedSentences.push(tempSentence);
+                }
 
                 let sentences_object = [];
-                sentences.forEach((sentence_item, sentence_index) => {
+                mergedSentences.forEach((sentence_item, sentence_index) => {
                     sentences_object.push({
                         "sentence_index": sentence_index,
                         "sentence_item": sentence_item,
@@ -88,11 +108,11 @@ $("#btnProcessSplit").click(function () {
                     "other_paragraphs": [],
                     "other_paragraph_ids": [],
                     "length_of_other_paragraphs": 0,
-                    "length_of_sentences": sentences.length,
+                    "length_of_sentences": mergedSentences.length,
                     "sentences_object": sentences_object,
-                    "sentences": sentences,
+                    "sentences": mergedSentences,
                 });
-                totalKalimatParagrafAkhir = sentences.length;
+                totalKalimatParagrafAkhir = mergedSentences.length;
             });
             showDataSplit();
         }
@@ -294,7 +314,7 @@ function showDataSplit() {
         <center><h6>Paragraph ${paragraph_index+1}</h6></center><hr>`;
 
         paragraph.sentences.forEach((sentence, sentence_index) => {
-            let withDot = (paragraph.length_of_sentences-1) > sentence_index ? '.' : '';
+            let withDot = (paragraph.length_of_sentences-1) > sentence_index ? '' : '';
 
             result += `<div class="section-sentence-horizontal" id="section-sentence-horizontal-${paragraph_index}-${sentence_index}">`;
             result += `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
@@ -1020,7 +1040,7 @@ function GenerateOpenAI(paragraph_index, sentence_index, current_index) {
 
             let result = response.choices[0].message.content.trim();
             if(!result.match(/\.$/)) {
-                result = result + '.';
+                result = result + '';
             }
 
             let tokens = response.usage.total_tokens;
@@ -1091,7 +1111,7 @@ function GenerateOpenAIParagraph(paragraph_index, current_index) {
 
             let result = response.choices[0].message.content.trim();
             if(!result.match(/\.$/)) {
-                result = result + '.';
+                result = result + '';
             }
 
             let tokens = response.usage.total_tokens;
