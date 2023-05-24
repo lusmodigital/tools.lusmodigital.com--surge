@@ -23,7 +23,7 @@
       </form>
       <form>
         <div class="form-group">
-          <label for="html-input">Masukkan Teks HTML:</label>
+          <label for="html-input">Masukkan Template HTML:</label>
           <textarea
             id="html-input"
             name="html-input"
@@ -203,6 +203,7 @@
       }
     </script>
     <script>
+      var previousPermalink = '';
       const metaTitleContainer = document.getElementById(
         "meta-title-container"
       );
@@ -317,6 +318,7 @@
 
         if (canonicalElement) {
           canonicalUrlInput.value = canonicalElement.getAttribute("href");
+          previousPermalink = canonicalUrlInput.value;
           canonicalUrlContainer.style.display = "block";
           canonicalElement.setAttribute("href", canonicalUrlInput.value);
           const ogUrlElement = htmlDocument.querySelector(
@@ -440,6 +442,7 @@
 
         if (canonicalElement) {
           canonicalUrlInput.value = canonicalElement.getAttribute("href");
+          previousPermalink = canonicalUrlInput.value;
           canonicalUrlContainer.style.display = "block";
           canonicalElement.setAttribute("href", canonicalUrlInput.value);
           const ogUrlElement = htmlDocument.querySelector(
@@ -598,6 +601,7 @@
 
         if (canonicalUrlElement && canonicalUrlInput.value !== "") {
           canonicalUrlElement.setAttribute("href", canonicalUrlInput.value);
+          console.log('berhasil replace', previousPermalink, "menjadi", canonicalUrlInput.value)
           if (ogUrlElement) {
             ogUrlElement.setAttribute("content", canonicalUrlInput.value);
           }
@@ -621,7 +625,9 @@
           entryContentElement.innerHTML = entryContentInput.value;
         }
 
-        htmlInput.value = htmlDocument.documentElement.outerHTML;
+        // replace seluruh permalink sebelumnya dengan permalink baru input dari user
+        let updatedHTML = htmlDocument.documentElement.outerHTML.replace(new RegExp(previousPermalink, 'g'), canonicalUrlInput.value);
+        htmlInput.value = updatedHTML;
 
         // show success alert
         const alertContainer = document.querySelector(".alert-container");
