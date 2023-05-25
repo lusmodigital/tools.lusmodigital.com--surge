@@ -52,6 +52,7 @@
             var titleTags = xmlDoc.getElementsByTagName("title");
             var descriptionTags =
               xmlDoc.getElementsByTagName("content:encoded");
+            var postDateTags = xmlDoc.getElementsByTagName("wp:post_date"); // Menambahkan tag wp:post_date
             var csvContent =
               "TYPE,DTSTAMP,UID,SUMMARY,DTSTART,DTEND,LOCATION,GEO,ORGANIZER,CONTACT,CATEGORIES,X-TAGS,STATUS,X-TICKETS-URL,X-COST,RRULE,EXRULE,RDATE,EXDATE,DESCRIPTION\n";
 
@@ -68,8 +69,13 @@
                 descriptionInfo.trim().replace(/,/g, " ").replace(/\n/g, "") +
                 '"'; // Menghapus koma, spasi di awal dan akhir teks, serta karakter newline (\n)
 
+              var postDate = postDateTags[i - 2].textContent; // Mendapatkan nilai wp:post_date
+              var dtstampValue = postDate.substring(0, 10).replace(/-/g, ""); // Mengubah format wp:post_date menjadi 20230501
+
               csvContent +=
-                '"vevent","","' +
+                '"vevent","' +
+                dtstampValue +
+                '","' +
                 uidCounter +
                 '",' +
                 summaryValue +
