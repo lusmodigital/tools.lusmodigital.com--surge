@@ -52,11 +52,12 @@
             var titleTags = xmlDoc.getElementsByTagName("title");
             var descriptionTags =
               xmlDoc.getElementsByTagName("content:encoded");
-            var postDateTags = xmlDoc.getElementsByTagName("wp:post_date"); // Menambahkan tag wp:post_date
+            var postDateTags = xmlDoc.getElementsByTagName("wp:post_date");
+            var creatorTags = xmlDoc.getElementsByTagName("dc:creator");
             var csvContent =
               "TYPE,DTSTAMP,UID,SUMMARY,DTSTART,DTEND,LOCATION,GEO,ORGANIZER,CONTACT,CATEGORIES,X-TAGS,STATUS,X-TICKETS-URL,X-COST,RRULE,EXRULE,RDATE,EXDATE,DESCRIPTION\n";
 
-            var uidCounter = 1000; // Counter UID
+            var uidCounter = 1000;
 
             for (var i = 2; i < titleTags.length; i++) {
               var titleInfo = titleTags[i].textContent;
@@ -67,10 +68,12 @@
               var descriptionValue =
                 '"' +
                 descriptionInfo.trim().replace(/,/g, " ").replace(/\n/g, "") +
-                '"'; // Menghapus koma, spasi di awal dan akhir teks, serta karakter newline (\n)
+                '"';
 
-              var postDate = postDateTags[i - 2].textContent; // Mendapatkan nilai wp:post_date
-              var dtstampValue = postDate.substring(0, 10).replace(/-/g, ""); // Mengubah format wp:post_date menjadi 20230501
+              var postDate = postDateTags[i - 2].textContent;
+              var dtstampValue = postDate.substring(0, 10).replace(/-/g, "");
+
+              var creatorValue = creatorTags[i - 2].textContent;
 
               csvContent +=
                 '"vevent","' +
@@ -79,11 +82,13 @@
                 uidCounter +
                 '",' +
                 summaryValue +
-                ',"","","","","","","","","","","","","","","",' +
+                ',"","","","","' +
+                creatorValue +
+                '","","","","","","","","","","",' +
                 descriptionValue +
                 "\n";
 
-              uidCounter++; // Increment UID
+              uidCounter++;
             }
 
             var exportBtn = document.getElementById("exportBtn");
