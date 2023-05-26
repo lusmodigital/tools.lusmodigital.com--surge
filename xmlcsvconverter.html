@@ -54,6 +54,7 @@
               xmlDoc.getElementsByTagName("content:encoded");
             var postDateTags = xmlDoc.getElementsByTagName("wp:post_date");
             var creatorTags = xmlDoc.getElementsByTagName("dc:creator");
+            var categoryTags = xmlDoc.getElementsByTagName("category");
             var csvContent =
               "TYPE,DTSTAMP,UID,SUMMARY,DTSTART,DTEND,LOCATION,GEO,ORGANIZER,CONTACT,CATEGORIES,X-TAGS,STATUS,X-TICKETS-URL,X-COST,RRULE,EXRULE,RDATE,EXDATE,DESCRIPTION\n";
 
@@ -75,6 +76,8 @@
 
               var creatorValue = creatorTags[i - 2].textContent;
 
+              var categoriesValue = categoryTags[i - 2].textContent;
+
               csvContent +=
                 '"vevent","' +
                 dtstampValue +
@@ -84,7 +87,9 @@
                 summaryValue +
                 ',"","","","","' +
                 creatorValue +
-                '","","","","","","","","","","",' +
+                '","","' +
+                categoriesValue +
+                '","","","","","","","","",' +
                 descriptionValue +
                 "\n";
 
