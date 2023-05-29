@@ -81,6 +81,7 @@ const editorHasil = new EditorJS({
   minHeight: 0
 });
 
+
 editorHasil.isReady
 .then(() => {
     document.getElementById('statusTextHasil').innerHTML = '<b>Status: </b>Editor.js sudah dapat digunakan!'

@@ -220,8 +220,9 @@ $("#btnGenerateOne").click(function () {
 
             if (sentence.length_of_other_sentences > 0)
                 sentence.other_sentences.forEach((other_sentence_item, other_sentence_index) => {
-                    if (dataType === 'p') resultHtml += "|" + other_sentence_item;
-                    if (dataType === 'p') renderHtml += "|" + other_sentence_item;
+                    if (dataType === 'p') 
+                        resultHtml += "|" + other_sentence_item, 
+                        renderHtml += "|" + other_sentence_item;
                 });
 
             if (dataType[0] != 'h' && dataType != 'img') 

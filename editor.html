@@ -132,6 +132,26 @@
       highlightHTMLSyntax();
     </script>
     <script>
+      $(document).ready(function() {
+        $('#canonical-url').on('input', function() {
+          var permalink = $(this).val();
+      
+          // Replace multiple spaces with a single space
+          permalink = permalink.replace(/\s+/g, ' ');
+      
+          // Convert to lowercase
+          permalink = permalink.toLowerCase();
+      
+          // Replace non-alphanumeric characters with spaces
+          permalink = permalink.replace(/\W/g, ' ');
+          
+          // Replace spaces with dashes
+          permalink = permalink.replace(/\s+/g, '-');
+      
+          // Update the value of the input field
+          $(this).val(permalink);
+        });
+      });
       function GetDataCORSBypass(urlArtikel) {
         try {
             $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel)+'&callback=?', function (data) {
@@ -600,8 +620,8 @@
         }
 
         if (canonicalUrlElement && canonicalUrlInput.value !== "") {
+          canonicalUrlInput.value = "/"+canonicalUrlInput.value+".html";
           canonicalUrlElement.setAttribute("href", canonicalUrlInput.value);
-          console.log('berhasil replace', previousPermalink, "menjadi", canonicalUrlInput.value)
           if (ogUrlElement) {
             ogUrlElement.setAttribute("content", canonicalUrlInput.value);
           }
