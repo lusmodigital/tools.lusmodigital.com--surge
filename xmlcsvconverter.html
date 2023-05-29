@@ -78,6 +78,12 @@
 
               var categoriesValue = categoryTags[i - 2].textContent;
 
+              var dtstartValue = dtstampValue;
+              var dtendValue = (parseInt(dtstampValue) + 1).toString();
+
+              var rdateValue = dtstampValue;
+              var exdateValue = dtstampValue;
+
               csvContent +=
                 '"vevent","' +
                 dtstampValue +
@@ -85,11 +91,19 @@
                 uidCounter +
                 '",' +
                 summaryValue +
-                ',"","","","","' +
+                ',"' +
+                dtstartValue +
+                '","' +
+                dtendValue +
+                '","","","' +
                 creatorValue +
                 '","","' +
                 categoriesValue +
-                '","","","","","","","","",' +
+                '","","","","","","","' +
+                rdateValue +
+                '","' +
+                exdateValue +
+                '",' +
                 descriptionValue +
                 "\n";
 
