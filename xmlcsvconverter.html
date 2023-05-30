@@ -24,6 +24,33 @@
             required
           />
         </div>
+        <div class="mb-3">
+          <label for="locationInput" class="form-label">Location:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="locationInput"
+            placeholder="Masukkan lokasi acara"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="geoInput" class="form-label">Geo:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="geoInput"
+            placeholder="Masukkan koordinat geografis (latitude,longitude)"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="contactInput" class="form-label">Contact:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="contactInput"
+            placeholder="Masukkan informasi kontak untuk acara"
+          />
+        </div>
         <button type="submit" class="btn btn-primary">Upload</button>
       </form>
 
@@ -97,6 +124,13 @@
                 currentTag = currentTag.nextElementSibling;
               }
 
+              // Get the values of the location, geo, and contact inputs
+              var locationValue =
+                document.getElementById("locationInput").value;
+              var geoValue = document.getElementById("geoInput").value;
+              var contactValue = document.getElementById("contactInput").value;
+
+              // Add the location, geo, and contact values to the CSV content
               csvContent +=
                 '"vevent","' +
                 dtstampValue +
@@ -108,9 +142,15 @@
                 dtstartValue +
                 '","' +
                 dtendValue +
-                '","","","' +
+                '","' +
+                locationValue +
+                '","' +
+                geoValue +
+                '","' +
                 creatorValue +
-                '","","' +
+                '","' +
+                contactValue +
+                '","' +
                 categoriesValue +
                 '","Construction","Published","' +
                 linkValue +
