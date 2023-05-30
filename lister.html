@@ -17,7 +17,7 @@
       <h1>Blog Lister HTML</h1>
       <form class="form-inline">
         <div class="form-group">
-            <input class="form-control mr-3" placeholder="URL Artikel" type="text" id="url-artikel" value="">
+            <input class="form-control mr-3" placeholder="URL Blog List Container" type="text" id="url-template" value="">
         </div>
         <button type="button" class="btn btn-primary" id="getDataBtn">Fetch!</button>
       </form>
@@ -354,7 +354,7 @@
       document.querySelector("#getDataBtn").addEventListener('click', GetData);
       function GetData()  {
         const xhr = new XMLHttpRequest;
-        let urlArtikel = $("#url-artikel").val();
+        let urlArtikel = $("#url-template").val();
         let cek = checkAccessControlAllowOrigin(urlArtikel);
         if (cek) {
             xhr.open("GET", urlArtikel);
