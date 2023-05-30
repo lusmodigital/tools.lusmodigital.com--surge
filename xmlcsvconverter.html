@@ -55,7 +55,7 @@
             var postDateTags = xmlDoc.getElementsByTagName("wp:post_date");
             var creatorTags = xmlDoc.getElementsByTagName("dc:creator");
             var categoryTags = xmlDoc.getElementsByTagName("category");
-            var guidTags = xmlDoc.getElementsByTagName("guid");
+            var linkTags = xmlDoc.getElementsByTagName("link");
             var csvContent =
               "TYPE,DTSTAMP,UID,SUMMARY,DTSTART,DTEND,LOCATION,GEO,ORGANIZER,CONTACT,CATEGORIES,X-TAGS,STATUS,X-TICKETS-URL,X-COST,RRULE,EXRULE,RDATE,EXDATE,DESCRIPTION\n";
 
@@ -85,7 +85,17 @@
               var rdateValue = dtstampValue;
               var exdateValue = dtstampValue;
 
-              var guidValue = guidTags[i - 2].textContent;
+              var linkValue = "";
+
+              // Find the <link> tag below <title> and above <pubDate>
+              var currentTag = titleTags[i].nextElementSibling;
+              while (currentTag && currentTag.tagName !== "pubDate") {
+                if (currentTag.tagName === "link") {
+                  linkValue = currentTag.textContent;
+                  break;
+                }
+                currentTag = currentTag.nextElementSibling;
+              }
 
               csvContent +=
                 '"vevent","' +
@@ -103,7 +113,7 @@
                 '","","' +
                 categoriesValue +
                 '","Construction","Published","' +
-                guidValue +
+                linkValue +
                 '","Free","","","' +
                 rdateValue +
                 '","' +
