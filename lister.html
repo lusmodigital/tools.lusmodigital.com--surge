@@ -40,30 +40,30 @@
           <!-- HTML forms -->
           <form id="blogForm">
             <label for="title">Title:</label>
-            <input type="text" id="title" required><br>
+            <input class="form-control mr-3" type="text" id="title" required><br>
 
             <label for="permalink">Permalink:</label>
-            <input type="text" id="permalink" required><br>
+            <input class="form-control mr-3" type="text" id="permalink" required><br>
 
             <label for="imageSrc">Image Source:</label>
-            <input type="text" id="imageSrc" required><br>
+            <input class="form-control mr-3" type="text" id="imageSrc" required><br>
 
             <label for="author">Author:</label>
-            <input type="text" id="author" required><br>
+            <input class="form-control mr-3" type="text" id="author" required><br>
 
             <label for="author">Author Image Source:</label>
-            <input type="text" id="authorImageSrc" required><br>
+            <input class="form-control mr-3" type="text" id="authorImageSrc" required><br>
 
             <label for="date">Date:</label>
-            <input type="text" id="date" required><br>
+            <input class="form-control mr-3" type="text" id="date" required><br>
 
             <label for="category">Category:</label>
-            <input type="text" id="category" required><br>
+            <input class="form-control mr-3" type="text" id="category" required><br>
 
             <label for="excerpt">Excerpt:</label>
-            <textarea id="excerpt" required></textarea><br>
+            <textarea class="form-control mr-3" id="excerpt" required></textarea><br>
 
-            <button type="button" class="btn btn-primary" id="addBlog">Add Blog!</button>
+            <button type="button" class="btn btn-primary" id="addBlog">Add Blog to List!</button>
           </form>
 
           <!-- Blog List Container -->
@@ -374,46 +374,37 @@
                         console.log(XMLResult);
                         var serializer = new XMLSerializer();
                         var htmlString = serializer.serializeToString(XMLResult);
+                        const parser = new DOMParser();
                         const htmlDocument = parser.parseFromString(htmlString, "text/html");
 
                         // Fetch Title
-                        const metaTitleInput = document.getElementById("title");
-                        const titleElement = htmlDocument.querySelector("head title");
-                        const ogTitleElement = htmlDocument.querySelector(
-                          'meta[property="og:title"]'
-                        );
-                        const twitterTitleElement = htmlDocument.querySelector(
-                          'meta[name="twitter:title"]'
-                        );
-
-                        if (titleElement) {
-                          metaTitleInput.value = titleElement.innerText
-                            .replace(/\s+/g, " ")
-                            .trim();
-                          titleElement.innerText = metaTitleInput.value;
-                        } else if (!titleElement && ogTitleElement) {
-                          metaTitleInput.value = ogTitleElement.getAttribute("content");
-                        } else if (!titleElement && !ogTitleElement && twitterTitleElement) {
-                          metaTitleInput.value = twitterTitleElement.getAttribute("content");
-                        }
-
-                        const descriptionElement = htmlDocument.querySelector(
-                          'head meta[name="description"]'
-                        );
-                        const ogDescriptionElement = htmlDocument.querySelector(
-                          'meta[property="og:description"]'
-                        );
-                        const twitterDescriptionElement = htmlDocument.querySelector(
-                          'meta[name="twitter:description"]'
-                        );
-                        const canonicalElement = htmlDocument.querySelector(
-                          'head link[rel="canonical"]'
-                        );
+                        const entryTitleInput = document.getElementById("title");
                         const entryTitleElement = htmlDocument.querySelector(
                           'h1[class="entry-title"]'
                         );
-                        $('#html-input').val(htmlString);
-                        changeForm()
+                        if (entryTitleElement) {
+                          entryTitleInput.value = entryTitleElement.innerText
+                            .replace(/\s+/g, " ")
+                            .trim();
+                          entryTitleElement.innerText = entryTitleInput.value;
+                        }
+
+                        // Fetch Permalink
+                        const permalinkInput = document.getElementById("permalink");
+                        const canonicalElement = htmlDocument.querySelector(
+                          'head link[rel="canonical"]'
+                        );
+                        if (canonicalElement) {
+                          permalinkInput.value = canonicalElement.getAttribute("href");
+                          canonicalElement.setAttribute("href", permalinkInput.value);
+                          const ogUrlElement = htmlDocument.querySelector(
+                            'meta[property="og:url"]'
+                          );
+                          if (ogUrlElement) {
+                            ogUrlElement.setAttribute("content", permalinkInput.value);
+                          }
+                        }
+                        console.log(entryTitleElement.innerText, permalinkInput.value);
                     } catch(err) {
                         try {
                             GetDataCORSBypass(urlArtikel)
