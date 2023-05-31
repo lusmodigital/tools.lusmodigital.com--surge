@@ -58,7 +58,7 @@
             <label for="excerpt">Excerpt:</label>
             <textarea id="excerpt" required></textarea><br>
 
-            <button type="button" id="addBlog">Add Blog!</button>
+            <button type="button" class="btn btn-primary" id="addBlog">Add Blog!</button>
           </form>
 
           <!-- Blog List Container -->
@@ -166,6 +166,7 @@
       
         entryTitle.appendChild(postLink);
         entryTitleWrapper.appendChild(entryTitle);
+        postRightContent.appendChild(entryTitleWrapper);
       
         const postMetaTags = document.createElement('div');
         postMetaTags.setAttribute('class', 'post-meta-tags rt-el-post-meta');
@@ -219,6 +220,8 @@
         postMetaTags.appendChild(authorSpan);
         postMetaTags.appendChild(dateSpan);
         postMetaTags.appendChild(categoriesSpan);
+
+        postRightContent.appendChild(postMetaTags);
       
         const tpgExcerpt = document.createElement('div');
         tpgExcerpt.setAttribute('class', 'tpg-excerpt tpg-el-excerpt');
@@ -228,6 +231,7 @@
         tpgExcerptInner.textContent = data.excerpt;
       
         tpgExcerpt.appendChild(tpgExcerptInner);
+        postRightContent.appendChild(tpgExcerpt);
       
         const postFooter = document.createElement('div');
         postFooter.setAttribute('class', 'post-footer');
@@ -245,12 +249,11 @@
         readMore.appendChild(readMoreLink);
       
         postFooter.appendChild(readMore);
+
+        postRightContent.appendChild(postFooter);
       
         detail.appendChild(imageHolder);
-        detail.appendChild(entryTitleWrapper);
-        detail.appendChild(postMetaTags);
-        detail.appendChild(tpgExcerpt);
-        detail.appendChild(postFooter);
+        detail.appendChild(postRightContent);
       
         holder.appendChild(detail);
         postContainer.appendChild(holder);
@@ -265,7 +268,7 @@
         document.querySelector("#addBlog").addEventListener("click", () => {         
           var title = $('#title').val();
           var permalink = $('#permalink').val();
-          var imageLink = $('#imageSrc').val();
+          var imageSrc = $('#imageSrc').val();
           var authorImageSrc = $('#authorImageSrc').val();
           var author = $('#author').val();
           var date = $('#date').val();
@@ -276,7 +279,7 @@
             id: (Math.floor(Math.random() * 10000) + 1).toString(), // Assign a unique ID for the blog post
             postTitle: title,
             postLink: permalink,
-            imageLink: imageLink,
+            imageSrc: imageSrc,
             authorImageSrc: authorImageSrc,
             authorName: author,
             date: date,
@@ -320,8 +323,8 @@
                 const parser = new DOMParser();
                 const htmlDoc = parser.parseFromString(data.contents, 'text/html');
                 console.log(htmlDoc)
-                $('#html-input').val(htmlDoc)
-                changeForm()
+                $('#html-input').val(data.contents)
+                // changeForm()
             });
             $('#modalTunggu').modal('show');
             console.log("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
