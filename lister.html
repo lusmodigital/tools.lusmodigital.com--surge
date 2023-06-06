@@ -3,14 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <title>Blog Lister HTML</title>
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
     />
+    <style>
+      .form-horizontal {
+        display: -webkit-box;
+    }
+    </style>
   </head>
   <body>
     <div class="my-5" style="margin-left: 20rem; margin-right: 20rem">
@@ -30,12 +33,25 @@
             rows="10"
           ></textarea>
         </div>
-      <form class="form-inline mb-2">
+      <form class="form mb-2">
         <div class="form-group">
-            <input class="form-control mr-3" placeholder="URL Artikel" type="text" id="url-artikel" value="">
+          <label for="html-input">Pilih Opsi Get Article:</label><br>
+          <input type="radio" id="html" name="tipe" value="Tunggal">
+          <label for="html">Tunggal</label><br>
+          <input type="radio" id="css" name="tipe" value="Banyak">
+          <label for="css">Banyak</label><br>
+        </div>
+        <div class="form-group">
+          <textarea id="banyakURL" placeholder="URL Artikel (Lebih dari 1)" class="form-control" rows="10"></textarea>
+          <input class="form-control mr-3" placeholder="URL Artikel" type="text" id="url-artikel" value="">
         </div>
         <button type="button" class="btn btn-primary" id="getArtikelBtn">Get!</button>
       </form>
+      <div id="ContainerSplitGroup" class="row flex-row flex-nowrap">
+        <ul class="mr-5 connected-sortable" id="containerDataArticle"
+            style="width:320px; height: auto; float: left;">
+        </ul>
+      </div>
         <div id="meta-title-container">
           <!-- HTML forms -->
           <form id="blogForm">
@@ -105,6 +121,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-html.min.js"></script>
     <script>
       const htmlInput = document.getElementById("html-input");
+      function extractDomain(url) {
+        // Remove "http://" or "https://" from the beginning of the URL
+        var hostnameWithPort = url.replace(/^(https?:\/\/)?/, '');
+        // Extract the hostname and port
+        var match = hostnameWithPort.match(/([^\/:]+)(:\d+)?/);
+        if (match) {
+          // Return the hostname and port
+          return match[0];
+        } else {
+          // Return an empty string if no match found
+          return '';
+        }
+      }
       function addBlogList(newBlogPost) {
         const htmlText = htmlInput.value;
         const parser = new DOMParser();
@@ -267,17 +296,17 @@
       
         return postContainer;
       }
-      $(document).ready(function() {
-        // Handle "Add Blog" form submission
-        document.querySelector("#addBlog").addEventListener("click", () => {         
-          var title = $('#title').val();
-          var permalink = $('#permalink').val();
-          var imageSrc = $('#imageSrc').val();
-          var authorImageSrc = $('#authorImageSrc').val();
-          var author = $('#author').val();
-          var date = $('#date').val();
-          var category = $('#category').val();
-          var excerpt = $('#excerpt').val();
+
+      function updateValue(id)
+      {
+          var title = $('#title-'+id).val();
+          var permalink = $('#permalink-'+id).val();
+          var imageSrc = $('#imageSrc-'+id).val();
+          var authorImageSrc = $('#authorImageSrc-'+id).val();
+          var author = $('#author-'+id).val();
+          var date = $('#date-'+id).val();
+          var category = $('#category-'+id).val();
+          var excerpt = $('#excerpt-'+id).val();
     
           var blogPostData = {
             id: (Math.floor(Math.random() * 10000) + 1).toString(), // Assign a unique ID for the blog post
@@ -294,13 +323,290 @@
     
           var blogPost = createBlogPost(blogPostData);
           $('#blogList').append(blogPost);
-    
-          // Clear form fields
-          // $('#blogForm')[0].reset();
-        });
-      });
+      }
     </script>
     <script>
+      // Get the necessary elements
+      const urlInput = document.getElementById('url-artikel');
+      const textareaResult = document.getElementById('banyakURL');
+      const radioButtons = document.querySelectorAll('input[name="tipe"]');
+
+      // Function to enable the URL Artikel input
+      function enableUrlInput() {
+        urlInput.style.display = "block";
+        textareaResult.style.display = "none";
+      }
+
+      // Function to enable the Textarea Convert Split Result
+      function enableTextareaResult() {
+        urlInput.style.display = "none";
+        textareaResult.style.display = "block";
+      }
+
+      // Add event listener to radio buttons
+      radioButtons.forEach(radioButton => {
+        radioButton.addEventListener('change', function() {
+          if (this.value === 'Tunggal') {
+            enableUrlInput();
+          } else if (this.value === 'Banyak') {
+            enableTextareaResult();
+          }
+        });
+      });
+
+      // Set the initial state based on the default value
+      const defaultRadioButton = document.querySelector('input[name="tipe"][value="Tunggal"]');
+      defaultRadioButton.checked = true;
+      enableUrlInput();
+
+      function makeColumn() {
+        
+        showDataSplit();
+      }
+
+      document.querySelector("#getArtikelBtn").addEventListener('click', checker);
+      
+      function checker() {
+        const radioBtn = document.getElementsByName('tipe');
+        let urlArtikel = $("#url-artikel").val();
+        let selectedValue;
+        for (const radioButton of radioBtn) {
+          if (radioButton.checked) {
+            selectedValue = radioButton.value;
+            break;
+          }
+        }
+        if (selectedValue == 'Banyak') 
+        {
+          let urlArtikel = $("#banyakURL").val();
+          let result = '';
+          console.log(urlArtikel);
+          const splitArray = urlArtikel.split(/\n/g);
+          for (let i = 0; i < splitArray.length; i++) {
+            result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${i % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
+              <center><h6>Artikel ${i+1}</h6></center><hr>`;
+            result += `<div class="form-horizontal" id="form-horizontal-${i}">`;
+            result += `<form id="blogForm-${i}">
+              <label for="title-${i}">Title:</label>
+              <input class="form-control mr-3" type="text" id="title-${i}" required><br>
+  
+              <label for="permalink-${i}">Permalink:</label>
+              <input class="form-control mr-3" type="text" id="permalink-${i}" required><br>
+  
+              <label for="imageSrc-${i}">Image Source:</label>
+              <input class="form-control mr-3" type="text" id="imageSrc-${i}" required><br>
+  
+              <label for="author-${i}">Author:</label>
+              <input class="form-control mr-3" type="text" id="author-${i}" required><br>
+  
+              <label for="author-${i}">Author Image Source:</label>
+              <input class="form-control mr-3" type="text" id="authorImageSrc-${i}" required><br>
+  
+              <label for="date-${i}">Date:</label>
+              <input class="form-control mr-3" type="text" id="date-${i}" required><br>
+  
+              <label for="category-${i}">Category:</label>
+              <input class="form-control mr-3" type="text" id="category-${i}" required><br>
+  
+              <label for="excerpt-${i}">Excerpt:</label>
+              <textarea class="form-control mr-3" id="excerpt-${i}" required></textarea><br>
+  
+              <button type="button" class="btn btn-primary" id="addBlog-${i}" onclick="updateValue(${i})">Add Blog to List!</button>
+            </form>`;
+            result += `</div></div>`;
+            const url = "https://rumahwalet.id/blog/"+splitArray[i];
+            console.log(i+1, url);
+            const xhr = new XMLHttpRequest;
+            let cek = checkAccessControlAllowOrigin(url);
+            if (cek) {
+                xhr.open("GET", url);
+                xhr.responseType = 'document';
+                xhr.onload = () => {
+                    if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+                        try {
+                            var XMLResult = xhr.responseXML;
+                            console.log(XMLResult);
+                            var serializer = new XMLSerializer();
+                            var htmlString = serializer.serializeToString(XMLResult);
+                            const parser = new DOMParser();
+                            const htmlDocument = parser.parseFromString(htmlString, "text/html");
+                            // Fetch Title
+                            const entryTitleInput = document.getElementById("title-"+i);
+                            const entryTitleElement = htmlDocument.querySelector(
+                              'h1[class="entry-title"]'
+                            );
+                            if (entryTitleElement) {
+                              entryTitleInput.value = entryTitleElement.innerText
+                                .replace(/\s+/g, " ")
+                                .trim();
+                              entryTitleElement.innerText = entryTitleInput.value;
+                            }
+
+                            // Fetch Permalink
+                            const permalinkInput = document.getElementById("permalink-"+i);
+                            const canonicalElement = htmlDocument.querySelector(
+                              'head link[rel="canonical"]'
+                            );
+                            if (canonicalElement) {
+                              permalinkInput.value = canonicalElement.getAttribute("href");
+                              canonicalElement.setAttribute("href", permalinkInput.value);
+                              const ogUrlElement = htmlDocument.querySelector(
+                                'meta[property="og:url"]'
+                              );
+                              if (ogUrlElement) {
+                                ogUrlElement.setAttribute("content", permalinkInput.value);
+                              }
+                            }
+
+                            // Image content detection logic
+                            const imagesInput = document.getElementById("imageSrc-"+i);
+                            const imagesElement = htmlDocument.querySelector(
+                              '.wp-post-image, .size-full, .wp-image'
+                            );
+                            console.log(canonicalElement)
+                            console.log(entryTitleElement)
+                            console.log(imagesElement)
+                            if (imagesElement) {
+                              const requestedUrl = url;// extractDomain(url);
+                              const updatedImageUrl = imagesElement.src; //.replace(extractDomain(imagesElement.src), requestedUrl);
+                              imagesInput.value = updatedImageUrl;
+                              imagesElement.innerHTML = imagesInput.value;
+                            }
+                            
+                            // console.log(entryTitleElement.innerText, permalinkInput.value);
+                        } catch(err) {
+                            try {
+                                GetDataCORSBypass(urlArtikel)
+                            } catch(err) {
+                                alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+                            }
+                        }
+                    }
+                };
+                xhr.send();
+            } else {
+                GetDataCORSBypass(urlArtikel)
+            }
+          }
+          $('#containerDataArticle').append(result);
+          console.log(splitArray);
+        }
+        else if (selectedValue == 'Tunggal')
+          GetArtikel(urlArtikel)
+      }
+
+      function GetArtikel(urlArtikel)  {
+        const xhr = new XMLHttpRequest;
+        let cek = checkAccessControlAllowOrigin(urlArtikel);
+        if (cek) {
+            xhr.open("GET", urlArtikel);
+            xhr.responseType = 'document';
+            xhr.onload = () => {
+                if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+                    try {
+                        var XMLResult = xhr.responseXML;
+                        console.log(XMLResult);
+                        var serializer = new XMLSerializer();
+                        var htmlString = serializer.serializeToString(XMLResult);
+                        const parser = new DOMParser();
+                        const htmlDocument = parser.parseFromString(htmlString, "text/html");
+                        // Fetch Title
+                        const entryTitleInput = document.getElementById("title");
+                        const entryTitleElement = htmlDocument.querySelector(
+                          'h1[class="entry-title"]'
+                        );
+                        if (entryTitleElement) {
+                          entryTitleInput.value = entryTitleElement.innerText
+                            .replace(/\s+/g, " ")
+                            .trim();
+                          entryTitleElement.innerText = entryTitleInput.value;
+                        }
+
+                        // Fetch Permalink
+                        const permalinkInput = document.getElementById("permalink");
+                        const canonicalElement = htmlDocument.querySelector(
+                          'head link[rel="canonical"]'
+                        );
+                        if (canonicalElement) {
+                          permalinkInput.value = canonicalElement.getAttribute("href");
+                          canonicalElement.setAttribute("href", permalinkInput.value);
+                          const ogUrlElement = htmlDocument.querySelector(
+                            'meta[property="og:url"]'
+                          );
+                          if (ogUrlElement) {
+                            ogUrlElement.setAttribute("content", permalinkInput.value);
+                          }
+                        }
+
+                        // Image content detection logic
+                        const imagesInput = document.getElementById("imageSrc");
+                        const imagesElement = htmlDocument.querySelector(
+                          '.wp-post-image, .size-full, .wp-image'
+                        );
+                        console.log(imagesElement)
+                        if (imagesElement) {
+                          const requestedUrl = extractDomain($("#url-artikel").val());
+                          const updatedImageUrl = imagesElement.src.replace(extractDomain(imagesElement.src), requestedUrl);
+                          imagesInput.value = updatedImageUrl;
+                          imagesElement.innerHTML = imagesInput.value;
+                        }
+                        
+                        // console.log(entryTitleElement.innerText, permalinkInput.value);
+                    } catch(err) {
+                        try {
+                            GetDataCORSBypass(urlArtikel)
+                        } catch(err) {
+                            alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+                        }
+                    }
+                }
+            };
+            xhr.send();
+        } else {
+            GetDataCORSBypass(urlArtikel)
+        }
+      }
+
+      function showDataSplit() {
+        paragraphs_object.forEach((paragraph, paragraph_index) => {
+            let result = '';
+            result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${paragraph_index % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
+            <center><h6>Paragraph ${paragraph_index+1}</h6></center><hr>`;
+    
+            paragraph.sentences.forEach((sentence, sentence_index) => {
+                let withDot = (paragraph.length_of_sentences-1) > sentence_index ? '' : '';
+    
+                result += `<div class="form-horizontal" id="form-horizontal-${paragraph_index}-${sentence_index}">`;
+                result += `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+                        <a>Kalimat ${sentence_index+1}</a>
+                        <textarea class="form-control" name="paragraph[]" rows="3">${sentence}${withDot}</textarea>
+                        <center>
+                        <button class="btn btn-sm btn-info" onclick="AddOpenAIText('${paragraph_index}','${sentence_index}')">Add</button>
+                        <button class="btn btn-sm btn-danger" onclick="DeleteHorizontalSentence('${paragraph_index}','${sentence_index}')">Delete</button>
+                        </center>
+                    </div> `;
+                result += `</div>`;
+                if (paragraph_index == paragraphs_object.length-1)
+                {
+                    result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${paragraph_index+1 % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
+                    <center><h6>Output</h6></center><hr>`;
+                    result += `<div class="form-horizontal" id="form-horizontal-${paragraph_index}-${sentence_index}-output">`;
+                    result += `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+                        <center>
+                        <b class="mb-2">Hasil Artikel ke-0</b>
+                        </div>`;
+                    result += `</div>`;
+                    result += `</div>`;
+                }
+            });
+            result += `</div>`;
+    
+            $('#containerDataArticle').append(result);
+        });
+    }
+    </script>
+    <script>
+      document.querySelector("#getDataBtn").addEventListener('click', GetData);
       $(document).ready(function() {
         $('#canonical-url').on('input', function() {
           var permalink = $(this).val();
@@ -357,69 +663,7 @@
         console.log(check)
         return check;
       }
-
-      document.querySelector("#getArtikelBtn").addEventListener('click', GetArtikel);
-      document.querySelector("#getDataBtn").addEventListener('click', GetData);
-      function GetArtikel()  {
-        const xhr = new XMLHttpRequest;
-        let urlArtikel = $("#url-artikel").val();
-        let cek = checkAccessControlAllowOrigin(urlArtikel);
-        if (cek) {
-            xhr.open("GET", urlArtikel);
-            xhr.responseType = 'document';
-            xhr.onload = () => {
-                if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-                    try {
-                        var XMLResult = xhr.responseXML;
-                        console.log(XMLResult);
-                        var serializer = new XMLSerializer();
-                        var htmlString = serializer.serializeToString(XMLResult);
-                        const parser = new DOMParser();
-                        const htmlDocument = parser.parseFromString(htmlString, "text/html");
-
-                        // Fetch Title
-                        const entryTitleInput = document.getElementById("title");
-                        const entryTitleElement = htmlDocument.querySelector(
-                          'h1[class="entry-title"]'
-                        );
-                        if (entryTitleElement) {
-                          entryTitleInput.value = entryTitleElement.innerText
-                            .replace(/\s+/g, " ")
-                            .trim();
-                          entryTitleElement.innerText = entryTitleInput.value;
-                        }
-
-                        // Fetch Permalink
-                        const permalinkInput = document.getElementById("permalink");
-                        const canonicalElement = htmlDocument.querySelector(
-                          'head link[rel="canonical"]'
-                        );
-                        if (canonicalElement) {
-                          permalinkInput.value = canonicalElement.getAttribute("href");
-                          canonicalElement.setAttribute("href", permalinkInput.value);
-                          const ogUrlElement = htmlDocument.querySelector(
-                            'meta[property="og:url"]'
-                          );
-                          if (ogUrlElement) {
-                            ogUrlElement.setAttribute("content", permalinkInput.value);
-                          }
-                        }
-                        console.log(entryTitleElement.innerText, permalinkInput.value);
-                    } catch(err) {
-                        try {
-                            GetDataCORSBypass(urlArtikel)
-                        } catch(err) {
-                            alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
-                        }
-                    }
-                }
-            };
-    
-            xhr.send();
-        } else {
-            GetDataCORSBypass(urlArtikel)
-        }
-      }
+      
       function GetData()  {
         const xhr = new XMLHttpRequest;
         let urlBlogList = $("#url-template").val();
