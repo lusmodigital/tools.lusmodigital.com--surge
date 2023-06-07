@@ -519,7 +519,7 @@ function createParagraphs(text) {
 
 function GetDataCORSBypass(urlArtikel) {
     try {
-        $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel)+'&callback=?', function (data) {
+        $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel), function (data) {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(data.contents, 'text/html');
             console.log(htmlDoc)
