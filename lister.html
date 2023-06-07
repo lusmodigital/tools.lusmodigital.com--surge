@@ -170,8 +170,8 @@
         image.setAttribute('decoding', 'async');
         image.setAttribute('src', data.imageSrc);
         image.setAttribute('class', 'rt-img-responsive');
-        image.setAttribute('width', data.imageWidth);
-        image.setAttribute('height', data.imageHeight);
+        image.setAttribute('width', '391');
+        image.setAttribute('height', '261');
         image.setAttribute('alt', data.imageAlt);
       
         const overlay = document.createElement('div');
@@ -211,8 +211,8 @@
         authorImage.setAttribute('alt', '');
         authorImage.setAttribute('src', data.authorImageSrc);
         authorImage.setAttribute('class', 'avatar avatar-80 photo');
-        authorImage.setAttribute('height', data.authorImageHeight);
-        authorImage.setAttribute('width', data.authorImageWidth);
+        authorImage.setAttribute('height', '80');
+        authorImage.setAttribute('width', '80');
       
         const authorLink = document.createElement('a');
         authorLink.setAttribute('href', data.authorLink);
@@ -243,8 +243,8 @@
         folderIcon.setAttribute('class', 'fas fa-folder-open');
       
         const categoryLink = document.createElement('a');
-        categoryLink.setAttribute('class', data.categoryClass);
-        categoryLink.setAttribute('href', data.categoryLink);
+        categoryLink.setAttribute('class', 'tak-berkategori');
+        categoryLink.setAttribute('href', 'https://rumahwalet.id/category/tak-berkategori');
         categoryLink.textContent = data.category;
       
         categoriesSpan.appendChild(folderIcon);
@@ -403,7 +403,7 @@
               <input class="form-control mr-3" type="text" id="authorImageSrc-${i}" required><br>
   
               <label for="date-${i}">Date:</label>
-              <input class="form-control mr-3" type="text" id="date-${i}" required><br>
+              <input class="form-control mr-3" type="date" id="date-${i}" required><br>
   
               <label for="category-${i}">Category:</label>
               <input class="form-control mr-3" type="text" id="category-${i}" required><br>
@@ -472,7 +472,18 @@
                               imagesInput.value = updatedImageUrl;
                               imagesElement.innerHTML = imagesInput.value;
                             }
-                            
+
+                            const authorInput = document.getElementById("author-"+i);
+                            authorInput.value = 'alwiishihab';
+
+                            const authorImageInput = document.getElementById("authorImageSrc-"+i);
+                            authorImageInput.value = 'http://1.gravatar.com/avatar/1cf002a100c0084dc1719765537944f2?s=80&amp;d=mm&amp;r=g';
+
+                            const categoryInput = document.getElementById("category-"+i);
+                            categoryInput.value = 'Tak Berkategori';
+
+                            const excerptInput = document.getElementById("excerpt-"+i);
+                            excerptInput.value = entryTitleInput.value;
                             // console.log(entryTitleElement.innerText, permalinkInput.value);
                         } catch(err) {
                             try {
