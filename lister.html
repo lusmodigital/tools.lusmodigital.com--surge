@@ -121,6 +121,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-html.min.js"></script>
     <script>
       const htmlInput = document.getElementById("html-input");
+      var type = 'alwi';
       function extractDomain(url) {
         // Remove "http://" or "https://" from the beginning of the URL
         var hostnameWithPort = url.replace(/^(https?:\/\/)?/, '');
@@ -147,154 +148,160 @@
         htmlInput.value = htmlDocument.documentElement.outerHTML;
       }
       function createBlogPost(data) {
-        const postContainer = document.createElement('div');
-        postContainer.setAttribute('class', 'rt-col-md-12 rt-col-sm-12 rt-col-xs-12 img_zoom_out rt-list-item rt-grid-item');
-        postContainer.setAttribute('data-id', data.id);
-      
-        const holder = document.createElement('div');
-        holder.setAttribute('class', 'rt-holder tpg-post-holder');
-      
-        const detail = document.createElement('div');
-        detail.setAttribute('class', 'rt-detail rt-el-content-wrapper');
-      
-        const imageHolder = document.createElement('div');
-        imageHolder.setAttribute('class', 'rt-img-holder tpg-el-image-wrap has-thumbnail');
-      
-        const imageLink = document.createElement('a');
-        imageLink.setAttribute('data-id', data.id);
-        imageLink.setAttribute('href', data.imageLink);
-        imageLink.setAttribute('class', 'tpg-post-link');
-        imageLink.setAttribute('target', '_self');
-      
-        const image = document.createElement('img');
-        image.setAttribute('decoding', 'async');
-        image.setAttribute('src', data.imageSrc);
-        image.setAttribute('class', 'rt-img-responsive');
-        image.setAttribute('width', '391');
-        image.setAttribute('height', '261');
-        image.setAttribute('alt', data.imageAlt);
-      
-        const overlay = document.createElement('div');
-        overlay.setAttribute('class', 'overlay grid-hover-content');
-      
-        imageLink.appendChild(image);
-        imageHolder.appendChild(imageLink);
-        imageHolder.appendChild(overlay);
-      
-        const postRightContent = document.createElement('div');
-        postRightContent.setAttribute('class', 'post-right-content');
-      
-        const entryTitleWrapper = document.createElement('div');
-        entryTitleWrapper.setAttribute('class', 'entry-title-wrapper');
-      
-        const entryTitle = document.createElement('h4');
-        entryTitle.setAttribute('class', 'entry-title');
-      
-        const postLink = document.createElement('a');
-        postLink.setAttribute('data-id', data.id);
-        postLink.setAttribute('href', data.postLink);
-        postLink.setAttribute('class', 'tpg-post-link');
-        postLink.setAttribute('target', '_self');
-        postLink.textContent = data.postTitle;
-      
-        entryTitle.appendChild(postLink);
-        entryTitleWrapper.appendChild(entryTitle);
-        postRightContent.appendChild(entryTitleWrapper);
-      
-        const postMetaTags = document.createElement('div');
-        postMetaTags.setAttribute('class', 'post-meta-tags rt-el-post-meta');
-      
-        const authorSpan = document.createElement('span');
-        authorSpan.setAttribute('class', 'author has-author-avatar');
-      
-        const authorImage = document.createElement('img');
-        authorImage.setAttribute('alt', '');
-        authorImage.setAttribute('src', data.authorImageSrc);
-        authorImage.setAttribute('class', 'avatar avatar-80 photo');
-        authorImage.setAttribute('height', '80');
-        authorImage.setAttribute('width', '80');
-      
-        const authorLink = document.createElement('a');
-        authorLink.setAttribute('href', data.authorLink);
-        authorLink.textContent = data.authorName;
-      
-        authorSpan.appendChild(authorImage);
-        authorSpan.appendChild(authorLink);
-      
-        const dateSpan = document.createElement('span');
-        dateSpan.setAttribute('class', 'date');
-      
-        const calendarIcon = document.createElement('i');
-        calendarIcon.setAttribute('aria-hidden', 'true');
-        calendarIcon.setAttribute('class', 'far fa-calendar-alt');
-      
-        const dateLink = document.createElement('a');
-        dateLink.setAttribute('href', data.dateLink);
-        dateLink.textContent = data.date;
-      
-        dateSpan.appendChild(calendarIcon);
-        dateSpan.appendChild(dateLink);
-      
-        const categoriesSpan = document.createElement('span');
-        categoriesSpan.setAttribute('class', 'categories-links');
-      
-        const folderIcon = document.createElement('i');
-        folderIcon.setAttribute('aria-hidden', 'true');
-        folderIcon.setAttribute('class', 'fas fa-folder-open');
-      
-        const categoryLink = document.createElement('a');
-        categoryLink.setAttribute('class', 'tak-berkategori');
-        categoryLink.setAttribute('href', 'https://rumahwalet.id/category/tak-berkategori');
-        categoryLink.textContent = data.category;
-      
-        categoriesSpan.appendChild(folderIcon);
-        categoriesSpan.appendChild(categoryLink);
-      
-        postMetaTags.appendChild(authorSpan);
-        postMetaTags.appendChild(dateSpan);
-        postMetaTags.appendChild(categoriesSpan);
+        if (type == 'alwi') 
+        {        
+          const postContainer = document.createElement('div');
+          postContainer.setAttribute('class', 'rt-col-md-12 rt-col-sm-12 rt-col-xs-12 img_zoom_out rt-list-item rt-grid-item');
+          postContainer.setAttribute('data-id', data.id);
+        
+          const holder = document.createElement('div');
+          holder.setAttribute('class', 'rt-holder tpg-post-holder');
+        
+          const detail = document.createElement('div');
+          detail.setAttribute('class', 'rt-detail rt-el-content-wrapper');
+        
+          const imageHolder = document.createElement('div');
+          imageHolder.setAttribute('class', 'rt-img-holder tpg-el-image-wrap has-thumbnail');
+        
+          const imageLink = document.createElement('a');
+          imageLink.setAttribute('data-id', data.id);
+          imageLink.setAttribute('href', data.imageLink);
+          imageLink.setAttribute('class', 'tpg-post-link');
+          imageLink.setAttribute('target', '_self');
+        
+          const image = document.createElement('img');
+          image.setAttribute('decoding', 'async');
+          image.setAttribute('src', data.imageSrc);
+          image.setAttribute('class', 'rt-img-responsive');
+          image.setAttribute('width', '391');
+          image.setAttribute('height', '261');
+          image.setAttribute('alt', data.imageAlt);
+        
+          const overlay = document.createElement('div');
+          overlay.setAttribute('class', 'overlay grid-hover-content');
+        
+          imageLink.appendChild(image);
+          imageHolder.appendChild(imageLink);
+          imageHolder.appendChild(overlay);
+        
+          const postRightContent = document.createElement('div');
+          postRightContent.setAttribute('class', 'post-right-content');
+        
+          const entryTitleWrapper = document.createElement('div');
+          entryTitleWrapper.setAttribute('class', 'entry-title-wrapper');
+        
+          const entryTitle = document.createElement('h4');
+          entryTitle.setAttribute('class', 'entry-title');
+        
+          const postLink = document.createElement('a');
+          postLink.setAttribute('data-id', data.id);
+          postLink.setAttribute('href', data.postLink);
+          postLink.setAttribute('class', 'tpg-post-link');
+          postLink.setAttribute('target', '_self');
+          postLink.textContent = data.postTitle;
+        
+          entryTitle.appendChild(postLink);
+          entryTitleWrapper.appendChild(entryTitle);
+          postRightContent.appendChild(entryTitleWrapper);
+        
+          const postMetaTags = document.createElement('div');
+          postMetaTags.setAttribute('class', 'post-meta-tags rt-el-post-meta');
+        
+          const authorSpan = document.createElement('span');
+          authorSpan.setAttribute('class', 'author has-author-avatar');
+        
+          const authorImage = document.createElement('img');
+          authorImage.setAttribute('alt', '');
+          authorImage.setAttribute('src', data.authorImageSrc);
+          authorImage.setAttribute('class', 'avatar avatar-80 photo');
+          authorImage.setAttribute('height', '80');
+          authorImage.setAttribute('width', '80');
+        
+          const authorLink = document.createElement('a');
+          authorLink.setAttribute('href', data.authorLink);
+          authorLink.textContent = data.authorName;
+        
+          authorSpan.appendChild(authorImage);
+          authorSpan.appendChild(authorLink);
+        
+          const dateSpan = document.createElement('span');
+          dateSpan.setAttribute('class', 'date');
+        
+          const calendarIcon = document.createElement('i');
+          calendarIcon.setAttribute('aria-hidden', 'true');
+          calendarIcon.setAttribute('class', 'far fa-calendar-alt');
+        
+          const dateLink = document.createElement('a');
+          dateLink.setAttribute('href', data.dateLink);
+          dateLink.textContent = data.date;
+        
+          dateSpan.appendChild(calendarIcon);
+          dateSpan.appendChild(dateLink);
+        
+          const categoriesSpan = document.createElement('span');
+          categoriesSpan.setAttribute('class', 'categories-links');
+        
+          const folderIcon = document.createElement('i');
+          folderIcon.setAttribute('aria-hidden', 'true');
+          folderIcon.setAttribute('class', 'fas fa-folder-open');
+        
+          const categoryLink = document.createElement('a');
+          categoryLink.setAttribute('class', 'tak-berkategori');
+          categoryLink.setAttribute('href', 'https://rumahwalet.id/category/tak-berkategori');
+          categoryLink.textContent = data.category;
+        
+          categoriesSpan.appendChild(folderIcon);
+          categoriesSpan.appendChild(categoryLink);
+        
+          postMetaTags.appendChild(authorSpan);
+          postMetaTags.appendChild(dateSpan);
+          postMetaTags.appendChild(categoriesSpan);
 
-        postRightContent.appendChild(postMetaTags);
-      
-        const tpgExcerpt = document.createElement('div');
-        tpgExcerpt.setAttribute('class', 'tpg-excerpt tpg-el-excerpt');
-      
-        const tpgExcerptInner = document.createElement('div');
-        tpgExcerptInner.setAttribute('class', 'tpg-excerpt-inner');
-        tpgExcerptInner.textContent = data.excerpt;
-      
-        tpgExcerpt.appendChild(tpgExcerptInner);
-        postRightContent.appendChild(tpgExcerpt);
-      
-        const postFooter = document.createElement('div');
-        postFooter.setAttribute('class', 'post-footer');
-      
-        const readMore = document.createElement('div');
-        readMore.setAttribute('class', 'read-more');
-      
-        const readMoreLink = document.createElement('a');
-        readMoreLink.setAttribute('data-id', data.id);
-        readMoreLink.setAttribute('href', data.readMoreLink);
-        readMoreLink.setAttribute('class', 'tpg-post-link');
-        readMoreLink.setAttribute('target', '_self');
-        readMoreLink.textContent = 'Read More';
-      
-        readMore.appendChild(readMoreLink);
-      
-        postFooter.appendChild(readMore);
+          postRightContent.appendChild(postMetaTags);
+        
+          const tpgExcerpt = document.createElement('div');
+          tpgExcerpt.setAttribute('class', 'tpg-excerpt tpg-el-excerpt');
+        
+          const tpgExcerptInner = document.createElement('div');
+          tpgExcerptInner.setAttribute('class', 'tpg-excerpt-inner');
+          tpgExcerptInner.textContent = data.excerpt;
+        
+          tpgExcerpt.appendChild(tpgExcerptInner);
+          postRightContent.appendChild(tpgExcerpt);
+        
+          const postFooter = document.createElement('div');
+          postFooter.setAttribute('class', 'post-footer');
+        
+          const readMore = document.createElement('div');
+          readMore.setAttribute('class', 'read-more');
+        
+          const readMoreLink = document.createElement('a');
+          readMoreLink.setAttribute('data-id', data.id);
+          readMoreLink.setAttribute('href', data.readMoreLink);
+          readMoreLink.setAttribute('class', 'tpg-post-link');
+          readMoreLink.setAttribute('target', '_self');
+          readMoreLink.textContent = 'Read More';
+        
+          readMore.appendChild(readMoreLink);
+        
+          postFooter.appendChild(readMore);
 
-        postRightContent.appendChild(postFooter);
-      
-        detail.appendChild(imageHolder);
-        detail.appendChild(postRightContent);
-      
-        holder.appendChild(detail);
-        postContainer.appendChild(holder);
+          postRightContent.appendChild(postFooter);
+        
+          detail.appendChild(imageHolder);
+          detail.appendChild(postRightContent);
+        
+          holder.appendChild(detail);
+          postContainer.appendChild(holder);
 
-        console.log(postContainer);
-        addBlogList(postContainer.outerHTML)
-      
-        return postContainer;
+          console.log(postContainer);
+          addBlogList(postContainer.outerHTML)
+        
+          return postContainer;
+        } else if (type == 'anggelin')
+        {
+          
+        }
       }
 
       function updateValue(id)
@@ -678,6 +685,8 @@
       function GetData()  {
         const xhr = new XMLHttpRequest;
         let urlBlogList = $("#url-template").val();
+        if (extractDomain(urlBlogList) == 'https://rumahwalet.id') type = 'alwi';
+        else  if (extractDomain(urlBlogList) == 'https://ternakwalet.com') type = 'anggelin';
         let cek = checkAccessControlAllowOrigin(urlBlogList);
         if (cek) {
             xhr.open("GET", urlBlogList);
