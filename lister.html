@@ -33,6 +33,15 @@
             rows="10"
           ></textarea>
         </div>
+        <div class="form-group">
+          <label for="html-input">Masukkan Template Blog List:</label>
+          <textarea
+            id="blog-list"
+            name="blog-list"
+            class="form-control"
+            rows="10"
+          ></textarea>
+        </div>
       <form class="form mb-2">
         <div class="form-group">
           <label for="html-input">Pilih Opsi Get Article:</label><br>
@@ -598,7 +607,7 @@
                           }
                         } catch(err) {
                             try {
-                                GetDataCORSBypass(url, i)
+                                GetDataCORSBypass(url, i, "Banyak")
                             } catch(err) {
                                 alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
                             }
@@ -607,7 +616,7 @@
                 };
                 xhr.send();
             } else {
-                GetDataCORSBypass(url, i)
+                GetDataCORSBypass(url, i, "Banyak")
             }
           }
           $('#containerDataArticle').append(result);
@@ -686,7 +695,7 @@
                         }
                     } catch(err) {
                         try {
-                            GetDataCORSBypass(urlArtikel, 0)
+                            GetDataCORSBypass(urlArtikel, 0, "Tunggal")
                         } catch(err) {
                             alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
                         }
@@ -695,7 +704,7 @@
             };
             xhr.send();
         } else {
-            GetDataCORSBypass(urlArtikel, 0)
+            GetDataCORSBypass(urlArtikel, 0, "Tunggal")
         }
       }
 
@@ -759,13 +768,18 @@
           $(this).val(permalink);
         });
       });
-      function GetDataCORSBypass(urlArtikel, id) {
+
+      function checkBlogListFormat() {
+
+      }
+
+      function GetDataCORSBypass(urlArtikel, id, tipe) {
         try {
             $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel), function (data) {
                 const parser = new DOMParser();
-                console.log("CEKK", urlArtikel, data)
+                console.log("CEKK", urlArtikel, extractDomain(urlArtikel))
                 const htmlDocument = parser.parseFromString(data.contents, 'text/html');
-                if (extractDomain(urlArtikel) == "ternakwalet.com") {
+                if (tipe == "Banyak") {
                   // Fetch Title
                   const entryTitleInput = document.getElementById("title-"+id);
                   const entryTitleElement = htmlDocument.querySelector(
@@ -819,7 +833,7 @@
                     imagesElement.innerHTML = imagesInput.value;
                   }
                 }
-                else if (extractDomain(urlArtikel) == "rumahwalet.id")
+                else
                 {
                   // Fetch Title
                   const entryTitleInput = document.getElementById("title");
@@ -931,7 +945,7 @@
                         changeForm()
                     } catch(err) {
                         try {
-                            GetDataCORSBypass(urlBlogList, 0)
+                            GetDataCORSBypass(urlBlogList, 0, "Tunggal")
                         } catch(err) {
                             alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
                         }
@@ -941,7 +955,7 @@
     
             xhr.send();
         } else {
-            GetDataCORSBypass(urlBlogList, 0)
+            GetDataCORSBypass(urlBlogList, 0, "Tunggal")
         }
       }
     </script>
