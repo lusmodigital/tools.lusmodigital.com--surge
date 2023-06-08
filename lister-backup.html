@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Blog Lister HTML</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
+    />
+    <style>
+      .form-horizontal {
+        display: -webkit-box;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="my-5" style="margin-left: 20rem; margin-right: 20rem">
+      <h1>Blog Lister HTML</h1>
+      <form class="form-inline">
+        <div class="form-group">
+            <input class="form-control mr-3" placeholder="URL Blog List Container" type="text" id="url-template" value="">
+        </div>
+        <button type="button" class="btn btn-primary" id="getDataBtn">Fetch!</button>
+      </form>
+        <div class="form-group">
+          <label for="html-input">Masukkan Template HTML:</label>
+          <textarea
+            id="html-input"
+            name="html-input"
+            class="form-control"
+            rows="10"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="html-input">Masukkan Template Blog List:</label>
+          <textarea
+            id="blog-list"
+            name="blog-list"
+            class="form-control"
+            rows="10"
+          ></textarea>
+        </div>
+      <form class="form mb-2">
+        <div class="form-group">
+          <label for="html-input">Pilih Opsi Get Article:</label><br>
+          <input type="radio" id="html" name="tipe" value="Tunggal">
+          <label for="html">Tunggal</label><br>
+          <input type="radio" id="css" name="tipe" value="Banyak">
+          <label for="css">Banyak</label><br>
+        </div>
+        <div class="form-group">
+          <textarea id="banyakURL" placeholder="URL Artikel (Lebih dari 1)" class="form-control" rows="10"></textarea>
+          <input class="form-control mr-3" placeholder="URL Artikel" type="text" id="url-artikel" value="">
+        </div>
+        <button type="button" class="btn btn-primary" id="getArtikelBtn">Get!</button>
+      </form>
+      <div id="ContainerSplitGroup" class="row flex-row flex-nowrap">
+        <ul class="mr-5 connected-sortable" id="containerDataArticle"
+            style="width:320px; height: auto; float: left;">
+        </ul>
+      </div>
+        <div id="meta-title-container">
+          <!-- HTML forms -->
+          <form id="blogForm">
+            <label for="title">Title:</label>
+            <input class="form-control mr-3" type="text" id="title" required><br>
+
+            <label for="permalink">Permalink:</label>
+            <input class="form-control mr-3" type="text" id="permalink" required><br>
+
+            <label for="imageSrc">Image Source:</label>
+            <input class="form-control mr-3" type="text" id="imageSrc" required><br>
+
+            <label for="author">Author:</label>
+            <input class="form-control mr-3" type="text" id="author" required><br>
+
+            <label for="author">Author Image Source:</label>
+            <input class="form-control mr-3" type="text" id="authorImageSrc" required><br>
+
+            <label for="date">Date:</label>
+            <input class="form-control mr-3" type="date" id="date" required><br>
+
+            <label for="category">Category:</label>
+            <input class="form-control mr-3" type="text" id="category" required><br>
+
+            <label for="excerpt">Excerpt:</label>
+            <textarea class="form-control mr-3" id="excerpt" required></textarea><br>
+
+            <button type="button" class="btn btn-primary" id="addBlog">Add Blog to List!</button>
+          </form>
+
+          <!-- Blog List Container -->
+          <div id="blogList"></div>
+        <div class="d-flex justify-content-end">
+          <button
+            type="button"
+            id="update-html-btn"
+            class="btn btn-primary float-end"
+            style="display: none"
+          >
+            Update HTML
+          </button>
+        </div>
+      <div class="alert-container"></div>
+      <div id="modalTunggu" class="modal" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Mohon Tunggu!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Sistem sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik-1 menit.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Baik</button>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-html.min.js"></script>
+    <script>
+      const htmlInput = document.getElementById("html-input");
+      var type = 'alwi';
+      function extractDomain(url) {
+        // Remove "http://" or "https://" from the beginning of the URL
+        var hostnameWithPort = url.replace(/^(https?:\/\/)?/, '');
+        // Extract the hostname and port
+        var match = hostnameWithPort.match(/([^\/:]+)(:\d+)?/);
+        if (match) {
+          // Return the hostname and port
+          return match[0];
+        } else {
+          // Return an empty string if no match found
+          return '';
+        }
+      }
+      function addBlogList(newBlogPost) {
+        if (type == 'alwi')
+        {
+          const htmlText = htmlInput.value;
+          const parser = new DOMParser();
+          const htmlDocument = parser.parseFromString(htmlText, "text/html");
+
+          const blogListContainer = htmlDocument.querySelector(".tpg-even");
+          console.log("dari", blogListContainer)
+          // TODO: Add 
+          $(blogListContainer).prepend(newBlogPost);
+          console.log("jadi", blogListContainer)
+          htmlInput.value = htmlDocument.documentElement.outerHTML;
+        } else if (type == "anggelin")
+        {
+          const htmlText = htmlInput.value;
+          const parser = new DOMParser();
+          const htmlDocument = parser.parseFromString(htmlText, "text/html");
+
+          
+          const blogListContainer = htmlDocument.querySelector(".eael-post-grid, .eael-post-appender");
+          console.log("dari", blogListContainer)
+          // TODO: Add 
+          $(blogListContainer).prepend(newBlogPost);
+          console.log("jadi", blogListContainer)
+          document.getElementById("html-input").value = "<!DOCTYPE html>\n"+htmlDocument.documentElement.outerHTML;
+        }
+      }
+      function createBlogPost(data) {
+        if (type == 'alwi') 
+        {        
+          const postContainer = document.createElement('div');
+          postContainer.setAttribute('class', 'rt-col-md-12 rt-col-sm-12 rt-col-xs-12 img_zoom_out rt-list-item rt-grid-item');
+          postContainer.setAttribute('data-id', data.id);
+          
+          const holder = document.createElement('div');
+          holder.setAttribute('class', 'rt-holder tpg-post-holder');
+          
+          const detail = document.createElement('div');
+          detail.setAttribute('class', 'rt-detail rt-el-content-wrapper');
+        
+          const imageHolder = document.createElement('div');
+          imageHolder.setAttribute('class', 'rt-img-holder tpg-el-image-wrap has-thumbnail');
+          
+          const imageLink = document.createElement('a');
+          imageLink.setAttribute('data-id', data.id);
+          imageLink.setAttribute('href', data.imageSrc);
+          imageLink.setAttribute('class', 'tpg-post-link');
+          imageLink.setAttribute('target', '_self');
+          
+          const image = document.createElement('img');
+          image.setAttribute('decoding', 'async');
+          image.setAttribute('src', data.imageSrc);
+          image.setAttribute('class', 'rt-img-responsive');
+          image.setAttribute('width', '391');
+          image.setAttribute('height', '261');
+          image.setAttribute('alt', data.imageAlt);
+          
+          const overlay = document.createElement('div');
+          overlay.setAttribute('class', 'overlay grid-hover-content');
+          
+          imageLink.appendChild(image);
+          imageHolder.appendChild(imageLink);
+          imageHolder.appendChild(overlay);
+          
+          const postRightContent = document.createElement('div');
+          postRightContent.setAttribute('class', 'post-right-content');
+        
+          const entryTitleWrapper = document.createElement('div');
+          entryTitleWrapper.setAttribute('class', 'entry-title-wrapper');
+        
+          const entryTitle = document.createElement('h4');
+          entryTitle.setAttribute('class', 'entry-title');
+        
+          const postLink = document.createElement('a');
+          postLink.setAttribute('data-id', data.id);
+          postLink.setAttribute('href', data.postLink);
+          postLink.setAttribute('class', 'tpg-post-link');
+          postLink.setAttribute('target', '_self');
+          postLink.textContent = data.postTitle;
+        
+          entryTitle.appendChild(postLink);
+          entryTitleWrapper.appendChild(entryTitle);
+          postRightContent.appendChild(entryTitleWrapper);
+        
+          const postMetaTags = document.createElement('div');
+          postMetaTags.setAttribute('class', 'post-meta-tags rt-el-post-meta');
+        
+          const authorSpan = document.createElement('span');
+          authorSpan.setAttribute('class', 'author has-author-avatar');
+        
+          const authorImage = document.createElement('img');
+          authorImage.setAttribute('alt', '');
+          authorImage.setAttribute('src', data.authorImageSrc);
+          authorImage.setAttribute('class', 'avatar avatar-80 photo');
+          authorImage.setAttribute('height', '80');
+          authorImage.setAttribute('width', '80');
+        
+          const authorLink = document.createElement('a');
+          authorLink.setAttribute('href', data.authorLink);
+          authorLink.textContent = data.authorName;
+        
+          authorSpan.appendChild(authorImage);
+          authorSpan.appendChild(authorLink);
+        
+          const dateSpan = document.createElement('span');
+          dateSpan.setAttribute('class', 'date');
+        
+          const calendarIcon = document.createElement('i');
+          calendarIcon.setAttribute('aria-hidden', 'true');
+          calendarIcon.setAttribute('class', 'far fa-calendar-alt');
+        
+          const dateLink = document.createElement('a');
+          dateLink.setAttribute('href', data.dateLink);
+          dateLink.textContent = data.date;
+        
+          dateSpan.appendChild(calendarIcon);
+          dateSpan.appendChild(dateLink);
+        
+          const categoriesSpan = document.createElement('span');
+          categoriesSpan.setAttribute('class', 'categories-links');
+        
+          const folderIcon = document.createElement('i');
+          folderIcon.setAttribute('aria-hidden', 'true');
+          folderIcon.setAttribute('class', 'fas fa-folder-open');
+        
+          const categoryLink = document.createElement('a');
+          categoryLink.setAttribute('class', 'tak-berkategori');
+          categoryLink.setAttribute('href', 'https://rumahwalet.id/category/tak-berkategori');
+          categoryLink.textContent = data.category;
+        
+          categoriesSpan.appendChild(folderIcon);
+          categoriesSpan.appendChild(categoryLink);
+        
+          postMetaTags.appendChild(authorSpan);
+          postMetaTags.appendChild(dateSpan);
+          postMetaTags.appendChild(categoriesSpan);
+
+          postRightContent.appendChild(postMetaTags);
+        
+          const tpgExcerpt = document.createElement('div');
+          tpgExcerpt.setAttribute('class', 'tpg-excerpt tpg-el-excerpt');
+        
+          const tpgExcerptInner = document.createElement('div');
+          tpgExcerptInner.setAttribute('class', 'tpg-excerpt-inner');
+          tpgExcerptInner.textContent = data.excerpt;
+        
+          tpgExcerpt.appendChild(tpgExcerptInner);
+          postRightContent.appendChild(tpgExcerpt);
+        
+          const postFooter = document.createElement('div');
+          postFooter.setAttribute('class', 'post-footer');
+        
+          const readMore = document.createElement('div');
+          readMore.setAttribute('class', 'read-more');
+        
+          const readMoreLink = document.createElement('a');
+          readMoreLink.setAttribute('data-id', data.id);
+          readMoreLink.setAttribute('href', data.readMoreLink);
+          readMoreLink.setAttribute('class', 'tpg-post-link');
+          readMoreLink.setAttribute('target', '_self');
+          readMoreLink.textContent = 'Read More';
+        
+          readMore.appendChild(readMoreLink);
+        
+          postFooter.appendChild(readMore);
+
+          postRightContent.appendChild(postFooter);
+        
+          detail.appendChild(imageHolder);
+          detail.appendChild(postRightContent);
+        
+          holder.appendChild(detail);
+          postContainer.appendChild(holder);
+
+          console.log(postContainer);
+          addBlogList(postContainer.outerHTML)
+        
+          return postContainer;
+        } else if (type == 'anggelin')
+        {
+          const article = document.createElement('article');
+          article.setAttribute('class', 'eael-grid-post eael-post-grid-column');
+          article.setAttribute('data-id', data.id);
+
+          const postHolder = document.createElement('div');
+          postHolder.setAttribute('class', 'eael-grid-post-holder');
+
+          const postHolderInner = document.createElement('div');
+          postHolderInner.setAttribute('class', 'eael-grid-post-holder-inner');
+
+          var postHolderInnerContent = `
+            <div class="eael-entry-media">
+              <div class="eael-entry-overlay fade-in">
+                <i class="fas fa-long-arrow-alt-right" aria-hidden="true"></i><a href="${data.postLink}"></a>
+              </div>
+              <div class="eael-entry-thumbnail">
+                <img width="300" height="168" src="${data.imageSrc}" class="attachment-medium size-medium wp-image-1255" alt="" decoding="async" srcset="${data.imageSrc} 300w, ${data.imageSrc} 720w" sizes="(max-width: 300px) 100vw, 300px">
+              </div>
+            </div>
+            <div class="eael-entry-wrapper">
+              <header class="eael-entry-header">
+                <h2 class="eael-entry-title">
+                  <a class="eael-grid-post-link" href="${data.postLink}" title="${data.postTitle}">${data.postTitle}</a>
+                </h2>
+              </header>
+              <div class="eael-entry-content">
+                <div class="eael-grid-post-excerpt">
+                  <p>${data.excerpt}.</p>
+                  <a href="${data.postLink}" class="eael-post-elements-readmore-btn">Read More</a>
+                </div>
+              </div>
+              <div class="eael-entry-header-after style-two">
+                <div class="eael-entry-meta">
+                  <span class="eael-meta-posted-on"><i class="far fa-clock"></i><time datetime="${data.date}">${data.date}</time></span>
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Append the elements
+          postHolderInner.innerHTML = postHolderInnerContent;
+          postHolder.appendChild(postHolderInner);
+          article.appendChild(postHolder);
+          addBlogList(article.outerHTML);
+
+          return article;
+        }
+      }
+
+      function updateValueSingle()
+      {
+          var title = $('#title').val();
+          var permalink = $('#permalink').val();
+          var imageSrc = $('#imageSrc').val();
+          var authorImageSrc = $('#authorImageSrc').val();
+          var author = $('#author').val();
+          var category = $('#category').val();
+          var excerpt = $('#excerpt').val();
+          var date = $('#date').val();
+          if (type="anggelin")
+          {
+            title = title.toUpperCase()
+            date = new Date($('#date').val()).toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric'
+            });
+          }
+          $('#date').val(date);
+          var blogPostData = {
+            id: (Math.floor(Math.random() * 10000) + 1).toString(), // Assign a unique ID for the blog post
+            postTitle: title,
+            postLink: permalink,
+            imageSrc: imageSrc,
+            authorImageSrc: authorImageSrc,
+            authorName: author,
+            date: date,
+            category: category,
+            excerpt: excerpt
+          };
+          console.log(blogPostData);
+    
+          var blogPost = createBlogPost(blogPostData);
+          $('#blogList').append(blogPost);
+      }
+      function updateValue(id)
+      {
+          var title = $('#title-'+id).val();
+          var permalink = $('#permalink-'+id).val();
+          var imageSrc = $('#imageSrc-'+id).val();
+          var authorImageSrc = $('#authorImageSrc-'+id).val();
+          var author = $('#author-'+id).val();
+          var date = $('#date-'+id).val();
+          var category = $('#category-'+id).val();
+          var excerpt = $('#excerpt-'+id).val();
+          if (type="anggelin")
+          {
+            title = title.toUpperCase()
+            date = new Date($('#date-'+id).val()).toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric'
+            });
+          }
+          var blogPostData = {
+            id: (Math.floor(Math.random() * 10000) + 1).toString(), // Assign a unique ID for the blog post
+            postTitle: title,
+            postLink: permalink,
+            imageSrc: imageSrc,
+            authorImageSrc: authorImageSrc,
+            authorName: author,
+            date: date,
+            category: category,
+            excerpt: excerpt
+          };
+          console.log(blogPostData);
+    
+          var blogPost = createBlogPost(blogPostData);
+          $('#blogList').append(blogPost);
+      }
+    </script>
+    <script>
+      // Get the necessary elements
+      const urlInput = document.getElementById('url-artikel');
+      const textareaResult = document.getElementById('banyakURL');
+      const radioButtons = document.querySelectorAll('input[name="tipe"]');
+
+      // Function to enable the URL Artikel input
+      function enableUrlInput() {
+        urlInput.style.display = "block";
+        textareaResult.style.display = "none";
+      }
+
+      // Function to enable the Textarea Convert Split Result
+      function enableTextareaResult() {
+        urlInput.style.display = "none";
+        textareaResult.style.display = "block";
+      }
+
+      // Add event listener to radio buttons
+      radioButtons.forEach(radioButton => {
+        radioButton.addEventListener('change', function() {
+          if (this.value === 'Tunggal') {
+            enableUrlInput();
+          } else if (this.value === 'Banyak') {
+            enableTextareaResult();
+          }
+        });
+      });
+
+      // Set the initial state based on the default value
+      const defaultRadioButton = document.querySelector('input[name="tipe"][value="Tunggal"]');
+      defaultRadioButton.checked = true;
+      enableUrlInput();
+
+      function makeColumn() {
+        
+        showDataSplit();
+      }
+
+      document.querySelector("#getArtikelBtn").addEventListener('click', checker);
+      
+      function checker() {
+        const radioBtn = document.getElementsByName('tipe');
+        let urlArtikel = $("#url-artikel").val();
+        let selectedValue;
+        for (const radioButton of radioBtn) {
+          if (radioButton.checked) {
+            selectedValue = radioButton.value;
+            break;
+          }
+        }
+        if (selectedValue == 'Banyak') 
+        {
+          let urlArtikel = $("#banyakURL").val();
+          let result = '';
+          console.log(urlArtikel);
+          const splitArray = urlArtikel.split(/\n/g);
+          for (let i = 0; i < splitArray.length; i++) {
+            result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${i % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
+              <center><h6>Artikel ${i+1}</h6></center><hr>`;
+            result += `<div class="form-horizontal" id="form-horizontal-${i}">`;
+            result += `<form id="blogForm-${i}">
+              <label for="title-${i}">Title:</label>
+              <input class="form-control mr-3" type="text" id="title-${i}" required><br>
+  
+              <label for="permalink-${i}">Permalink:</label>
+              <input class="form-control mr-3" type="text" id="permalink-${i}" required><br>
+  
+              <label for="imageSrc-${i}">Image Source:</label>
+              <input class="form-control mr-3" type="text" id="imageSrc-${i}" required><br>
+  
+              <label for="author-${i}">Author:</label>
+              <input class="form-control mr-3" type="text" id="author-${i}" required><br>
+  
+              <label for="author-${i}">Author Image Source:</label>
+              <input class="form-control mr-3" type="text" id="authorImageSrc-${i}" required><br>
+  
+              <label for="date-${i}">Date:</label>
+              <input class="form-control mr-3" type="date" id="date-${i}" required><br>
+  
+              <label for="category-${i}">Category:</label>
+              <input class="form-control mr-3" type="text" id="category-${i}" required><br>
+  
+              <label for="excerpt-${i}">Excerpt:</label>
+              <textarea class="form-control mr-3" id="excerpt-${i}" required></textarea><br>
+  
+              <button type="button" class="btn btn-primary" id="addBlog-${i}" onclick="updateValue(${i})">Add Blog to List!</button>
+            </form>`;
+            result += `</div></div>`;
+            var url = ""
+            if (type == "alwi") url = "https://rumahwalet.id/blog/"+splitArray[i];
+            if (type == "anggelin") url = "https://ternakwalet.com/blog-artikel/"+splitArray[i];
+            console.log(i+1, url);
+            const xhr = new XMLHttpRequest;
+            let cek = checkAccessControlAllowOrigin(url);
+            if (cek) {
+                xhr.open("GET", url);
+                xhr.responseType = 'document';
+                xhr.onload = () => {
+                    if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+                        try {
+                          var XMLResult = xhr.responseXML;
+                          console.log(XMLResult);
+                          var serializer = new XMLSerializer();
+                          var htmlString = serializer.serializeToString(XMLResult);
+                          const parser = new DOMParser();
+                          const htmlDocument = parser.parseFromString(htmlString, "text/html");
+                          // Fetch Title
+                          const entryTitleInput = document.getElementById("title-"+id);
+                          const entryTitleElement = htmlDocument.querySelector(
+                            'title'
+                          );
+                          if (entryTitleElement) {
+                            entryTitleInput.value = entryTitleElement.innerText
+                              .replace(/\s+/g, " ")
+                              .trim();
+                            entryTitleElement.innerText = entryTitleInput.value;
+                          }
+  
+                          // Fetch Excerpt
+                          const excerptInput = document.getElementById("excerpt-"+id);
+                          const excerptElement = htmlDocument.querySelector(
+                            'head meta[name="description"]'
+                          );
+                          if (excerptElement) {
+                            excerptInput.value = excerptElement.content
+                              .split(' ').slice(0, 10).join(' ')+'...';
+                            excerptElement.innerText = excerptInput.value;
+                          }
+                          console.log('excerpt', excerptElement)
+  
+                          // Fetch Permalink
+                          const permalinkInput = document.getElementById("permalink-"+id);
+                          const canonicalElement = htmlDocument.querySelector(
+                            'head link[rel="canonical"]'
+                          );
+                          if (canonicalElement) {
+                            permalinkInput.value = canonicalElement.getAttribute("href");
+                            canonicalElement.setAttribute("href", permalinkInput.value);
+                            const ogUrlElement = htmlDocument.querySelector(
+                              'meta[property="og:url"]'
+                            );
+                            if (ogUrlElement) {
+                              ogUrlElement.setAttribute("content", permalinkInput.value);
+                            }
+                          }
+  
+                          // Image content detection logic
+                          const imagesInput = document.getElementById("imageSrc-"+id);
+                          const imagesElement = htmlDocument.querySelector(
+                            '.wp-post-image, .size-full, .wp-image'
+                          );
+                          console.log(imagesElement)
+                          if (imagesElement) {
+                            const requestedUrl = $("#url-artikel").val()//extractDomain($("#url-artikel").val());
+                            const updatedImageUrl = imagesElement.src;//.replace(imagesElement.src, requestedUrl);
+                            imagesInput.value = updatedImageUrl;
+                            imagesElement.innerHTML = imagesInput.value;
+                          }
+                        } catch(err) {
+                            try {
+                                GetDataCORSBypass(url, i, "Banyak")
+                            } catch(err) {
+                                alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+                            }
+                        }
+                    }
+                };
+                xhr.send();
+            } else {
+                GetDataCORSBypass(url, i, "Banyak")
+            }
+          }
+          $('#containerDataArticle').append(result);
+          console.log(splitArray);
+        }
+        else if (selectedValue == 'Tunggal')
+          GetArtikel(urlArtikel)
+      }
+
+      function GetArtikel(urlArtikel)  {
+        const xhr = new XMLHttpRequest;
+        let cek = checkAccessControlAllowOrigin(urlArtikel);
+        if (cek) {
+            xhr.open("GET", urlArtikel);
+            xhr.responseType = 'document';
+            xhr.onload = () => {
+                if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+                    try {
+                        var XMLResult = xhr.responseXML;
+                        console.log(XMLResult);
+                        var serializer = new XMLSerializer();
+                        var htmlString = serializer.serializeToString(XMLResult);
+                        const parser = new DOMParser();
+                        const htmlDocument = parser.parseFromString(htmlString, "text/html");
+                        // Fetch Title
+                        const entryTitleInput = document.getElementById("title");
+                        const entryTitleElement = htmlDocument.querySelector(
+                          'title'
+                        );
+                        if (entryTitleElement) {
+                          entryTitleInput.value = entryTitleElement.innerText
+                            .replace(/\s+/g, " ")
+                            .trim();
+                          entryTitleElement.innerText = entryTitleInput.value;
+                        }
+
+                        // Fetch Excerpt
+                        const excerptInput = document.getElementById("excerpt");
+                        const excerptElement = htmlDocument.querySelector(
+                          'head meta[name="description"]'
+                        );
+                        if (excerptElement) {
+                          excerptInput.value = excerptElement.content
+                            .split(' ').slice(0, 10).join(' ')+'...';
+                          excerptElement.innerText = excerptInput.value;
+                        }
+                        console.log('excerpt', excerptElement)
+
+                        // Fetch Permalink
+                        const permalinkInput = document.getElementById("permalink");
+                        const canonicalElement = htmlDocument.querySelector(
+                          'head link[rel="canonical"]'
+                        );
+                        if (canonicalElement) {
+                          permalinkInput.value = canonicalElement.getAttribute("href");
+                          canonicalElement.setAttribute("href", permalinkInput.value);
+                          const ogUrlElement = htmlDocument.querySelector(
+                            'meta[property="og:url"]'
+                          );
+                          if (ogUrlElement) {
+                            ogUrlElement.setAttribute("content", permalinkInput.value);
+                          }
+                        }
+
+                        // Image content detection logic
+                        const imagesInput = document.getElementById("imageSrc");
+                        const imagesElement = htmlDocument.querySelector(
+                          '.wp-post-image, .size-full, .wp-image'
+                        );
+                        console.log(imagesElement)
+                        if (imagesElement) {
+                          const requestedUrl = $("#url-artikel").val()//extractDomain($("#url-artikel").val());
+                          const updatedImageUrl = imagesElement.src;//.replace(imagesElement.src, requestedUrl);
+                          imagesInput.value = updatedImageUrl;
+                          imagesElement.innerHTML = imagesInput.value;
+                        }
+                    } catch(err) {
+                        try {
+                            GetDataCORSBypass(urlArtikel, 0, "Tunggal")
+                        } catch(err) {
+                            alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+                        }
+                    }
+                }
+            };
+            xhr.send();
+        } else {
+            GetDataCORSBypass(urlArtikel, 0, "Tunggal")
+        }
+      }
+
+      function showDataSplit() {
+        paragraphs_object.forEach((paragraph, paragraph_index) => {
+            let result = '';
+            result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${paragraph_index % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
+            <center><h6>Paragraph ${paragraph_index+1}</h6></center><hr>`;
+    
+            paragraph.sentences.forEach((sentence, sentence_index) => {
+                let withDot = (paragraph.length_of_sentences-1) > sentence_index ? '' : '';
+    
+                result += `<div class="form-horizontal" id="form-horizontal-${paragraph_index}-${sentence_index}">`;
+                result += `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+                        <a>Kalimat ${sentence_index+1}</a>
+                        <textarea class="form-control" name="paragraph[]" rows="3">${sentence}${withDot}</textarea>
+                        <center>
+                        <button class="btn btn-sm btn-info" onclick="AddOpenAIText('${paragraph_index}','${sentence_index}')">Add</button>
+                        <button class="btn btn-sm btn-danger" onclick="DeleteHorizontalSentence('${paragraph_index}','${sentence_index}')">Delete</button>
+                        </center>
+                    </div> `;
+                result += `</div>`;
+                if (paragraph_index == paragraphs_object.length-1)
+                {
+                    result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${paragraph_index+1 % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
+                    <center><h6>Output</h6></center><hr>`;
+                    result += `<div class="form-horizontal" id="form-horizontal-${paragraph_index}-${sentence_index}-output">`;
+                    result += `<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb">
+                        <center>
+                        <b class="mb-2">Hasil Artikel ke-0</b>
+                        </div>`;
+                    result += `</div>`;
+                    result += `</div>`;
+                }
+            });
+            result += `</div>`;
+    
+            $('#containerDataArticle').append(result);
+        });
+    }
+    </script>
+    <script>
+      document.querySelector("#getDataBtn").addEventListener('click', GetData);
+      $(document).ready(function() {
+        $('#canonical-url').on('input', function() {
+          var permalink = $(this).val();
+      
+          // Replace multiple spaces with a single space
+          permalink = permalink.replace(/\s+/g, ' ');
+      
+          // Convert to lowercase
+          permalink = permalink.toLowerCase();
+      
+          // Replace non-alphanumeric characters with spaces
+          permalink = permalink.replace(/\W/g, ' ');
+          
+          // Replace spaces with dashes
+          permalink = permalink.replace(/\s+/g, '-');
+      
+          // Update the value of the input field
+          $(this).val(permalink);
+        });
+      });
+
+      function checkBlogListFormat() {
+
+      }
+
+      function GetDataCORSBypass(urlArtikel, id, tipe) {
+        try {
+            $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel), function (data) {
+                const parser = new DOMParser();
+                console.log("CEKK", urlArtikel, extractDomain(urlArtikel))
+                const htmlDocument = parser.parseFromString(data.contents, 'text/html');
+                if (tipe == "Banyak") {
+                  // Fetch Title
+                  const entryTitleInput = document.getElementById("title-"+id);
+                  const entryTitleElement = htmlDocument.querySelector(
+                    'title'
+                  );
+                  if (entryTitleElement) {
+                    entryTitleInput.value = entryTitleElement.innerText
+                      .replace(/\s+/g, " ")
+                      .trim();
+                    entryTitleElement.innerText = entryTitleInput.value;
+                  }
+
+                  // Fetch Excerpt
+                  const excerptInput = document.getElementById("excerpt-"+id);
+                  const excerptElement = htmlDocument.querySelector(
+                    'head meta[name="description"]'
+                  );
+                  if (excerptElement) {
+                    excerptInput.value = excerptElement.content
+                      .split(' ').slice(0, 10).join(' ')+'...';
+                    excerptElement.innerText = excerptInput.value;
+                  }
+                  console.log('excerpt', excerptElement)
+
+                  // Fetch Permalink
+                  const permalinkInput = document.getElementById("permalink-"+id);
+                  const canonicalElement = htmlDocument.querySelector(
+                    'head link[rel="canonical"]'
+                  );
+                  if (canonicalElement) {
+                    permalinkInput.value = canonicalElement.getAttribute("href");
+                    canonicalElement.setAttribute("href", permalinkInput.value);
+                    const ogUrlElement = htmlDocument.querySelector(
+                      'meta[property="og:url"]'
+                    );
+                    if (ogUrlElement) {
+                      ogUrlElement.setAttribute("content", permalinkInput.value);
+                    }
+                  }
+
+                  // Image content detection logic
+                  const imagesInput = document.getElementById("imageSrc-"+id);
+                  const imagesElement = htmlDocument.querySelector(
+                    '.wp-post-image, .size-full, .wp-image'
+                  );
+                  console.log(imagesElement)
+                  if (imagesElement) {
+                    const requestedUrl = $("#url-artikel").val()//extractDomain($("#url-artikel").val());
+                    const updatedImageUrl = imagesElement.src;//.replace(imagesElement.src, requestedUrl);
+                    imagesInput.value = updatedImageUrl;
+                    imagesElement.innerHTML = imagesInput.value;
+                  }
+                }
+                else
+                {
+                  // Fetch Title
+                  const entryTitleInput = document.getElementById("title");
+                  const entryTitleElement = htmlDocument.querySelector(
+                    'title'
+                  );
+                  if (entryTitleElement) {
+                    entryTitleInput.value = entryTitleElement.innerText
+                      .replace(/\s+/g, " ")
+                      .trim();
+                    entryTitleElement.innerText = entryTitleInput.value;
+                  }
+
+                  // Fetch Excerpt
+                  const excerptInput = document.getElementById("excerpt");
+                  const excerptElement = htmlDocument.querySelector(
+                    'head meta[name="description"]'
+                  );
+                  if (excerptElement) {
+                    excerptInput.value = excerptElement.content
+                      .split(' ').slice(0, 10).join(' ')+'...';
+                    excerptElement.innerText = excerptInput.value;
+                  }
+                  console.log('excerpt', excerptElement)
+
+                  // Fetch Permalink
+                  const permalinkInput = document.getElementById("permalink");
+                  const canonicalElement = htmlDocument.querySelector(
+                    'head link[rel="canonical"]'
+                  );
+                  if (canonicalElement) {
+                    permalinkInput.value = canonicalElement.getAttribute("href");
+                    canonicalElement.setAttribute("href", permalinkInput.value);
+                    const ogUrlElement = htmlDocument.querySelector(
+                      'meta[property="og:url"]'
+                    );
+                    if (ogUrlElement) {
+                      ogUrlElement.setAttribute("content", permalinkInput.value);
+                    }
+                  }
+
+                  // Image content detection logic
+                  const imagesInput = document.getElementById("imageSrc");
+                  const imagesElement = htmlDocument.querySelector(
+                    '.wp-post-image, .size-full, .wp-image'
+                  );
+                  console.log(imagesElement)
+                  if (imagesElement) {
+                    const requestedUrl = $("#url-artikel").val()//extractDomain($("#url-artikel").val());
+                    const updatedImageUrl = imagesElement.src;//.replace(imagesElement.src, requestedUrl);
+                    imagesInput.value = updatedImageUrl;
+                    imagesElement.innerHTML = imagesInput.value;
+                  }
+                }
+            });
+            $('#modalTunggu').modal('show');
+            console.log("Sedang memproses fetch dengan bypass policy CORS server URL yang diberikan. Proses ini berlangsung sekitar 30 detik - 1 menit.")
+        } catch(err) {
+            console.log(err);
+            alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+        }
+      }
+      
+      function checkAccessControlAllowOrigin(url) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('HEAD', url, false);
+        try {
+          xhr.send();
+        } catch (e) {
+          console.log('AccessControlAllowOrigin tidak diizinkan!');
+        }
+        let check = false;
+        try {
+          if (xhr.getAllResponseHeaders() != '') check = true;
+          if (xhr.getAllResponseHeaders().indexOf("Access-Control-Allow-Origin") >= 0)
+              check = true;
+          console.log("check")
+          console.log('"'+xhr.getAllResponseHeaders()+'"')
+        } catch (e) {console.log(e)}
+        console.log(check)
+        return check;
+      }
+      $(document).ready(function() {
+        // Handle "Add Blog" form submission
+        document.querySelector("#addBlog").addEventListener('click', updateValueSingle);
+      });
+      function GetData()  {
+        const xhr = new XMLHttpRequest;
+        let urlBlogList = $("#url-template").val();
+        let urlDomain = extractDomain(urlBlogList);
+        if (urlDomain == 'rumahwalet.id') type = 'alwi';
+        else  if (urlDomain == 'ternakwalet.com') 
+        {
+          type = 'anggelin';
+          $('#author, #authorImageSrc, #category').prop('disabled', true);
+        }
+        let cek = checkAccessControlAllowOrigin(urlBlogList);
+        if (cek) {
+            xhr.open("GET", urlBlogList);
+            xhr.responseType = 'document';
+            xhr.onload = () => {
+                if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+                    try {
+                        var XMLResult = xhr.responseXML;
+                        console.log(XMLResult);
+                        var serializer = new XMLSerializer();
+                        var htmlString = serializer.serializeToString(XMLResult);
+                        $('#html-input').val(htmlString);
+                        changeForm()
+                    } catch(err) {
+                        try {
+                            GetDataCORSBypass(urlBlogList, 0, "Tunggal")
+                        } catch(err) {
+                            alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+                        }
+                    }
+                }
+            };
+    
+            xhr.send();
+        } else {
+            GetDataCORSBypass(urlBlogList, 0, "Tunggal")
+        }
+      }
+    </script>
+  </body>
+</html>
