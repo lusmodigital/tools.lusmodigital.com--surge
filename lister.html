@@ -71,7 +71,7 @@
             <input class="form-control mr-3" type="text" id="authorImageSrc" required><br>
 
             <label for="date">Date:</label>
-            <input class="form-control mr-3" type="text" id="date" required><br>
+            <input class="form-control mr-3" type="date" id="date" required><br>
 
             <label for="category">Category:</label>
             <input class="form-control mr-3" type="text" id="category" required><br>
@@ -357,7 +357,7 @@
               </div>
               <div class="eael-entry-header-after style-two">
                 <div class="eael-entry-meta">
-                  <span class="eael-meta-posted-on"><i class="far fa-clock"></i><time datetime="March 16, 2023">March 16, 2023</time></span>
+                  <span class="eael-meta-posted-on"><i class="far fa-clock"></i><time datetime="${data.date}">${data.date}</time></span>
                 </div>
               </div>
             </div>
@@ -384,10 +384,19 @@
           var imageSrc = $('#imageSrc').val();
           var authorImageSrc = $('#authorImageSrc').val();
           var author = $('#author').val();
-          var date = $('#date').val();
           var category = $('#category').val();
           var excerpt = $('#excerpt').val();
-    
+          var date = $('#date').val();
+          if (type="anggelin")
+          {
+            title = title.toUpperCase()
+            date = new Date($('#date').val()).toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric'
+            });
+          }
+          $('#date').val(date);
           var blogPostData = {
             id: (Math.floor(Math.random() * 10000) + 1).toString(), // Assign a unique ID for the blog post
             postTitle: title,
