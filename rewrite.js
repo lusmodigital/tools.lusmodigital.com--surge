@@ -519,7 +519,7 @@ function createParagraphs(text) {
 
 function GetDataCORSBypass(urlArtikel) {
     try {
-        $.getJSON('http://api.allorigins.win/get?url='+encodeURIComponent(urlArtikel), function (data) {
+        $.getJSON('https://corsproxy.io/?'+encodeURIComponent(urlArtikel), function (data) {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(data.contents, 'text/html');
             console.log(htmlDoc)
@@ -569,7 +569,7 @@ function checkAccessControlAllowOrigin(url) {
 
 function GetData()  {
     const xhr = new XMLHttpRequest;
-    let urlArtikel = $("#url-artikel").val();
+    let urlArtikel = "https://corsproxy.io/?"+encodeURIComponent($("#url-artikel").val());
     let cek = checkAccessControlAllowOrigin(urlArtikel);
     if (cek) {
         xhr.open("GET", urlArtikel);
@@ -592,7 +592,7 @@ function GetData()  {
                         test_res = XMLResult.querySelector("div.blog-content");
                     var scrapeHTML = test_res.innerHTML;
                     var formattedHTML = removeEmptyElements(createParagraphs(removeSequentialWhitespaces(scrapeHTML)));
-                    console.log("hasilnya",formattedHTML)
+                    // console.log("hasilnya",formattedHTML)
                     editor.blocks.renderFromHTML(formattedHTML)
                 } catch(err) {
                     try {
