@@ -767,6 +767,7 @@
           let result = '';
           console.log(urlBanyak);
           const splitArray = urlBanyak.split(/\n/g);
+          console.log("tESST:",splitArray)
           for (let i = 0; i < splitArray.length; i++) {
             result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${i % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
               <center><h6>Artikel ${i+1}</h6></center><hr>`;
@@ -800,90 +801,85 @@
             </form>`;
             result += `</div></div>`;
             var url = ""
-            if (type == "alwi") url = "https://rumahwalet.id/blog/"+splitArray[i];
-            if (type == "anggelin") url = "https://ternakwalet.com/blog-artikel/"+splitArray[i];
+            var urlPrefix = document.getElementById("urlBlog").value
+            url = urlPrefix+splitArray[i];
             url = "https://corsproxy.io/?"+encodeURIComponent(url.replace(".html",""))
             console.log(i+1, url, splitArray[i], type);
             const xhr = new XMLHttpRequest;
-            //let cek = checkAccessControlAllowOrigin(url);
-            //if (cek) {
-                xhr.open("GET", url);
-                xhr.responseType = 'document';
-                xhr.onload = () => {
-                    if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+            xhr.open("GET", url);
+            xhr.responseType = 'document';
+            xhr.onload = () => {
+                if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+                    try {
+                      var XMLResult = xhr.responseXML;
+                      console.log(XMLResult);
+                      var serializer = new XMLSerializer();
+                      var htmlString = serializer.serializeToString(XMLResult);
+                      const parser = new DOMParser();
+                      const htmlDocument = parser.parseFromString(htmlString, "text/html");
+                      // Fetch Title
+                      const entryTitleInput = document.getElementById("title-"+i);
+                      const entryTitleElement = htmlDocument.querySelector(
+                        '.entry.title'
+                      );
+                      if (entryTitleElement) {
+                        entryTitleInput.value = entryTitleElement.innerText
+                          .replace(/\s+/g, " ")
+                          .trim();
+                        entryTitleElement.innerText = entryTitleInput.value;
+                      }
+  
+                      // Fetch Excerpt
+                      const excerptInput = document.getElementById("excerpt-"+i);
+                      const excerptElement = htmlDocument.querySelector(
+                        'head meta[name="description"]'
+                      );
+                      if (excerptElement) {
+                        excerptInput.value = excerptElement.content
+                          .split(' ').slice(0, 10).join(' ')+'...';
+                        excerptElement.innerText = excerptInput.value;
+                      }
+                      console.log('excerpt', excerptElement)
+  
+                      // Fetch Permalink
+                      const permalinkInput = document.getElementById("permalink-"+i);
+                      const canonicalElement = htmlDocument.querySelector(
+                        'head link[rel="canonical"]'
+                      );
+                      if (canonicalElement) {
+                        permalinkInput.value = canonicalElement.getAttribute("href");
+                        canonicalElement.setAttribute("href", permalinkInput.value);
+                        const ogUrlElement = htmlDocument.querySelector(
+                          'meta[property="og:url"]'
+                        );
+                        if (ogUrlElement) {
+                          ogUrlElement.setAttribute("content", permalinkInput.value);
+                        }
+                      }
+  
+                      // Image content detection logic
+                      const imagesInput = document.getElementById("imageSrc-"+i);
+                      const imagesElement = htmlDocument.querySelector(
+                        '.wp-post-image, .size-full, .wp-image'
+                      );
+                      console.log(imagesElement)
+                      if (imagesElement) {
+                        const requestedUrl = $("#url-artikel").val()//extractDomain($("#url-artikel").val());
+                        const updatedImageUrl = imagesElement.src;//.replace(imagesElement.src, requestedUrl);
+                        imagesInput.value = updatedImageUrl;
+                        imagesElement.innerHTML = imagesInput.value;
+                      }
+                    } catch(err) {
                         try {
-                          var XMLResult = xhr.responseXML;
-                          console.log(XMLResult);
-                          var serializer = new XMLSerializer();
-                          var htmlString = serializer.serializeToString(XMLResult);
-                          const parser = new DOMParser();
-                          const htmlDocument = parser.parseFromString(htmlString, "text/html");
-                          // Fetch Title
-                          const entryTitleInput = document.getElementById("title-"+i);
-                          const entryTitleElement = htmlDocument.querySelector(
-                            '.entry.title'
-                          );
-                          if (entryTitleElement) {
-                            entryTitleInput.value = entryTitleElement.innerText
-                              .replace(/\s+/g, " ")
-                              .trim();
-                            entryTitleElement.innerText = entryTitleInput.value;
-                          }
-  
-                          // Fetch Excerpt
-                          const excerptInput = document.getElementById("excerpt-"+i);
-                          const excerptElement = htmlDocument.querySelector(
-                            'head meta[name="description"]'
-                          );
-                          if (excerptElement) {
-                            excerptInput.value = excerptElement.content
-                              .split(' ').slice(0, 10).join(' ')+'...';
-                            excerptElement.innerText = excerptInput.value;
-                          }
-                          console.log('excerpt', excerptElement)
-  
-                          // Fetch Permalink
-                          const permalinkInput = document.getElementById("permalink-"+i);
-                          const canonicalElement = htmlDocument.querySelector(
-                            'head link[rel="canonical"]'
-                          );
-                          if (canonicalElement) {
-                            permalinkInput.value = canonicalElement.getAttribute("href");
-                            canonicalElement.setAttribute("href", permalinkInput.value);
-                            const ogUrlElement = htmlDocument.querySelector(
-                              'meta[property="og:url"]'
-                            );
-                            if (ogUrlElement) {
-                              ogUrlElement.setAttribute("content", permalinkInput.value);
-                            }
-                          }
-  
-                          // Image content detection logic
-                          const imagesInput = document.getElementById("imageSrc-"+i);
-                          const imagesElement = htmlDocument.querySelector(
-                            '.wp-post-image, .size-full, .wp-image'
-                          );
-                          console.log(imagesElement)
-                          if (imagesElement) {
-                            const requestedUrl = $("#url-artikel").val()//extractDomain($("#url-artikel").val());
-                            const updatedImageUrl = imagesElement.src;//.replace(imagesElement.src, requestedUrl);
-                            imagesInput.value = updatedImageUrl;
-                            imagesElement.innerHTML = imagesInput.value;
-                          }
+                          console.log(err)
+                            GetDataCORSBypass(url, i, "Banyak")
                         } catch(err) {
-                            try {
-                              console.log(err)
-                                GetDataCORSBypass(url, i, "Banyak")
-                            } catch(err) {
-                                alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
-                            }
+                            alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
                         }
                     }
-                };
-                xhr.send();
-            /*} else {
-                GetDataCORSBypass(url, i, "Banyak")
-            }*/
+                }
+            };
+            xhr.send();
           }
           $('#containerDataArticle').append(result);
           console.log(splitArray);
