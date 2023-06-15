@@ -60,7 +60,10 @@
           <label for="css">Banyak</label><br>
         </div>
         <div class="form-group">
-          <textarea id="banyakURL" placeholder="URL Artikel (Lebih dari 1)" class="form-control" rows="10"></textarea>
+          <textarea id="linkGithub" placeholder="Link Github Blog" class="form-control mb-3" rows="1"></textarea>
+          <textarea id="urlBlog" placeholder="URL Utama Blog" class="form-control mb-3" rows="1"></textarea>
+          <button type="button" class="btn btn-primary" id="getGithub">Fetch!</button>
+          <textarea id="banyakURL" placeholder="URL Artikel (Lebih dari 1)" class="form-control mb-3" rows="10"></textarea>
           <input class="form-control mr-3" placeholder="URL Artikel" type="text" id="url-artikel" value="">
         </div>
         <button type="button" class="btn btn-primary" id="getArtikelBtn">Get!</button>
@@ -490,19 +493,27 @@
     <script>
       // Get the necessary elements
       const urlInput = document.getElementById('url-artikel');
-      const textareaResult = document.getElementById('banyakURL');
+      const banyakURLInput = document.getElementById('banyakURL');
+      const github = document.getElementById('linkGithub');
+      const urlBlog = document.getElementById('urlBlog');
       const radioButtons = document.querySelectorAll('input[name="tipe"]');
 
       // Function to enable the URL Artikel input
       function enableUrlInput() {
         urlInput.style.display = "block";
-        textareaResult.style.display = "none";
+        banyakURLInput.style.display = "none";
+        github.style.display = "none";
+        urlBlog.style.display = "none";
+        document.getElementById("getGithub").style.display = "none";
       }
 
       // Function to enable the Textarea Convert Split Result
-      function enableTextareaResult() {
+      function enablebanyakURLInput() {
         urlInput.style.display = "none";
-        textareaResult.style.display = "block";
+        banyakURLInput.style.display = "block";
+        github.style.display = "block";
+        urlBlog.style.display = "block";
+        document.getElementById("getGithub").style.display = "block";
       }
 
       // Add event listener to radio buttons
@@ -511,7 +522,7 @@
           if (this.value === 'Tunggal') {
             enableUrlInput();
           } else if (this.value === 'Banyak') {
-            enableTextareaResult();
+            enablebanyakURLInput();
           }
         });
       });
@@ -522,6 +533,37 @@
       enableUrlInput();
 
       document.querySelector("#getArtikelBtn").addEventListener('click', checker);
+      document.querySelector("#getGithub").addEventListener('click', fetchGithub);
+
+      function fetchGithub()
+      {
+        var urlGithub = github.value;
+        urlGithub = "https://corsproxy.io/?"+encodeURIComponent(urlGithub.replace(".html",""))
+        const xhr = new XMLHttpRequest;
+        xhr.open("GET", urlGithub);
+        xhr.responseType = 'document';
+        xhr.onload = () => {
+            if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+              var XMLResult = xhr.responseXML;
+              console.log(XMLResult);
+              var serializer = new XMLSerializer();
+              var htmlString = serializer.serializeToString(XMLResult);
+              const parser = new DOMParser();
+              const htmlDocument = parser.parseFromString(htmlString, "text/html");
+              // Fetch Blog Links
+              const blogLinksInput = document.getElementById("title");
+              const blogLinks = htmlDocument.querySelector(
+                '.Link--primary'
+              );
+              if (blogLinks) {
+                blogLinksElement.forEach(blogLink => {
+                  banyakURLInput.value += blogLink.getAttribute('href') +"\n";
+                });
+              }
+            }
+        };
+        xhr.send();
+      }
 
       function duplicateElementsBp() {
         var blogListInput = $('#blog-list').val();
