@@ -800,9 +800,7 @@
               <button type="button" class="btn btn-primary" id="addBlog-${i}" onclick="updateValue(${i})">Add Blog to List!</button>
             </form>`;
             result += `</div></div>`;
-            var url = ""
-            var urlPrefix = document.getElementById("urlBlog").value
-            url = urlPrefix+splitArray[i];
+            var url = splitArray[i];
             url = "https://corsproxy.io/?"+encodeURIComponent(url.replace(".html",""))
             console.log(i+1, url, splitArray[i], type);
             const xhr = new XMLHttpRequest;
@@ -820,7 +818,7 @@
                       // Fetch Title
                       const entryTitleInput = document.getElementById("title-"+i);
                       const entryTitleElement = htmlDocument.querySelector(
-                        '.entry.title'
+                        '.entry-title'
                       );
                       if (entryTitleElement) {
                         entryTitleInput.value = entryTitleElement.innerText
