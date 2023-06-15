@@ -62,7 +62,7 @@
         <div class="form-group">
           <textarea id="linkGithub" placeholder="Link Github Blog" class="form-control mb-3" rows="1"></textarea>
           <textarea id="urlBlog" placeholder="URL Utama Blog" class="form-control mb-3" rows="1"></textarea>
-          <button type="button" class="btn btn-primary" id="getGithub">Fetch!</button>
+          <button type="button" class="btn btn-primary mb-3" id="getGithub">Fetch!</button>
           <textarea id="banyakURL" placeholder="URL Artikel (Lebih dari 1)" class="form-control mb-3" rows="10"></textarea>
           <input class="form-control mr-3" placeholder="URL Artikel" type="text" id="url-artikel" value="">
         </div>
@@ -551,13 +551,14 @@
               const parser = new DOMParser();
               const htmlDocument = parser.parseFromString(htmlString, "text/html");
               // Fetch Blog Links
-              const blogLinksInput = document.getElementById("title");
-              const blogLinks = htmlDocument.querySelector(
-                '.Link--primary'
+              const blogLinks = htmlDocument.querySelectorAll(
+                'a.Link--primary'
               );
               if (blogLinks) {
-                blogLinksElement.forEach(blogLink => {
-                  banyakURLInput.value += blogLink.getAttribute('href') +"\n";
+                blogLinks.forEach(blogLink => {
+                  var permalink = blogLink.getAttribute('title')
+                  if (permalink != null)
+                    banyakURLInput.value += urlBlog.value + permalink + "\n";
                 });
               }
             }
