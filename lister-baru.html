@@ -754,33 +754,11 @@
       }
 
       function addAll() {
-        paragraphs_object.forEach( (paragraph, paragraph_index) => {
-            if (paragraph.paragraph_item.slice(0, 5) != '[img]' && paragraph.paragraph_item.slice(0, 2) != '<h')
-            {
-                console.log(totalKalimat, htmlElement)
-                if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, 'p')
-                GenerateOpenAIParagraph(paragraph_index, other_paragraph_vertical_index);
-            }
-            else if(paragraph.paragraph_item.slice(0, 2) == '<h') 
-            {
-                console.log(totalKalimat, htmlElement)
-                if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, paragraph.paragraph_item.slice(1, 3))
-                paragraphs_object[paragraph_index].other_paragraphs[other_paragraph_vertical_index] = paragraphs_object[paragraph_index].paragraph_item,
-                $(`#open-ai-paragraph-${paragraph_index}-${other_paragraph_vertical_index}`).val(paragraphs_object[paragraph_index].paragraph_item);
-            }
-            else if(paragraph.paragraph_item.slice(0, 2) == '- ') 
-            {
-                console.log(totalKalimat, htmlElement)
-                if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, paragraph.paragraph_item.slice(1, 3))
-                paragraphs_object[paragraph_index].other_paragraphs[other_paragraph_vertical_index] = paragraphs_object[paragraph_index].paragraph_item,
-                $(`#open-ai-paragraph-${paragraph_index}-${other_paragraph_vertical_index}`).val(paragraphs_object[paragraph_index].paragraph_item);
-            }
-            else if(paragraph.paragraph_item.slice(0, 5) == '[img]')
-            {
-                console.log(totalKalimat, htmlElement)
-                if (!htmlElement[totalKalimat]) htmlElement.splice(totalKalimat++, 0, 'img')
-            }
-        });
+        const allIDs = [...idBanyak];
+        console.log("yang di add:", allIDs);
+        for (var i = 0; i < allIDs.length; i++) {
+          updateValue(allIDs[i]);
+        }
       }
 
       function deleteAll()
