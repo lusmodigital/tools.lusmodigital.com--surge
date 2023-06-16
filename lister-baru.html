@@ -785,13 +785,14 @@
 
       function deleteAll()
       {
-        $(`new-article-lists`).remove();
+        $(`#new-article-lists`).remove();
+        $(`#containerDataArticle`).remove();
         idBanyak.clear();
       }
 
       function deleteValue(i)
       {
-        $(`artikel-${i}`).remove();
+        $(`#artikel-${i}`).remove();
         idBanyak.delete(i);
         console.log("berhassil ngapus")
       }
@@ -818,10 +819,10 @@
               <button class="btn btn-sm btn-danger" id="delete-all-blog-lists" onclick="deleteAll()">Close All</button>
               <br>
           `;
-          result += massDeleteButton;
+          result += massDeleteButton + "</div>";
           for (let i = 0; i < splitArray.length; i++) {
             idBanyak.add(i);
-            result += `<div class="p-2 mt-5" id="artikel-${i}" style="width:320px; height: auto; background-color:${i % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
+            result += `<div class="p-2 mt-5" id="artikel-${i}" style="width:340px; height: auto; background-color:${i % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
               <center><h6>Artikel ${i+1}</h6></center><hr>`;
             result += `<div class="form-horizontal" id="form-horizontal-${i}">`;
             result += `<form id="blogForm-${i}">
