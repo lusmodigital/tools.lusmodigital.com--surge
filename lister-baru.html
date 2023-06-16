@@ -764,10 +764,17 @@
         if (selectedValue == 'Banyak') 
         {
           let urlBanyak = $("#banyakURL").val();
-          let result = '';
+          let result = '<div class="mt-2 p-2 sentence-item" style="background-color:#dbdbdb" id="new-article-lists">';
           console.log(urlBanyak);
           const splitArray = urlBanyak.split(/\n/g);
           console.log("tESST:",splitArray)
+          let massDeleteButton = '', massGenerateArticle = '';
+          massDeleteButton =`
+              <button class="btn btn-sm btn-success" id="add-all-blog-lists" onclick="addAll()">Add All to Blog List</button>
+              <button class="btn btn-sm btn-danger" id="delete-all-blog-lists" onclick="deleteAll()">Close All</button>
+              <br>
+          `;
+          result += massDeleteButton;
           for (let i = 0; i < splitArray.length; i++) {
             result += `<div class="p-2 mt-5" id="containerPerParagraph" style="width:320px; height: auto; background-color:${i % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
               <center><h6>Artikel ${i+1}</h6></center><hr>`;
@@ -799,7 +806,7 @@
   
               <button type="button" class="btn btn-primary" id="addBlog-${i}" onclick="updateValue(${i})">Add Blog to List!</button>
             </form>`;
-            result += `</div></div>`;
+            result += `</div></div></div>`;
             var url = splitArray[i];
             url = "https://corsproxy.io/?"+encodeURIComponent(url.replace(".html",""))
             console.log(i+1, url, splitArray[i], type);
