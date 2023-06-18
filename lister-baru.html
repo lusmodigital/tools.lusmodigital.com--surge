@@ -658,6 +658,50 @@
         console.log("container", containerElement)
         htmlInput.value = htmlElement.documentElement.outerHTML;
       }
+
+      function duplicateElements(id) {
+        const blogContainer = document.getElementById("blog-container");
+        const blogList = document.getElementById("blog-list").value;
+        
+        var parser = new DOMParser();
+        var htmlElement = parser.parseFromString(htmlInput.value, "text/html");
+        var containerHtml = parser.parseFromString(blogContainer.value, "text/html").body.firstChild;
+        console.log("containerHtml", containerHtml);
+        const parentContainerClass = containerHtml.getAttribute("class").split(" ").join(".");
+        var containerElement = htmlElement.querySelector("." + parentContainerClass);
+        console.log("container", containerElement)
+        var blogHtml = parser.parseFromString(blogList, "text/html");
+        var clonedBlogHtml = blogHtml.body.firstChild.cloneNode(true);
+        console.log("sebelum:")
+        console.log(clonedBlogHtml)
+        const titleInput = document.getElementById("title-"+id);
+        const permalinkInput = document.getElementById("permalink-"+id);
+        const imageInput = document.getElementById("imageSrc-"+id);
+        console.log(id)
+        console.log(titleInput.value)
+        console.log(permalinkInput.value)
+        console.log(imageInput.value)
+        var modifiedElement = clonedBlogHtml.cloneNode(true); // Create a new modified element
+        for (let i = 1; i <= 10; i++) {
+          const heading = modifiedElement.querySelector('h' + i + ' a');
+          if (heading) {
+            heading.textContent = titleInput.value.trim();
+            break;
+          }
+        }
+        const allAnchorElements = modifiedElement.querySelectorAll('a');
+        allAnchorElements.forEach(anchorElement => {
+          anchorElement.setAttribute('href', permalinkInput.value);
+        });
+        const imgElement = modifiedElement.querySelector("img");
+        if (imgElement) {
+          imgElement.setAttribute("src", imageInput.value);
+        }
+        console.log("setelah", modifiedElement)
+        $(containerElement).prepend(modifiedElement);
+        console.log("container", containerElement)
+        htmlInput.value = htmlElement.documentElement.outerHTML;
+      }
       
 
       function duplicateElementsTemp() {
@@ -758,6 +802,7 @@
         console.log("yang di add:", allIDs);
         for (var i = 0; i < allIDs.length; i++) {
           updateValue(allIDs[i]);
+          duplicateElements(allIDs[i]);
         }
       }
 
