@@ -461,8 +461,9 @@
           var title = $('#title-'+id).val();
           var permalink = $('#permalink-'+id).val();
           var imageSrc = $('#imageSrc-'+id).val();
-          var authorImageSrc = $('#authorImageSrc-'+id).val();
-          var author = $('#author-'+id).val();
+          var authorLink = $('#author-link-banyak').val();
+          var authorImageSrc = $('#authorImageSrc-banyak').val();
+          var author = $('#author-banyak').val();
           var date = $('#date-'+id).val();
           var category = $('#category-'+id).val();
           var excerpt = $('#excerpt-'+id).val();
@@ -488,11 +489,12 @@
           };
           console.log(blogPostData);
     
-          var blogPost = createBlogPost(blogPostData);
-          $('#blogList').append(blogPost);
+          // var blogPost = createBlogPost(blogPostData);
+          // $('#blogList').append(blogPost);
       }
 
       // Get the necessary elements
+      var adaAuthor = false, adaDate = false;
       const urlInput = document.getElementById('url-artikel');
       const banyakURLInput = document.getElementById('banyakURL');
       const github = document.getElementById('linkGithub');
@@ -689,6 +691,32 @@
             break;
           }
         }
+
+        if (adaDate)
+        {
+          // Fetch Date
+          const dateInput = document.getElementById("date-"+id);
+          var dateElement = modifiedElement.querySelector('.date');
+          console.log("tanggal: ", dateElement);
+          var anchorElement = dateElement.querySelector('a');
+          anchorElement.setAttribute('href', dateInput.value);
+          anchorElement.textContent = dateInput.value;
+        }
+        
+        if (adaAuthor)
+        {
+          // Fetch Author
+          const authorInput = document.getElementById("author-banyak");
+          const authorLinkInput = document.getElementById("author-link-banyak");
+          const authorImgInput = document.getElementById("authorImageSrc-banyak");
+          var authorElement = modifiedElement.querySelector('.author.has-author-avatar');
+          var anchorElementAuthor = authorElement.querySelector('a');
+          anchorElementAuthor.setAttribute('href', authorLinkInput.value);
+          var authorImgElement = authorElement.querySelector('img');
+          authorImgElement.setAttribute('src', authorImgInput.value);
+          anchorElementAuthor.textContent = authorInput.value;
+        }
+
         const allAnchorElements = modifiedElement.querySelectorAll('a');
         allAnchorElements.forEach(anchorElement => {
           anchorElement.setAttribute('href', permalinkInput.value);
@@ -831,6 +859,7 @@
         }
         if (selectedValue == 'Banyak') 
         {
+          let blogListArtikelUrl = $("#urlBlog").val();
           let urlBanyak = $("#banyakURL").val();
           let result = '<div class="mt-2 p-2 sentence-item" style="width:340px; height: auto; background-color:#dbdbdb" id="new-article-lists">';
           console.log(urlBanyak);
@@ -839,10 +868,83 @@
           let massDeleteButton = '', massGenerateArticle = '';
           massDeleteButton =`
               <button class="btn btn-sm btn-success" id="add-all-blog-lists" onclick="addAll()">Add All to Blog List</button>
-              <button class="btn btn-sm btn-danger" id="delete-all-blog-lists" onclick="deleteAll()">Close All</button>
+              <button class="btn btn-sm btn-danger" id="delete-all-blog-lists" onclick="deleteAll()">Close All</button><br>
+
+              <label for="author-banyak">Author:</label>
+              <input class="form-control mr-3" type="text" id="author-banyak" required><br>
+
+              <label for="author-link-banyak">Author Link:</label>
+              <input class="form-control mr-3" type="text" id="author-link-banyak" required><br>
+  
+              <label for="authorImgSrc-banyak">Author Image Source:</label>
+              <input class="form-control mr-3" type="text" id="authorImageSrc-banyak" required><br>
+  
+              <label for="start-date">Start Date:</label>
+              <input class="form-control mr-3" type="date" id="start-date" required><br>
+
+              <label for="start-date">End Date:</label>
+              <input class="form-control mr-3" type="date" id="end-date" required><br>
               <br>
           `;
           result += massDeleteButton + "</div>";
+          var urlBlogList = "https://corsproxy.io/?"+encodeURIComponent(blogListArtikelUrl.replace(".html",""))
+          const xhrBlog = new XMLHttpRequest;
+          xhrBlog.open("GET", urlBlogList);
+          xhrBlog.responseType = 'document';
+          xhrBlog.onload = () => {
+              if (xhrBlog.readyState === xhrBlog.DONE && xhrBlog.status === 200) {
+                  try {
+                    var XMLResult = xhrBlog.responseXML;
+                    console.log(XMLResult);
+                    var serializer = new XMLSerializer();
+                    var htmlString = serializer.serializeToString(XMLResult);
+                    const parser = new DOMParser();
+                    const htmlDocument = parser.parseFromString(htmlString, "text/html");
+                    
+                    // Fetch Date
+                    const dateInput = document.getElementById("date-banyak");
+                    var dateElement = htmlDocument.querySelector('.date');
+                    if (dateElement) 
+                    {
+                      adaDate = true;
+                      var anchorElement = dateElement.querySelector('a');
+                      var hrefValue = anchorElement.getAttribute('href');
+                      var textContent = anchorElement.textContent.trim();
+                    }
+                    
+                    // Fetch Author
+                    const authorInput = document.getElementById("author-banyak");
+                    const authorLinkInput = document.getElementById("author-link-banyak");
+                    const authorImgInput = document.getElementById("authorImageSrc-banyak");
+                    var authorElement = htmlDocument.querySelector('.author.has-author-avatar');
+                    if (authorElement != null)
+                    {
+                      adaAuthor = true;
+                      var anchorElementAuthor = authorElement.querySelector('a');
+                      var linkAuthor = anchorElementAuthor.getAttribute('href');
+                      var imgElement = authorElement.querySelector('img');
+                      var imgSrc = imgElement.getAttribute('src');
+                      var authorName = anchorElementAuthor.textContent.trim();
+                      authorInput.value = authorName;
+                      authorLinkInput.value = linkAuthor;
+                      authorImgInput.value = imgSrc;
+                    }
+
+                    // Menampilkan output
+                    console.log("imgSrc: " + imgSrc);
+                    console.log("linkAuthor: " + linkAuthor);
+                    console.log("authorName: " + authorName);
+                  } catch(err) {
+                      try {
+                        console.log(err)
+                          GetDataCORSBypass(url, i, "Banyak")
+                      } catch(err) {
+                          alert("Error! Pastikan url benar dan konten dalam page berbasis Wordpress Article!")
+                      }
+                  }
+              }
+          };
+          xhrBlog.send();
           for (let i = 0; i < splitArray.length; i++) {
             idBanyak.add(i);
             result += `<div class="p-2 mt-5" id="artikel-${i}" style="width:340px; height: auto; background-color:${i % 2 == 0 ? '#bcf4ff' : '#dbdbdb'}">
@@ -857,15 +959,6 @@
   
               <label for="imageSrc-${i}">Image Source:</label>
               <input class="form-control mr-3" type="text" id="imageSrc-${i}" required><br>
-  
-              <label for="author-${i}">Author:</label>
-              <input class="form-control mr-3" type="text" id="author-${i}" required><br>
-  
-              <label for="author-${i}">Author Image Source:</label>
-              <input class="form-control mr-3" type="text" id="authorImageSrc-${i}" required><br>
-  
-              <label for="date-${i}">Date:</label>
-              <input class="form-control mr-3" type="date" id="date-${i}" required><br>
   
               <label for="category-${i}">Category:</label>
               <input class="form-control mr-3" type="text" id="category-${i}" required><br>
@@ -931,7 +1024,7 @@
                           ogUrlElement.setAttribute("content", permalinkInput.value);
                         }
                       }
-  
+
                       // Image content detection logic
                       const imagesInput = document.getElementById("imageSrc-"+i);
                       const imagesElement = htmlDocument.querySelector(
