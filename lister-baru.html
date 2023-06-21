@@ -560,7 +560,7 @@
               if (blogLinks) {
                 blogLinks.forEach(blogLink => {
                   var permalink = blogLink.getAttribute('title')
-                  if (permalink != null)
+                  if (permalink != null && permalink.endsWith('.html'))
                     banyakURLInput.value += urlBlog.value + permalink + "\n";
                 });
               }
