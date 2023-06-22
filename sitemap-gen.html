@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fetch GitHub HTML URLs</title>
+    <title>Sitemap Generator</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
@@ -13,7 +13,7 @@
   </head>
   <body>
     <div class="container mt-5">
-      <h1>Fetch GitHub HTML URLs</h1>
+      <h1>Sitemap Generator</h1>
       <div class="form-group">
         <label for="github">GitHub URL:</label>
         <input
@@ -29,7 +29,7 @@
           type="text"
           class="form-control"
           id="baseurl"
-          placeholder="Contoh: https://indonesiayanwoo.com"
+          placeholder="Contoh: https://indonesiayanwoo.com/"
         />
       </div>
       <button class="btn btn-primary" onclick="fetchGithub1()">
@@ -52,6 +52,28 @@
         <label for="output">Result:</label>
         <textarea class="form-control" id="output" rows="5" readonly></textarea>
       </div>
+      <button class="btn btn-primary mt-3" onclick="generateXML()">
+        Generate XML
+      </button>
+      <div class="form-group mt-3">
+        <label for="xmlOutput">XML Result:</label>
+        <textarea
+          class="form-control"
+          id="xmlOutput"
+          rows="5"
+          readonly
+        ></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="copyToClipboard()">
+        Copy to Clipboard
+      </button>
+      <a
+        class="btn btn-primary"
+        id="downloadLink"
+        onclick="downloadXML()"
+        style="display: none"
+        >Download XML</a
+      >
     </div>
 
     <script>
@@ -140,6 +162,59 @@
           }
         };
         xhr.send();
+      }
+
+      function generateXML() {
+        var output = document.getElementById("output").value;
+        var urls = output.split("\n").filter((url) => url.trim() !== "");
+        var xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (url) => `<url>
+  <loc>${url}</loc>
+  <lastmod>${generateRandomLastmod()}</lastmod>
+</url>`
+  )
+  .join("\n")}
+</urlset>`;
+        var xmlOutput = document.getElementById("xmlOutput");
+        xmlOutput.value = xmlContent;
+        var downloadLink = document.getElementById("downloadLink");
+        downloadLink.setAttribute(
+          "href",
+          "data:text/xml;charset=utf-8," + encodeURIComponent(xmlContent)
+        );
+        downloadLink.setAttribute("download", "post-sitemap.xml");
+        downloadLink.style.display = "inline-block";
+      }
+
+      function generateRandomLastmod() {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = padZero(date.getMonth() + 1);
+        var day = padZero(date.getDate());
+        var hour = padZero(date.getHours());
+        var minute = padZero(date.getMinutes());
+        var second = padZero(date.getSeconds());
+        return `${year}-${month}-${day}T${hour}:${minute}:${second}+00:00`;
+      }
+
+      function padZero(num) {
+        return num.toString().padStart(2, "0");
+      }
+
+      function copyToClipboard() {
+        var xmlOutput = document.getElementById("xmlOutput");
+        xmlOutput.select();
+        xmlOutput.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        alert("XML content copied to clipboard");
+      }
+
+      function downloadXML() {
+        var downloadLink = document.getElementById("downloadLink");
+        downloadLink.click();
       }
     </script>
   </body>
